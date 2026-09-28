@@ -5,10 +5,11 @@
   // 纯静态站：dist/ 直接作为 assets 部署，没有 Worker 脚本
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "404-page",
-    // ⚠️ 必须设 "none"：默认的 auto-trailing-slash 会把 /ads/x.html 307 到
-    // /ads/x，广告位 iframe 因此多一次重定向，而且和本地 python http.server
-    // 的行为不一致（本地只有 .html 能取）。设 none 后两边行为一致。
-    "html_handling": "none"
+    "not_found_handling": "404-page"
+    // ⚠️ 别加 "html_handling": "none" 来消除 /ads/x.html 的 307 ——
+    // 那个默认行为（auto-trailing-slash）同时也是**整站目录式 URL**
+    // （/tools/xp-calculator/ → .../index.html）能工作的原因。
+    // 为了省广告位一次同源重定向而关掉它，是拿全站 113 页赌一个可忽略的开销。
+    // 307 本身无害：iframe 会自动跟随，且广告位是 lazy 加载的。
   }
 }
