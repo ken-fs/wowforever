@@ -34,6 +34,23 @@ npm run data -- --only=Item,Spell      # 只跑某几张表
 **为什么有个 site.db**：站点只用到其中 17 张表（其余是物品/法术全量，只用来计数）。
 瘦身后 312 KB 可以进 git，**CI 构建就不需要网络、不需要跑管线**。
 
+### ⚠️⚠️ 改完管线必须提交 site.db
+
+**CI 读的是仓库里那份 `data/site.db`，不会自己跑管线。** 所以：
+
+```bash
+# 改了 pipeline/derive.sql 或 pipeline/build.mjs 之后
+node pipeline/build.mjs        # 重新生成 site.db
+git add data/site.db           # ← 这一行漏了，CI 就还在用旧数据
+git commit
+```
+
+踩过一次（2026-09-28）：只提交了 `derive.sql` 的天赋修复、忘了提交重新生成的 `site.db`，
+线上跑了半小时的旧数据。**本地 `npm run build` 完全正常**（它读本地那份），
+所以只有线上能看出来。
+
+验证办法：`git status --short` 里出现 `M data/site.db` 就是漏提交了。
+
 ### 语料管线
 
 ```bash
