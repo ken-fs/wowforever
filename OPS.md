@@ -10,6 +10,7 @@ World of Warcraft: Forever 数据/工具站。英文，Astro 静态生成，Clou
 
 ```
 pipeline/build.mjs    数据管线   wago.tools → SQLite → data/site.db
+pipeline/assets.mjs   素材管线   官方 CDN → src/assets/（营销图 + 职业图标）
 pipeline/youtube.mjs  语料管线   YouTube 字幕 → data/transcripts/
 ```
 
@@ -287,3 +288,46 @@ export default { async fetch() { ... } };
 需要本地部署时跑一次 `npx wrangler login`。
 
 或者用 MCP：`cloudflare_execute` 的 token 权限比 wrangler 高，能建 zone（wrangler 只有 `zone:read`）。
+
+
+---
+
+## 美术素材（官方来源，别用竞品截图）
+
+```bash
+node pipeline/assets.mjs          # 拉全部（33 张营销图 + 9 个职业图标）
+node pipeline/assets.mjs --force  # 重下
+```
+
+| 来源 | 是什么 | 怎么拿 |
+|---|---|---|
+| `blz-contentstack-images.akamaized.net` | Blizzard 官网 Forever 落地页的营销图：主视觉、天裔原画、**7 张区域图**、产品图、特性图 | 抓落地页 HTML 里的 URL，去掉 `-sm/-md/-lg` 后缀拿全分辨率 |
+| `render.worldofwarcraft.com/us/icons/56/<name>.jpg` | **游戏图标官方渲染 CDN**（56×56 JPEG） | `fdid` → `wago.tools/api/info/{fdid}` 拿文件名 → 拼 CDN |
+
+**为什么不用 Wowhead / 竞品的图**：那是别人的截图，DMCA 风险比"没图"严重得多。
+上面这两个都是开发商自己发布/渲染的素材，粉丝站配免责声明使用是行业惯例
+（和 Roblox 站用 `thumbnails.roblox.com` 一个道理）。
+
+### ⚠️ 坑：wago.tools 给的是 BLP2，不是 PNG
+
+`wago.tools/api/casc/{fdid}` 返回 **BLP2**（暴雪贴图格式，DXT 压缩），直接当图片用不了。
+**不要写 BLP 解码器** —— 走 `/api/info/{fdid}` 拿文件名，再去 `render.worldofwarcraft.com` 拿 JPEG。
+实测 5/5 成功，每张约 2.4KB。
+
+### 页面怎么用
+
+素材通过 `src/data/assets.ts` 暴露（`import.meta.glob` 收集 + 具名导出）：
+
+```astro
+import { Image } from "astro:assets";
+import { hero, classIcon, guideImage } from "../data/assets.ts";
+
+<Image src={hero} alt="..." widths={[420, 720]} format="webp" loading="eager" fetchpriority="high" />
+```
+
+**装饰性图标一律 `alt=""`**（旁边的文字已经说了是什么），**图库图必须有描述性 alt**（图片搜索靠它）。
+
+### 署名义务
+
+页脚已写「Artwork © Blizzard Entertainment, reproduced from Blizzard's own press and marketing assets.」
+**别删这行**。

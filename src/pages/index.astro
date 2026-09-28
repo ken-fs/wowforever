@@ -1,6 +1,8 @@
 ---
 import Base from "../layouts/Base.astro";
 import { all, val, one, count } from "../data/db.ts";
+import { Image } from "astro:assets";
+import { hero, ogImage, attribution } from "../data/assets.ts";
 
 const build = val(`SELECT value FROM meta WHERE key='build'`);
 
@@ -40,7 +42,8 @@ const NEWSWORTHY = [
   description="World of Warcraft: Forever reference built from the game client itself. Race and class combinations, XP buff stacking, talent data, and what changed versus Classic."
   {build}
 >
-  <section class="pt-10 pb-8 border-b border-rule">
+  <section class="pt-10 pb-8 border-b border-rule grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
+    <div>
     <p class="tag mb-3">World of Warcraft: Forever</p>
     <h1 class="text-[2.1rem] sm:text-[2.7rem] leading-[1.1] max-w-[20ch]">
       Every number in Forever, pulled from the client.
@@ -67,6 +70,27 @@ const NEWSWORTHY = [
         ))
       }
     </dl>
+    </div>
+    {
+      hero && (
+        <figure class="lg:pt-2">
+          <Image
+            src={hero}
+            alt="Official key art for World of Warcraft: Forever"
+            widths={[420, 720]}
+            sizes="(max-width: 1023px) 100vw, 400px"
+            format="webp"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+            class="w-full border border-rule-hard"
+          />
+          <figcaption class="mt-2 text-[0.72rem] text-ink-faint leading-snug">
+            Key art from Blizzard's Forever announcement assets.
+          </figcaption>
+        </figure>
+      )
+    }
   </section>
 
   <section class="py-9 grid gap-10 lg:grid-cols-[1.35fr_1fr]">

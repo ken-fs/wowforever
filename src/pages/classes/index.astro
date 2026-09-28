@@ -1,6 +1,8 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { all, val, slug } from "../../data/db.ts";
+import { Image } from "astro:assets";
+import { classIcon } from "../../data/assets.ts";
 
 const build = val(`SELECT value FROM meta WHERE key='build'`);
 
@@ -47,7 +49,13 @@ const roleHint = {
           classes.map((c) => (
             <tr>
               <td>
-                <a href={`/classes/${slug(c.class)}/`} class="font-medium hover:text-rust">{c.class}</a>
+                <span class="flex items-center gap-2.5">
+                  {classIcon[slug(c.class)] && (
+                    <Image src={classIcon[slug(c.class)]!} alt="" width={28} height={28}
+                      format="webp" class="shrink-0" aria-hidden="true" />
+                  )}
+                  <a href={`/classes/${slug(c.class)}/`} class="font-medium hover:text-rust">{c.class}</a>
+                </span>
               </td>
               <td class="hidden sm:table-cell text-ink-faint text-[0.86rem]">{roleHint[c.class] ?? ""}</td>
               <td class="text-right font-mono">{byClass[c.class]?.races ?? 0}</td>
@@ -66,7 +74,12 @@ const roleHint = {
       {
         classes.map((c) => (
           <div class="border-t-2 border-rule-hard pt-3">
-            <a href={`/classes/${slug(c.class)}/`} class="font-serif text-[1.05rem] hover:text-rust">{c.class}</a>
+            <span class="flex items-baseline gap-2">
+              {classIcon[slug(c.class)] && (
+                <Image src={classIcon[slug(c.class)]!} alt="" width={22} height={22} format="webp" aria-hidden="true" />
+              )}
+              <a href={`/classes/${slug(c.class)}/`} class="font-serif text-[1.05rem] hover:text-rust">{c.class}</a>
+            </span>
             <p class="mt-1 text-[0.85rem] text-ink-soft leading-relaxed">
               {namesFor(c.class).map((r, i) => (
                 <>

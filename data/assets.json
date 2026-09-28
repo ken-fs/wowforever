@@ -1,0 +1,305 @@
+{
+ "generated": "2026-09-28T04:45:36.883Z",
+ "sources": {
+  "marketing": "blz-contentstack-images.akamaized.net — Blizzard 官网 Forever 落地页素材",
+  "classIcons": "render.worldofwarcraft.com/us/icons — 游戏图标官方渲染 CDN（fdid 经 wago.tools/api/info 解析）"
+ },
+ "marketing": [
+  {
+   "name": "Open_Graph_-_Camelot.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt766f7698aedb7b7f/6a9bc5882437ed5612d4878f/Open_Graph_-_Camelot.jpg",
+   "ok": true,
+   "kb": 124,
+   "dim": "1287x759"
+  },
+  {
+   "name": "paper-bg.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt3be5fbbd8ab0160d/6a9bc736f8f1240c84bcb8fd/paper-bg.jpg",
+   "ok": true,
+   "kb": 830,
+   "dim": "1920x9554"
+  },
+  {
+   "name": "masthead-bg.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt09d4f876d494a584/6aa1ead14b66aa844291d284/masthead-bg-sm.jpg",
+   "ok": true,
+   "kb": 218,
+   "dim": "960x1880"
+  },
+  {
+   "name": "masthead-art.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt27ce9eca34bd523d/6aa1eb902c0580208d273e42/masthead-art-md.jpg",
+   "ok": true,
+   "kb": 187,
+   "dim": "1600x1725"
+  },
+  {
+   "name": "masthead-art.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt4d412035d16da095/6aa204fb2c0580bfcf273e54/masthead-art.jpg",
+   "ok": true,
+   "kb": 187,
+   "dim": "1600x1725"
+  },
+  {
+   "name": "camelot-logo-gamepage.png",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt527dd61848a757c7/6aa3316cad92093ee45628fd/camelot-logo-gamepage.png",
+   "ok": true,
+   "kb": 576,
+   "dim": "png/svg"
+  },
+  {
+   "name": "countdown-timer-bg.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blta1b9868056666a96/6a95c2c6203da3660af0e0ba/countdown-timer-bg-sm.jpg",
+   "ok": true,
+   "kb": 224,
+   "dim": "960x1880"
+  },
+  {
+   "name": "countdown-timer-bg.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt195a9f74585f069a/6a95c2dc2924f56db28aa8b8/countdown-timer-bg.jpg",
+   "ok": true,
+   "kb": 224,
+   "dim": "960x1880"
+  },
+  {
+   "name": "icon_512x512.png",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/bltb85c5fab7b152371/6aab0d1a2c058061d2274050/icon_512x512.png",
+   "ok": true,
+   "kb": 53,
+   "dim": "png/svg"
+  },
+  {
+   "name": "Cinematic_Trailer.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt2ba5c8ba05a5aed8/6aa43f0b203da39637f0e411/Cinematic_Trailer.jpg",
+   "ok": true,
+   "kb": 365,
+   "dim": "2600x1463"
+  },
+  {
+   "name": "Explore_Untold_Stories.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt4865ad3281f25cb8/6aa09df51deff31ac7439163/Explore_Untold_Stories.jpg",
+   "ok": true,
+   "kb": 274,
+   "dim": "2600x1463"
+  },
+  {
+   "name": "Soak_in_Breathtaking_Expanses.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt491397daad992c6d/6aa09e0ec751e10dc30c50e0/Soak_in_Breathtaking_Expanses.jpg",
+   "ok": true,
+   "kb": 218,
+   "dim": "2600x1463"
+  },
+  {
+   "name": "Take_Unknown_Paths.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt7a58f20dd8f6b2d9/6aa09f1c7ec8fef91000059e/Take_Unknown_Paths.jpg",
+   "ok": true,
+   "kb": 326,
+   "dim": "2600x1463"
+  },
+  {
+   "name": "Claim_New_Power.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt2dc686732f526be5/6aa09db81deff3540b439161/Claim_New_Power.jpg",
+   "ok": true,
+   "kb": 315,
+   "dim": "2600x1463"
+  },
+  {
+   "name": "Every_Journey_Matters.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt848d2f0dbc2d2d1e/6aa09dd67ec8fedf4f00059c/Every_Journey_Matters.jpg",
+   "ok": true,
+   "kb": 234,
+   "dim": "2600x1463"
+  },
+  {
+   "name": "System_Revamps.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt50839e89a98e4d22/6aa09f512437ed84d9d48846/System_Revamps.jpg",
+   "ok": true,
+   "kb": 376,
+   "dim": "2600x1463"
+  },
+  {
+   "name": "Updates_Ashenvale_01.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt58abba267979c75c/6a985e232437ed4648d48726/Updates_Ashenvale_01.jpg",
+   "ok": true,
+   "kb": 229,
+   "dim": "2600x1462"
+  },
+  {
+   "name": "Updates_Ashenvale_02.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/bltaea7929ebe6f9a8b/6a985e239b942e3ba6f7426b/Updates_Ashenvale_02.jpg",
+   "ok": true,
+   "kb": 277,
+   "dim": "2600x1462"
+  },
+  {
+   "name": "Updates_Darkshore.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt7c732bea431c18cf/6a985e239b942e1f62f74267/Updates_Darkshore.jpg",
+   "ok": true,
+   "kb": 167,
+   "dim": "2600x1462"
+  },
+  {
+   "name": "Updates_Dustwallow.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt7bdf8e7ba8e4b30a/6a985e232c05804582273c55/Updates_Dustwallow.jpg",
+   "ok": true,
+   "kb": 210,
+   "dim": "2600x1462"
+  },
+  {
+   "name": "Updates_Felwood.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt013749cb805b2c05/6a985e23dee884432bcba951/Updates_Felwood.jpg",
+   "ok": true,
+   "kb": 304,
+   "dim": "2600x1462"
+  },
+  {
+   "name": "Updates_Mulgore.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/bltf8ea7f909345c09b/6a985e23203da3e3fcf0e10e/Updates_Mulgore.jpg",
+   "ok": true,
+   "kb": 201,
+   "dim": "2600x1462"
+  },
+  {
+   "name": "Updates_TheBarrens.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blta4c0f5c59e8c1615/6a985e243ad3924af56f8e16/Updates_TheBarrens.jpg",
+   "ok": true,
+   "kb": 219,
+   "dim": "2600x1462"
+  },
+  {
+   "name": "Skyborne-BG.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blta3214baff005e0a5/6a99ff662924f5c4358aa988/Skyborne-BG-sm.jpg",
+   "ok": true,
+   "kb": 133,
+   "dim": "960x1880"
+  },
+  {
+   "name": "Skyborne-bg.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/bltf8b2b1b23755de4e/6aa1d6e5f8f124ea95bcba3e/Skyborne-bg-md.jpg",
+   "ok": true,
+   "kb": 133,
+   "dim": "960x1880"
+  },
+  {
+   "name": "Skyborne-BG.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt86ec9f1909d2e4f3/6a99ff068102310aeb81e0de/Skyborne-BG.jpg",
+   "ok": true,
+   "kb": 133,
+   "dim": "960x1880"
+  },
+  {
+   "name": "WoWForever_Collection.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt93cdf699622c1b0d/6aa43b37f8f1245cfdbcbb80/WoWForever_Collection.jpg",
+   "ok": true,
+   "kb": 193,
+   "dim": "2600x1463"
+  },
+  {
+   "name": "background-art.png",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blte2e5cd42dc134ef1/6aa305a3dee8848ed5cbac3d/background-art.png",
+   "ok": true,
+   "kb": 7424,
+   "dim": "png/svg"
+  },
+  {
+   "name": "background-masthead-art.png",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blteaa3841b57743e16/6aa306b04b66aac9d291d3a3/background-masthead-art-sm.png",
+   "ok": true,
+   "kb": 2747,
+   "dim": "png/svg"
+  },
+  {
+   "name": "Heroic_Comp.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blteb250711dec6ee18/6a96037132e602b75fc0dadb/Heroic_Comp.jpg",
+   "ok": true,
+   "kb": 157,
+   "dim": "1920x1080"
+  },
+  {
+   "name": "Epic_Comp.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt08431c31023ba96e/6a9603712c05804cc3273c15/Epic_Comp.jpg",
+   "ok": true,
+   "kb": 288,
+   "dim": "1920x1080"
+  },
+  {
+   "name": "Warcraft_Forever_Collection_Comp.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/bltc02ff90fbb5fae15/6a9603716cec0d6339b1415e/Warcraft_Forever_Collection_Comp.jpg",
+   "ok": true,
+   "kb": 211,
+   "dim": "1920x1080"
+  },
+  {
+   "name": "Pane-dirtLight.jpg",
+   "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/bltc84f261fbf1df38b/66a95ecef86a4a0858e0ff5b/Pane-dirtLight.jpg",
+   "ok": true,
+   "kb": 180,
+   "dim": "2400x1080"
+  }
+ ],
+ "classIcons": [
+  {
+   "name": "Warrior",
+   "file": "classicon_warrior",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_warrior.jpg",
+   "ok": true,
+   "kb": 2
+  },
+  {
+   "name": "Paladin",
+   "file": "classicon_paladin",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_paladin.jpg",
+   "ok": true,
+   "kb": 3
+  },
+  {
+   "name": "Hunter",
+   "file": "classicon_hunter",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_hunter.jpg",
+   "ok": true,
+   "kb": 2
+  },
+  {
+   "name": "Rogue",
+   "file": "classicon_rogue",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_rogue.jpg",
+   "ok": true,
+   "kb": 3
+  },
+  {
+   "name": "Priest",
+   "file": "classicon_priest",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_priest.jpg",
+   "ok": true,
+   "kb": 2
+  },
+  {
+   "name": "Shaman",
+   "file": "classicon_shaman",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_shaman.jpg",
+   "ok": true,
+   "kb": 3
+  },
+  {
+   "name": "Mage",
+   "file": "classicon_mage",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_mage.jpg",
+   "ok": true,
+   "kb": 3
+  },
+  {
+   "name": "Warlock",
+   "file": "classicon_warlock",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_warlock.jpg",
+   "ok": true,
+   "kb": 3
+  },
+  {
+   "name": "Druid",
+   "file": "classicon_druid",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_druid.jpg",
+   "ok": true,
+   "kb": 2
+  }
+ ]
+}

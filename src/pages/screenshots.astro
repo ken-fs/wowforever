@@ -1,0 +1,170 @@
+---
+import Base from "../layouts/Base.astro";
+import { Image } from "astro:assets";
+import { val } from "../data/db.ts";
+import { zones, feature, editions, skyborne, attribution } from "../data/assets.ts";
+
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+
+// 官方原画 + 说明。图是 Blizzard 自己发的营销素材，不是抓的别人截图。
+const zoneShots = [
+  { img: zones.ashenvale, name: "Ashenvale", note: "Forever's take on the contested forest — the announcement showed it rebuilt rather than remastered." },
+  { img: zones.ashenvaleAlt, name: "Ashenvale, second view", note: "Same zone, different angle. Night elf territory and the Horde's lumber camps both live here." },
+  { img: zones.darkshore, name: "Darkshore", note: "The night elf coast after the Sundering. One of the zones Forever reshapes rather than restores." },
+  { img: zones.dustwallow, name: "Dustwallow Marsh", note: "Swamp, steam, and the Grimtotem. A zone Classic players usually sprinted through." },
+  { img: zones.felwood, name: "Felwood", note: "Corrupted forest, and one of the clearer examples of Forever pushing the art further than Classic did." },
+  { img: zones.mulgore, name: "Mulgore", note: "Tauren starting ground. One of the zones where the visual update is most obvious." },
+  { img: zones.barrens, name: "The Barrens", note: "The zone every Horde player has spent too long in. Still flat, still enormous." },
+].filter((z) => z.img);
+
+const featureShots = [
+  { img: feature.cinematic, name: "Cinematic still", note: "From the announcement cinematic, which introduced the Skyborne and the new Azeroth." },
+  { img: feature.stories, name: "Untold stories", note: "Blizzard's framing for the reimagined questing: corners of original Azeroth that never got finished." },
+  { img: feature.expanses, name: "Expanses", note: "The world-scale pitch. Forever is a level 60 cap with a wider map rather than a higher ceiling." },
+  { img: feature.paths, name: "Unknown paths", note: "New routes through old zones — the leveling guide covers what that does to routing." },
+  { img: feature.power, name: "New power", note: "Class and talent reworks. Lava Burst, Mutilate and Holy Strike all come back here." },
+  { img: feature.journey, name: "Every journey", note: "The horizontal-progression argument: gear stops climbing, the world keeps growing." },
+  { img: feature.systems, name: "System revamps", note: "Professions, camping and Legacy — the three systems that aren't a Classic remix." },
+].filter((f) => f.img);
+
+const editionShots = [
+  { img: editions.heroic, name: "Skyborne Heroic Pack", note: "The new race, its Zephras Isle starting experience, and early name reservation." },
+  { img: editions.epic, name: "Skyborne Epic Pack", note: "Everything in Heroic plus beta access and 30 days of game time." },
+  { img: editions.collection, name: "Warcraft Forever Collection", note: "The limited bundle that adds Warcraft III: Reforged and the Forsaken Kingdom campaign." },
+  { img: editions.warcraftCollection, name: "Collection contents", note: "Available through January 11, 2027." },
+].filter((e) => e.img);
+---
+<Base
+  title="WoW Forever screenshots and official artwork"
+  description="Official World of Warcraft: Forever artwork — reworked zones, feature art and expansion editions, all from Blizzard's own marketing assets."
+  crumbs={[{ href: "/", label: "Home" }, { label: "Screenshots" }]}
+  {build}
+>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <p class="tag mb-3">Official artwork</p>
+    <h1 class="text-[2rem] sm:text-[2.35rem] leading-tight max-w-[22ch]">What Forever actually looks like</h1>
+    <p class="mt-3 max-w-[66ch] text-ink-soft leading-relaxed">
+      Every image below is from Blizzard's own announcement and store assets, not screenshots lifted from
+      someone else's site. Seven reworked zones, the feature art, and the expansion editions.
+    </p>
+  </header>
+
+  {
+    skyborne && (
+      <section class="py-8">
+        <figure>
+          <Image
+            src={skyborne}
+            alt="Official Skyborne artwork for World of Warcraft: Forever"
+            widths={[600, 960]}
+            sizes="(max-width: 1100px) 100vw, 1100px"
+            format="webp"
+            loading="eager"
+            decoding="async"
+            class="w-full max-h-[520px] object-cover border border-rule-hard"
+          />
+          <figcaption class="mt-2 text-[0.85rem] text-ink-soft">
+            <strong>The Skyborne.</strong> The client ships them as two races — High Order for the Alliance
+            and Windshaper for the Horde. Blizzard's artwork shows one.{" "}
+            <a href="/guides/skyborne/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">More on the split →</a>
+          </figcaption>
+        </figure>
+      </section>
+    )
+  }
+
+  <section class="py-8 border-t border-rule">
+    <h2 class="text-[1.5rem] mb-1">The reworked zones</h2>
+    <p class="text-[0.9rem] text-ink-soft mb-6 max-w-[68ch]">
+      Seven zones Blizzard showed off in the announcement. Forever rebuilds these rather than restoring them,
+      which is the difference between a remaster and a reimagining.
+    </p>
+    <div class="grid gap-8 sm:grid-cols-2">
+      {
+        zoneShots.map((z, i) => (
+          <figure class={i === 0 ? "sm:col-span-2" : ""}>
+            <Image
+              src={z.img!}
+              alt={`${z.name} in World of Warcraft: Forever — official artwork`}
+              widths={i === 0 ? [700, 1200] : [400, 700]}
+              sizes={i === 0 ? "(max-width: 1100px) 100vw, 1100px" : "(max-width: 640px) 100vw, 520px"}
+              format="webp"
+              loading="lazy"
+              decoding="async"
+              class="w-full border border-rule-hard"
+            />
+            <figcaption class="mt-2 text-[0.85rem]">
+              <span class="font-serif text-[1rem]">{z.name}</span>
+              <span class="block text-ink-soft mt-0.5 leading-relaxed">{z.note}</span>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="py-8 border-t border-rule">
+    <h2 class="text-[1.5rem] mb-1">The pitch, in pictures</h2>
+    <p class="text-[0.9rem] text-ink-soft mb-6 max-w-[68ch]">
+      Blizzard's feature art for Forever, and what each one is actually claiming.
+    </p>
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        featureShots.map((f) => (
+          <figure>
+            <Image
+              src={f.img!}
+              alt={`${f.name} — official World of Warcraft: Forever artwork`}
+              widths={[360, 620]}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 340px"
+              format="webp"
+              loading="lazy"
+              decoding="async"
+              class="w-full border border-rule-hard"
+            />
+            <figcaption class="mt-2 text-[0.85rem]">
+              <span class="font-serif text-[1rem]">{f.name}</span>
+              <span class="block text-ink-soft mt-0.5 leading-relaxed">{f.note}</span>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="py-8 border-t border-rule">
+    <h2 class="text-[1.5rem] mb-1">The editions</h2>
+    <p class="text-[0.9rem] text-ink-soft mb-6 max-w-[68ch]">
+      Forever is included with a subscription or game time — these are optional upgrades, not a purchase
+      you need to play. See the{" "}
+      <a href="https://worldofwarcraft.blizzard.com/en-us/news/24301508" rel="nofollow noopener" target="_blank" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">official pre-purchase page</a>{" "}
+      for what's in each.
+    </p>
+    <div class="grid gap-8 sm:grid-cols-2">
+      {
+        editionShots.map((e) => (
+          <figure>
+            <Image
+              src={e.img!}
+              alt={`${e.name} — World of Warcraft: Forever edition artwork`}
+              widths={[400, 720]}
+              sizes="(max-width: 640px) 100vw, 520px"
+              format="webp"
+              loading="lazy"
+              decoding="async"
+              class="w-full border border-rule-hard"
+            />
+            <figcaption class="mt-2 text-[0.85rem]">
+              <span class="font-serif text-[1rem]">{e.name}</span>
+              <span class="block text-ink-soft mt-0.5 leading-relaxed">{e.note}</span>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </section>
+
+  <footer class="py-6 border-t border-rule">
+    <p class="text-[0.82rem] text-ink-faint max-w-[70ch]">{attribution}</p>
+  </footer>
+</Base>
