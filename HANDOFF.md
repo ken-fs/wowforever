@@ -1,59 +1,64 @@
-# 上线交接单
+# 上线状态
 
-> 2026-09-28 · 已完成 90%，剩一步只有你能做
+> 2026-09-28 · **已上线** · 只剩 GSC 一步
 
-## ✅ 已完成
-
-```
-GitHub    github.com/ken-fs/wowforever（公开）
-Worker    wowforever  ·  hasAssets: true
-线上      https://wowforever.493129720ljw.workers.dev     ← 现在就能访问
-构建      push 到 main → 自动构建（实测 source=push_event, outcome=success）
-zone      wowforever.one · id 915927540a00804212ce71ffa276b1f5 · status=pending
-```
-
-全站 96 条 sitemap URL，canonical 已指向 `https://wowforever.one/`，404 页正常。
-
-## ⛔ 只剩这一步：改 NS（只有你能做）
-
-Spaceship **没有** API 凭据在这台机器上，所以只能你去控制台改：
-
-1. 登录 [spaceship.com](https://www.spaceship.com/) → **Domain Manager** → `wowforever.one`
-2. 找 **Nameservers**（可能在 Advanced / DNS 里）→ 改成 **Custom**
-3. 填这两个，删掉原来的：
+## ✅ 全部完成
 
 ```
-daisy.ns.cloudflare.com
-lochlan.ns.cloudflare.com
+线上          https://wowforever.one           ← 8/8 页浏览器验收干净
+www           301 → apex（路径保留）
+证书          Google Trust Services WE1（Cloudflare 自动签发）
+GitHub        github.com/ken-fs/wowforever
+Worker        wowforever  ·  96 条 sitemap URL · 非本域 0 条
+构建          push 到 main → 自动构建（已实测两次）
+zone          915927540a00804212ce71ffa276b1f5 · active
+NS            daisy/lochlan.ns.cloudflare.com（已从 Spaceship 改掉）
+IndexNow      96 个 URL 已提交（Bing/Yandex，HTTP 202）
+验收工具      已加进 scripts/gsc-lib.mjs + verify-baseline.json
 ```
 
-原值是 `launch1.spaceship.net` / `launch2.spaceship.net`，要删掉。
+## ⛔ 只剩这一步：GSC 属性
 
-4. 保存。Cloudflare 那边通常几分钟到几小时生效。
+卡点：**Site Verification API 没在你那个 GCP 项目里启用**，所以我拿不到验证 TXT。
 
-> ⚠️ 如果改了 NS 但 zone 一直 `pending`：AGENTS.md 记过这个坑 ——
-> 要去 Cloudflare dashboard 点一次「**立即检查名称服务器**」。
-> zone 的 `modified_on` 停在创建后的几十秒不动 = 就是这个状态。
+服务账号 `gsc-bot@ken-seo-tools.iam.gserviceaccount.com` 的凭据是好的
+（webmasters 和 siteverification 两个 scope 都能签出 token），只差 API 没开。
 
-## ⏭️ 改完 NS 之后我做（告诉我一声即可）
+### 选项 A（推荐，点一下就行，之后我全自动）
 
-按顺序，**不能跳**：
+打开这个链接，点 **启用**：
 
+https://console.developers.google.com/apis/api/siteverification.googleapis.com/overview?project=163174629679
+
+启用后跟我说一声，我自动做完剩下的：
+取 TXT → 用 MCP 写进 Cloudflare DNS → 调 API 验证 → 加属性 → 提交 sitemap。
+
+### 选项 B（手动，2 分钟）
+
+1. [GSC](https://search.google.com/search-console) → 添加资源 → **网域** → `wowforever.one`
+2. 复制它给的 TXT 值，发给我（我用 MCP 写进 DNS），或者你自己去
+   Cloudflare → wowforever.one → DNS → 加 TXT
+3. 回 GSC 点验证
+4. GSC → 设置 → 用户和权限 → 加 `gsc-bot@ken-seo-tools.iam.gserviceaccount.com` 为 **Owner**
+5. 跟我说一声，我跑 `node scripts/gsc.mjs sitemaps` 提交 sitemap
+
+## 还没做的（可选）
+
+| 项 | 说明 |
+|---|---|
+| GA4 属性 | 建好后把 ID 填进 Cloudflare 构建变量；同时补 `gsc-lib.mjs` 的 `ga` 字段 |
+| Cloudflare 构建变量 | `SITE_URL` 不用（astro.config.mjs 已写死 `https://wowforever.one`）|
+| AdSense | 站上还没放广告位 |
+
+## 日常运维
+
+```bash
+cd ~/Desktop/david/Ship/wow-forever
+
+npm run data        # 游戏出新 build 后重跑（beta 期约 4.4 次/周）
+git diff data/site.db   # 看数据变了什么 ← 别跳过这步
+npm run build && npm run preview
+git add -A && git commit && git push     # 部署 = push
+
+npm run indexnow    # 新页面推给 Bing
 ```
-① 等 zone 变 active          ← ⚠️ 必须等！pending 时绑域名会导致证书签发失败且不重试
-                              （AGENTS.md 坑 #2：TLS 握手读 0 字节直接断）
-② 绑自定义域名到 Worker       POST /accounts/{acc}/workers/domains
-③ 验证 https://wowforever.one 真的通
-④ 如果 www 也要，一起绑
-⑤ GSC 属性验证 + 提交 sitemap
-⑥ IndexNow key（可选，加速收录）
-```
-
-## 📌 现在的临时地址
-
-在域名生效前，站是活的，可以直接看：
-
-**https://wowforever.493129720ljw.workers.dev**
-
-⚠️ 注意 canonical 指向 `wowforever.one`，所以**现在别把这个地址公开**，
-等域名绑好再推广。Google 现在爬到会产生指向未生效域名的 canonical。
