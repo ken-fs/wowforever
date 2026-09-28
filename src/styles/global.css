@@ -5,14 +5,14 @@
    规则（DESIGN-RULES.md）：禁 Tailwind 默认色板、禁纯平背景。
 */
 @theme {
-  --color-paper:      #f7f3e9;
-  --color-paper-edge: #efe9db;
-  --color-card:       #fffdf8;
+  --color-paper:      #fdfbf6;
+  --color-paper-edge: #f7f3ea;
+  --color-card:       #ffffff;
   --color-ink:        #1c1a16;
   --color-ink-soft:   #4a4438;
-  --color-ink-faint:  #857c69;
-  --color-rule:       #ddd4c0;
-  --color-rule-hard:  #c4b79a;
+  --color-ink-faint:  #78705c;
+  --color-rule:       #e6dfcd;
+  --color-rule-hard:  #cec2a8;
   --color-rust:       #a63d1c;
   --color-ochre:      #9a6b12;
   --color-moss:       #4a6141;
@@ -35,7 +35,7 @@
 /* 纸纹：SVG feTurbulence 内联，零请求。DESIGN-RULES 禁止纯平背景 */
 body {
   background-color: var(--color-paper);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.055 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.035 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
