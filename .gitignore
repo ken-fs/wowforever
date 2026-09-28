@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.astro/
+
+# 完整数据库 20MB，只留在本地；仓库里只提交瘦身后的 data/site.db
+data/wow-forever.db
+data/raw/
+data/baseline/
+data/_import.sql
+out/
+
+# 字幕语料体积大且随时可重跑
+data/transcripts/

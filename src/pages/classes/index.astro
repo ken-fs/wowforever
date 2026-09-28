@@ -1,0 +1,83 @@
+---
+import Base from "../../layouts/Base.astro";
+import { all, val, slug } from "../../data/db.ts";
+
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+
+const classes = all(`
+  SELECT DISTINCT class, class_id FROM race_class ORDER BY class
+`);
+
+const stats = all(`
+  SELECT class,
+         COUNT(*)                    AS races,
+         (SELECT COUNT(*) FROM talent_full t WHERE t.class = rc.class) AS talents,
+         (SELECT COUNT(DISTINCT tab_id) FROM talent_full t WHERE t.class = rc.class) AS trees
+  FROM race_class rc GROUP BY class ORDER BY class
+`);
+const byClass = Object.fromEntries(stats.map((s) => [s.class, s]));
+
+const combos = all(`SELECT race, class FROM race_class`);
+const namesFor = (c) => combos.filter((x) => x.class === c).map((x) => x.race);
+const roleHint = {
+  Warrior: "Tank / melee DPS", Paladin: "Healer / tank / melee DPS", Hunter: "Ranged DPS",
+  Rogue: "Melee DPS", Priest: "Healer / ranged DPS", Shaman: "Healer / melee or ranged DPS",
+  Mage: "Ranged DPS", Warlock: "Ranged DPS", Druid: "Tank / healer / melee or ranged DPS",
+};
+---
+<Base title="All 9 classes in WoW Forever — races, talents, and what changed" description="Every class in World of Warcraft: Forever with its talent trees and the full list of races that can play it, read from the game client." crumbs={[{ href: "/", label: "Home" }, { label: "Classes" }]} {build}>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <h1 class="text-[2rem] leading-tight">{classes.length} classes</h1>
+    <p class="mt-3 max-w-[62ch] text-ink-soft leading-relaxed">
+      Forever runs on Classic's nine classes &mdash; no Death Knight, no Monk, no Demon Hunter. What changed
+      is who gets to play them and what's inside the trees.
+    </p>
+  </header>
+
+  <section class="py-8">
+    <table class="data">
+      <thead>
+        <tr>
+          <th>Class</th><th class="hidden sm:table-cell">Role</th>
+          <th class="text-right">Races</th><th class="text-right">Talent trees</th><th class="text-right">Points</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          classes.map((c) => (
+            <tr>
+              <td>
+                <a href={`/classes/${slug(c.class)}/`} class="font-medium hover:text-rust">{c.class}</a>
+              </td>
+              <td class="hidden sm:table-cell text-ink-faint text-[0.86rem]">{roleHint[c.class] ?? ""}</td>
+              <td class="text-right font-mono">{byClass[c.class]?.races ?? 0}</td>
+              <td class="text-right font-mono">{byClass[c.class]?.trees ?? 0}</td>
+              <td class="text-right font-mono text-ink-faint">{byClass[c.class]?.talents ?? 0}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </section>
+
+  <section class="py-8 border-t border-rule">
+    <h2 class="text-[1.35rem] mb-4">Who can play what</h2>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        classes.map((c) => (
+          <div class="border-t-2 border-rule-hard pt-3">
+            <a href={`/classes/${slug(c.class)}/`} class="font-serif text-[1.05rem] hover:text-rust">{c.class}</a>
+            <p class="mt-1 text-[0.85rem] text-ink-soft leading-relaxed">
+              {namesFor(c.class).map((r, i) => (
+                <>
+                  {i > 0 && <span class="text-rule-hard"> · </span>}
+                  <a href={`/race-class/${slug(r)}-${slug(c.class)}/`} class="hover:text-rust">{r}</a>
+                </>
+              ))}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,139 @@
+---
+import Base from "../layouts/Base.astro";
+import { all, val, one, count } from "../data/db.ts";
+
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+
+// 首页要的是"能立刻用的东西"，不是营销文案
+const combos = all(`SELECT race, class, is_skyborne FROM race_class ORDER BY race, class`);
+const skyborne = combos.filter((c) => c.is_skyborne);
+const undead = combos.filter((c) => c.race === "Undead").map((c) => c.class);
+
+const counts = {
+  combos: combos.length,
+  classes: val(`SELECT COUNT(*) FROM (SELECT DISTINCT class FROM race_class)`),
+  races: val(`SELECT COUNT(DISTINCT race) FROM race_class`),
+  talents: val(`SELECT COUNT(*) FROM talent_full`),
+  recipes: val(`SELECT COUNT(*) FROM recipe`),
+  items: count("items_rare"),
+  xpbuffs: val(`SELECT COUNT(DISTINCT name) FROM xp_spell WHERE reliable = 1 AND aura = 200`),
+  dungeons: count("dungeons"),
+};
+
+const NEWSWORTHY = [
+  {
+    k: "The Skyborne are two races, not one",
+    v: `The client ships <strong>High Order Skyborne</strong> and <strong>Windshaper Skyborne</strong> as separate playable races (IDs 95 and 96). Blizzard's announcement only ever described one.`,
+  },
+  {
+    k: "Undead can be Paladins",
+    v: `Undead picks up ${undead.length} classes — and Paladin is one of them. That single line has spawned a 14,000-view forum thread.`,
+  },
+  {
+    k: "Paladins are down to three races",
+    v: `Human, Dwarf, Undead. That's it. Druids get four, and two of them are the Skyborne.`,
+  },
+];
+---
+<Base
+  title="WoW Forever — race/class combos, XP math, and every number that changed"
+  description="World of Warcraft: Forever reference built from the game client itself. Race and class combinations, XP buff stacking, talent data, and what changed versus Classic."
+  {build}
+>
+  <section class="pt-10 pb-8 border-b border-rule">
+    <p class="tag mb-3">World of Warcraft: Forever</p>
+    <h1 class="text-[2.1rem] sm:text-[2.7rem] leading-[1.1] max-w-[20ch]">
+      Every number in Forever, pulled from the client.
+    </h1>
+    <p class="mt-4 max-w-[62ch] text-ink-soft leading-relaxed">
+      Wowhead has the news and the item database, and it does both well. What it doesn't hand you is a
+      sortable answer. This site is the sortable answer: what the client actually ships, rebuilt every time
+      Blizzard pushes a build.
+    </p>
+    <dl class="mt-6 flex flex-wrap gap-x-8 gap-y-3 font-mono text-[0.82rem]">
+      {
+        Object.entries({
+          "race × class combos": counts.combos,
+          classes: counts.classes,
+          races: counts.races,
+          "talent points": counts.talents,
+          recipes: counts.recipes,
+          "rare+ items": counts.items,
+        }).map(([k, v]) => (
+          <div class="flex items-baseline gap-2">
+            <dd class="text-[1.35rem] text-rust">{Number(v).toLocaleString()}</dd>
+            <dt class="text-ink-faint">{k}</dt>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="py-9 grid gap-10 lg:grid-cols-[1.35fr_1fr]">
+    <div>
+      <h2 class="text-[1.6rem] mb-1">Start here</h2>
+      <p class="text-ink-soft text-[0.92rem] mb-5">Two tools nobody else has built yet.</p>
+      <div class="space-y-4">
+        <a href="/tools/xp-calculator/" class="block border border-rule-hard bg-card p-5 hover:border-rust transition-colors">
+          <h3 class="text-[1.15rem]">XP &amp; leveling calculator</h3>
+          <p class="mt-1 text-[0.9rem] text-ink-soft">
+            {counts.xpbuffs} XP buffs are readable straight out of the client. Stack{" "}
+            <span class="font-mono text-rust">Winds of Wisdom</span> (+50%) on top of food and rest, and
+            see what 1&ndash;60 actually costs you.
+          </p>
+        </a>
+        <a href="/race-class/" class="block border border-rule-hard bg-card p-5 hover:border-rust transition-colors">
+          <h3 class="text-[1.15rem]">Race × class matrix</h3>
+          <p class="mt-1 text-[0.9rem] text-ink-soft">
+            All {counts.combos} legal combinations across {counts.races} races and {counts.classes} classes,
+            each one its own page. Filter by role, faction, or the new Skyborne.
+          </p>
+        </a>
+      </div>
+    </div>
+
+    <div class="lg:pt-14">
+      <h2 class="text-[1.15rem] mb-3">Things the announcement didn't say</h2>
+      <dl class="space-y-4">
+        {
+          NEWSWORTHY.map((n) => (
+            <div class="border-l-2 border-ochre pl-3">
+              <dt class="font-serif text-[1rem]">{n.k}</dt>
+              <dd class="text-[0.88rem] text-ink-soft mt-0.5" set:html={n.v} />
+            </div>
+          ))
+        }
+      </dl>
+      <p class="mt-4 text-[0.82rem] text-ink-faint">
+        All three come from <span class="font-mono">CharBaseInfo</span> in the client. Nobody has written
+        them up yet.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-9 border-t border-rule">
+    <div class="flex flex-wrap items-baseline justify-between gap-2 mb-4">
+      <h2 class="text-[1.6rem]">Browse</h2>
+      <p class="text-[0.82rem] text-ink-faint">Rebuilt from the client every patch.</p>
+    </div>
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        [
+          { href: "/classes/", t: "Classes", d: `${counts.classes} classes, three trees each` },
+          { href: "/races/", t: "Races", d: `${counts.races} playable races` },
+          { href: "/race-class/", t: "Combos", d: `${counts.combos} combinations` },
+          { href: "/changes/", t: "What changed", d: "16 new combos, 0 removed" },
+        ].map((c) => (
+          <a href={c.href} class="border-t-2 border-rule-hard pt-3 hover:border-rust transition-colors">
+            <span class="font-serif text-[1.05rem]">{c.t}</span>
+            <span class="block text-[0.82rem] text-ink-faint mt-0.5">{c.d}</span>
+          </a>
+        ))
+      }
+    </div>
+
+    <div class="mt-8 text-[0.88rem] text-ink-soft max-w-[70ch]">
+      <p><strong>{Number(counts.talents).toLocaleString()}</strong> talent points and <strong>{Number(counts.recipes).toLocaleString()}</strong> profession recipes are indexed and waiting on pages. <a href="/about/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">How this is built &rarr;</a></p>
+    </div>
+  </section>
+</Base>

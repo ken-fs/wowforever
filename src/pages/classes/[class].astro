@@ -1,0 +1,120 @@
+---
+import Base from "../../layouts/Base.astro";
+import { all, one, slug, val } from "../../data/db.ts";
+
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+
+export async function getStaticPaths() {
+  const classes = all(`SELECT DISTINCT class FROM race_class ORDER BY class`);
+  return classes.map((c) => ({ params: { class: slug(c.class) }, props: { cls: c.class } }));
+}
+
+const { cls } = Astro.props;
+
+const races = all(`SELECT race, is_skyborne FROM race_class WHERE class = ? ORDER BY race`, cls);
+const talents = all(
+  `SELECT tab, tier, col, spell_name FROM talent_full WHERE class = ? ORDER BY tab, tier, col`,
+  cls,
+);
+const trees = [...new Set(talents.map((t) => t.tab).filter(Boolean))];
+
+// 这个职业相关的配方（如果专业数据能对上的话）
+const recipeCount = val(`SELECT COUNT(*) FROM recipe`);
+
+const ROLE = {
+  Warrior: "Tank or melee DPS. Rage, and not much of it.",
+  Paladin: "Heals, tanks, or swings. Forever gives it to a third race.",
+  Hunter: "Ranged DPS with a pet. The solo-friendly pick.",
+  Rogue: "Melee DPS. Stealth, stuns, and a reworked kit in Forever.",
+  Priest: "Heals or shadow DPS. The healer most groups expect.",
+  Shaman: "Healer or DPS, melee and ranged. Bloodlust on demand.",
+  Mage: "Ranged DPS, portals, and food. Always wanted.",
+  Warlock: "Ranged DPS with pets and dots. Slow, sturdy, relentless.",
+  Druid: "Does everything. Forever's four-race club.",
+};
+---
+<Base
+  title={`${cls} in WoW Forever — races, talent trees, and what the client says`}
+  description={`${cls} in World of Warcraft: Forever: the ${races.length} races that can play it, its ${trees.length} talent trees, and where it sits in the class spread.`}
+  crumbs={[{ href: "/", label: "Home" }, { href: "/classes/", label: "Classes" }, { label: cls }]}
+  {build}
+>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <div class="flex flex-wrap gap-2 mb-3">
+      <span class="tag">{races.length} of 10 races</span>
+      <span class="tag">{talents.length} talent points</span>
+      <span class="tag">{trees.length} trees</span>
+    </div>
+    <h1 class="text-[2rem] leading-tight">{cls}</h1>
+    <p class="mt-3 max-w-[62ch] text-ink-soft leading-relaxed">{ROLE[cls] ?? ""}</p>
+  </header>
+
+  <section class="py-8 grid gap-10 lg:grid-cols-[1.3fr_1fr]">
+    <div>
+      <h2 class="text-[1.3rem] mb-3">Talent trees</h2>
+      {
+        trees.length ? (
+          <div class="space-y-6">
+            {trees.map((tree) => {
+              const pts = talents.filter((t) => t.tab === tree);
+              const tiers = [...new Set(pts.map((p) => p.tier))].sort((a, b) => a - b);
+              return (
+                <div>
+                  <h3 class="font-serif text-[1.1rem] mb-2">{tree}</h3>
+                  <table class="data">
+                    <thead>
+                      <tr><th class="w-16">Tier</th><th>Talent</th></tr>
+                    </thead>
+                    <tbody>
+                      {tiers.map((tier) => (
+                        <tr>
+                          <td class="font-mono text-ink-faint align-top">{tier + 1}</td>
+                          <td>
+                            {pts.filter((p) => p.tier === tier).map((p, i) => (
+                              <>
+                                {i > 0 && <span class="text-rule-hard"> · </span>}
+                                <span>{p.spell_name || "—"}</span>
+                              </>
+                            ))}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p class="text-ink-faint">No talent data for this class in the current build.</p>
+        )
+      }
+    </div>
+
+    <aside>
+      <h2 class="text-[1.15rem] mb-3">Races that can be a {cls}</h2>
+      <table class="data">
+        <thead><tr><th>Race</th><th></th></tr></thead>
+        <tbody>
+          {
+            races.map((r) => (
+              <tr>
+                <td><a href={`/race-class/${slug(r.race)}-${slug(cls)}/`} class="hover:text-rust">{r.race}</a></td>
+                <td class="text-right">{r.is_skyborne ? <span class="tag">new</span> : null}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+
+      <div class="border border-rule-hard bg-card p-4 mt-6">
+        <p class="text-[0.85rem] text-ink-soft">
+          Leveling this class? The
+          <a href="/tools/xp-calculator/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">XP calculator</a>
+          works out what 1&ndash;60 costs with your buffs up. {Number(recipeCount).toLocaleString()} profession
+          recipes are indexed too.
+        </p>
+      </div>
+    </aside>
+  </section>
+</Base>

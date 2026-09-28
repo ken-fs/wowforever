@@ -1,0 +1,119 @@
+---
+import Base from "../../layouts/Base.astro";
+import { all, one, slug, val } from "../../data/db.ts";
+
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+
+// 56 个组合各一页
+export async function getStaticPaths() {
+  const combos = all(`SELECT race, class, race_id, class_id, is_skyborne FROM race_class`);
+  return combos.map((c) => ({
+    params: { combo: `${slug(c.race)}-${slug(c.class)}` },
+    props: { combo: c },
+  }));
+}
+
+const { combo } = Astro.props;
+const { race, class: cls, is_skyborne } = combo;
+
+const raceRow = one(`SELECT * FROM ChrRaces WHERE CAST(ID AS INTEGER) = ?`, combo.race_id);
+const classRow = one(`SELECT * FROM ChrClasses WHERE CAST(Name_lang AS TEXT) = ?`, cls);
+
+// 同一职业的可选种族 / 同一种族的可选职业 —— 这是内链的核心
+const sameClass = all(`SELECT race FROM race_class WHERE class = ? ORDER BY race`, cls);
+const sameRace = all(`SELECT class FROM race_class WHERE race = ? ORDER BY class`, race);
+
+// 天赋树（这个职业的 3 系）
+const talents = all(
+  `SELECT tab, COUNT(*) n, MIN(tier) minTier, MAX(tier) maxTier
+   FROM talent_full WHERE class = ? GROUP BY tab ORDER BY tab`,
+  cls,
+);
+
+const raceClassCount = all(`SELECT COUNT(*) n FROM race_class WHERE class = ?`, cls)[0].n;
+
+const factions = {
+  Human: "Alliance", Dwarf: "Alliance", "Night Elf": "Alliance", Gnome: "Alliance",
+  Orc: "Horde", Undead: "Horde", Tauren: "Horde", Troll: "Horde",
+};
+const faction = is_skyborne ? null : factions[race] ?? null;
+
+const title = `${race} ${cls} in WoW Forever — talents, race count, and what it means`;
+const desc = `${race} can be a ${cls} in World of Warcraft: Forever. ${raceClassCount} races can play ${cls}. Talent trees, related combinations, and what the client says.`;
+---
+<Base title={title} description={desc.slice(0, 158)} crumbs={[
+  { href: "/", label: "Home" },
+  { href: "/race-class/", label: "Race × Class" },
+  { label: `${race} ${cls}` },
+]} {build}>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <div class="flex flex-wrap gap-2 mb-3">
+      <span class="tag">{is_skyborne ? "new race" : faction}</span>
+      <span class="tag">{raceClassCount} races can play {cls}</span>
+    </div>
+    <h1 class="text-[2rem] leading-tight">{race} {cls}</h1>
+    <p class="mt-3 max-w-[64ch] text-ink-soft leading-relaxed">
+      Yes, this combination exists. It's in the client's <span class="font-mono text-[0.9em]">CharBaseInfo</span> table,
+      which is what the character creator reads from.
+    </p>
+  </header>
+
+  <section class="py-8 grid gap-10 lg:grid-cols-[1.3fr_1fr]">
+    <div>
+      <h2 class="text-[1.3rem] mb-3">Talent trees for {cls}</h2>
+      {talents.length ? (
+        <table class="data">
+          <thead>
+            <tr><th>Tree</th><th class="text-right">Points</th><th class="text-right">Tiers</th><th></th></tr>
+          </thead>
+          <tbody>
+            {talents.map((t) => (
+              <tr>
+                <td>{t.tab || "—"}</td>
+                <td class="text-right font-mono">{t.n}</td>
+                <td class="text-right font-mono text-ink-faint">{t.minTier + 1}–{t.maxTier + 1}</td>
+                <td class="text-right"><a href={`/classes/${slug(cls)}/`} class="text-[0.82rem] hover:text-rust">all trees →</a></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p class="text-ink-faint text-[0.9rem]">No talent data recorded for this class yet.</p>
+      )}
+      <p class="mt-4 text-[0.85rem] text-ink-soft">
+        <a href="/tools/xp-calculator/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">See how fast this race/class levels →</a>
+      </p>
+    </div>
+
+    <aside class="lg:pt-2">
+      <div class="border border-rule-hard bg-card p-4">
+        <h2 class="font-serif text-[1.05rem] mb-2">{race}</h2>
+        <p class="text-[0.85rem] text-ink-soft mb-3">
+          Can be {sameRace.length} classes: {sameRace.map((r, i) => (
+            <>{i > 0 && ", "}<a href={`/race-class/${slug(race)}-${slug(r.class)}/`} class="hover:text-rust">{r.class}</a></>
+          ))}
+        </p>
+        <a href={`/races/${slug(race)}/`} class="text-[0.85rem] hover:text-rust">All {race} details →</a>
+      </div>
+
+      <div class="border border-rule-hard bg-card p-4 mt-4">
+        <h2 class="font-serif text-[1.05rem] mb-2">{cls}</h2>
+        <p class="text-[0.85rem] text-ink-soft mb-3">
+          {raceClassCount} races: {sameClass.map((r, i) => (
+            <>{i > 0 && ", "}<a href={`/race-class/${slug(r.race)}-${slug(cls)}/`} class="hover:text-rust">{r.race}</a></>
+          ))}
+        </p>
+        <a href={`/classes/${slug(cls)}/`} class="text-[0.85rem] hover:text-rust">All {cls} details →</a>
+      </div>
+
+      {is_skyborne && (
+        <div class="border-l-2 border-ochre pl-3 mt-5">
+          <p class="text-[0.85rem] text-ink-soft">
+            Skyborne split into two races in the client — <strong>High Order</strong> and
+            <strong>Windshaper</strong>. Blizzard's announcement only described one.
+          </p>
+        </div>
+      )}
+    </aside>
+  </section>
+</Base>

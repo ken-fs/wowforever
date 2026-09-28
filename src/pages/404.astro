@@ -1,0 +1,19 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="Page not found" description="That page doesn't exist on wowforever.one." crumbs={[{ href: "/", label: "Home" }, { label: "Not found" }]}>
+  <section class="pt-16 pb-10">
+    <p class="tag mb-3">404</p>
+    <h1 class="text-[2rem] leading-tight">Nothing here.</h1>
+    <p class="mt-3 max-w-[58ch] text-ink-soft leading-relaxed">
+      The page you asked for doesn't exist. If you followed a link from somewhere on this site, that's a
+      bug worth knowing about. The things that definitely exist:
+    </p>
+    <ul class="mt-5 space-y-2 text-[0.95rem]">
+      <li><a href="/tools/xp-calculator/" class="hover:text-rust">XP calculator</a> — what 1–60 costs with your buffs</li>
+      <li><a href="/race-class/" class="hover:text-rust">Race × class matrix</a> — all 56 combinations</li>
+      <li><a href="/changes/" class="hover:text-rust">What changed</a> — Forever versus Classic, client against client</li>
+      <li><a href="/tools/" class="hover:text-rust">All tools</a></li>
+    </ul>
+  </section>
+</Base>

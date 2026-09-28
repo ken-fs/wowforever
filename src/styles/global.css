@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+/* ── 设计 token：纸质年鉴 ──────────────────────────────────────
+   竞品全是暗色霓虹游戏站，我们走印刷品：米白纸、墨黑字、赭金规则线。
+   规则（DESIGN-RULES.md）：禁 Tailwind 默认色板、禁纯平背景。
+*/
+@theme {
+  --color-paper:      #f7f3e9;
+  --color-paper-edge: #efe9db;
+  --color-card:       #fffdf8;
+  --color-ink:        #1c1a16;
+  --color-ink-soft:   #4a4438;
+  --color-ink-faint:  #857c69;
+  --color-rule:       #ddd4c0;
+  --color-rule-hard:  #c4b79a;
+  --color-rust:       #a63d1c;
+  --color-ochre:      #9a6b12;
+  --color-moss:       #4a6141;
+
+  /* 物品品质（数据语义色，不是站点主色） */
+  --color-q0: #8a8578;
+  --color-q1: #57534a;
+  --color-q2: #3d6b35;
+  --color-q3: #1d5c99;
+  --color-q4: #6b3fa0;
+  --color-q5: #b25c07;
+  --color-q6: #9c7a2e;
+  --color-q7: #7a6a3a;
+
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, ui-serif, serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+}
+
+/* 纸纹：SVG feTurbulence 内联，零请求。DESIGN-RULES 禁止纯平背景 */
+body {
+  background-color: var(--color-paper);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.055 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 { font-family: var(--font-serif); font-weight: 600; letter-spacing: -0.01em; }
+
+/* 表格数字：等宽 + 齐位，方便纵向比对 */
+.num, table td, table th { font-variant-numeric: tabular-nums; }
+.num { font-family: var(--font-mono); }
+
+/* 小标签 */
+.tag {
+  display: inline-block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid var(--color-rule-hard);
+  color: var(--color-ink-faint);
+  border-radius: 2px;
+}
+
+/* 数据表：发丝线，不用圆角卡片 */
+table.data { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+table.data th {
+  text-align: left; font-weight: 600; font-size: 0.75rem;
+  letter-spacing: 0.05em; text-transform: uppercase; color: var(--color-ink-faint);
+  border-bottom: 1.5px solid var(--color-rule-hard); padding: 0.4rem 0.6rem 0.4rem 0;
+}
+table.data td { border-bottom: 1px solid var(--color-rule); padding: 0.4rem 0.6rem 0.4rem 0; }
+table.data tr:hover td { background: color-mix(in srgb, var(--color-ochre) 7%, transparent); }
+
+a { color: inherit; }
+a:hover { color: var(--color-rust); }

@@ -1,0 +1,75 @@
+---
+import Base from "../../layouts/Base.astro";
+import { all, val, slug } from "../../data/db.ts";
+
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+const combos = all(`SELECT race, class, is_skyborne FROM race_class`);
+const races = [...new Set(combos.map((c) => c.race))].sort();
+const namesFor = (r) => combos.filter((x) => x.race === r).map((x) => x.class);
+
+const FACTIONS = {
+  Human: "Alliance", Dwarf: "Alliance", "Night Elf": "Alliance", Gnome: "Alliance",
+  Orc: "Horde", Undead: "Horde", Tauren: "Horde", Troll: "Horde",
+};
+---
+<Base title="All playable races in WoW Forever — including both Skyborne" description="Every playable race in World of Warcraft: Forever. The client ships two Skyborne races, not the one Blizzard announced. Full class lists for each." crumbs={[{ href: "/", label: "Home" }, { label: "Races" }]} {build}>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <h1 class="text-[2rem] leading-tight">{races.length} playable races</h1>
+    <p class="mt-3 max-w-[64ch] text-ink-soft leading-relaxed">
+      Eight of these are the familiar Classic roster. The other two are new, and Blizzard's announcement
+      only ever described one of them.
+    </p>
+  </header>
+
+  <section class="py-8">
+    <table class="data">
+      <thead>
+        <tr><th>Race</th><th>Faction</th><th class="text-right">Classes</th><th>Can be</th></tr>
+      </thead>
+      <tbody>
+        {
+          races.map((r) => (
+            <tr>
+              <td>
+                <a href={`/races/${slug(r)}/`} class="font-medium hover:text-rust">{r}</a>
+                {r.includes("Skyborne") ? <span class="tag ml-2">new</span> : null}
+              </td>
+              <td class="text-ink-faint text-[0.86rem]">{FACTIONS[r] ?? "—"}</td>
+              <td class="text-right font-mono">{namesFor(r).length}</td>
+              <td class="text-[0.86rem] text-ink-soft">
+                {namesFor(r).map((c, i) => (
+                  <>
+                    {i > 0 && <span class="text-rule-hard"> · </span>}
+                    <a href={`/race-class/${slug(r)}-${slug(c)}/`} class="hover:text-rust">{c}</a>
+                  </>
+                ))}
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </section>
+
+  <section class="py-8 border-t border-rule grid gap-8 lg:grid-cols-2">
+    <div class="border-l-2 border-ochre pl-4">
+      <h2 class="text-[1.25rem] mb-2">The Skyborne are two races</h2>
+      <p class="text-[0.92rem] text-ink-soft leading-relaxed">
+        The client carries <span class="font-mono">High Order Skyborne</span> (race ID 95) and
+        <span class="font-mono">Windshaper Skyborne</span> (race ID 96) as separate playable entries, each with
+        its own class list. Blizzard's marketing described a single new race called the Skyborne. Whether the
+        split shows up in the character creator at launch, or is just how the data is organised internally,
+        hasn't been said either way.
+      </p>
+    </div>
+    <div>
+      <h2 class="text-[1.25rem] mb-2">The tight clubs</h2>
+      <p class="text-[0.92rem] text-ink-soft leading-relaxed">
+        Paladin is the narrowest class in the game with three races &mdash; and one of them is
+        <strong>Undead</strong>, which has never been possible before. Druid has four, and half of that list is
+        Skyborne. Everything else sits at five or more.
+      </p>
+      <a href="/race-class/" class="inline-block mt-3 text-[0.9rem] hover:text-rust">See the full matrix →</a>
+    </div>
+  </section>
+</Base>

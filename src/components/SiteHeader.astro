@@ -1,0 +1,37 @@
+---
+// 站点导航。子页面的数据页靠这里给内链质量。
+const NAV = [
+  { href: "/tools/", label: "Tools" },
+  { href: "/race-class/", label: "Race × Class" },
+  { href: "/classes/", label: "Classes" },
+  { href: "/races/", label: "Races" },
+  { href: "/changes/", label: "What Changed" },
+  { href: "/guides/", label: "Guides" },
+];
+const path = Astro.url.pathname;
+---
+<header class="border-b-2 border-rule-hard bg-paper-edge/60">
+  <div class="w-full max-w-[1100px] mx-auto px-5 sm:px-8">
+    <div class="flex flex-wrap items-baseline gap-x-6 gap-y-2 py-4">
+      <a href="/" class="group flex items-baseline gap-2 shrink-0">
+        <span class="font-serif text-[1.35rem] font-semibold tracking-tight">WoW Forever</span>
+        <span class="text-[0.7rem] font-mono text-rust tracking-wider">.one</span>
+      </a>
+      <nav class="flex flex-wrap gap-x-5 gap-y-1 text-[0.86rem]">
+        {
+          NAV.map((n) => {
+            const on = path === n.href || path.startsWith(n.href);
+            return (
+              <a
+                href={n.href}
+                class:list={["py-0.5 transition-colors", on ? "text-rust border-b-2 border-rust" : "text-ink-soft hover:text-ink"]}
+              >
+                {n.label}
+              </a>
+            );
+          })
+        }
+      </nav>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,54 @@
+---
+import "../styles/global.css";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  /** 面包屑，最后一项是当前页 */
+  crumbs?: { href?: string; label: string }[];
+  /** 页面最后更新的 build 号 */
+  build?: string;
+}
+const { title, description, crumbs = [], build } = Astro.props;
+const canonical = new URL(Astro.url.pathname.replace(/\/$/, "") + "/", Astro.site).href;
+const fullTitle = title.includes("WoW Forever") ? title : `${title} — WoW Forever`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <SiteHeader />
+
+    <main class="flex-1 w-full max-w-[1100px] mx-auto px-5 sm:px-8 pb-20">
+      {
+        crumbs.length > 0 && (
+          <nav class="pt-6 pb-2 text-[0.78rem] text-ink-faint font-mono" aria-label="Breadcrumb">
+            {crumbs.map((c, i) => (
+              <>
+                {i > 0 && <span class="px-1.5 opacity-50">/</span>}
+                {c.href ? <a href={c.href} class="hover:text-rust">{c.label}</a> : <span class="text-ink-soft">{c.label}</span>}
+              </>
+            ))}
+          </nav>
+        )
+      }
+      <slot />
+    </main>
+
+    <SiteFooter build={build} />
+  </body>
+</html>

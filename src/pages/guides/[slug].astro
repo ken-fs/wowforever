@@ -1,0 +1,123 @@
+---
+import Base from "../../layouts/Base.astro";
+import { render } from "astro:content";
+import { getCollection, getEntry } from "astro:content";
+import { val } from "../../data/db.ts";
+
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+
+export async function getStaticPaths() {
+  const guides = await getCollection("guides");
+  return guides.map((g) => ({ params: { slug: g.id }, props: { guide: g } }));
+}
+
+const { guide } = Astro.props;
+const { Content } = await render(guide);
+
+// 同区的其他攻略，做内链
+const all = await getCollection("guides");
+const others = all.filter((g) => g.id !== guide.id).slice(0, 6);
+---
+<Base
+  title={guide.data.title}
+  description={guide.data.description}
+  crumbs={[{ href: "/", label: "Home" }, { href: "/guides/", label: "Guides" }, { label: guide.data.title }]}
+  {build}
+>
+  <article>
+    <header class="pt-8 pb-6 border-b border-rule">
+      <p class="tag mb-3">
+        Updated <time datetime={guide.data.updated.toISOString()}>{guide.data.updated.toISOString().slice(0, 10)}</time>
+      </p>
+      <h1 class="text-[2rem] sm:text-[2.3rem] leading-tight max-w-[24ch]">{guide.data.title}</h1>
+
+      {
+        guide.data.facts.length > 0 && (
+          <dl class="mt-6 flex flex-wrap gap-x-8 gap-y-3 font-mono text-[0.82rem]">
+            {guide.data.facts.map((f) => (
+              <div class="flex items-baseline gap-2">
+                <dd class="text-[1.35rem] text-rust">{f.v}</dd>
+                <dt class="text-ink-faint">{f.k}</dt>
+              </div>
+            ))}
+          </dl>
+        )
+      }
+    </header>
+
+    <div class="py-8 max-w-[72ch] guide-body">
+      <Content />
+    </div>
+
+    {
+      guide.data.sources.length > 0 && (
+        <footer class="py-6 border-t border-rule">
+          <h2 class="text-[0.75rem] uppercase tracking-wider text-ink-faint mb-3">Where this comes from</h2>
+          <ul class="text-[0.88rem] space-y-1.5">
+            {guide.data.sources.map((s) => (
+              <li>
+                {s.url ? (
+                  <a href={s.url} rel="nofollow noopener" target="_blank" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">{s.label}</a>
+                ) : (
+                  <span class="text-ink-soft">{s.label}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+          <p class="mt-3 text-[0.82rem] text-ink-faint max-w-[70ch]">
+            Numbers marked as client data were read out of the game files for build {build}. Where a source
+            contradicts another, both are quoted rather than averaged.
+          </p>
+        </footer>
+      )
+    }
+  </article>
+
+  <section class="py-8 border-t border-rule">
+    <h2 class="text-[1.15rem] mb-3">More guides</h2>
+    <ul class="grid gap-2 sm:grid-cols-2">
+      {
+        others.map((o) => (
+          <li>
+            <a href={`/guides/${o.id}/`} class="hover:text-rust">{o.data.title}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>
+
+<style is:global>
+  /* 攻略正文排版：标题用衬线，表格沿用站点的发丝线风格 */
+  .guide-body h2 {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    margin: 2rem 0 0.6rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .guide-body h3 { font-size: 1.08rem; margin: 1.4rem 0 0.4rem; }
+  .guide-body p { margin: 0.75rem 0; line-height: 1.7; color: var(--color-ink-soft); }
+  .guide-body strong { color: var(--color-ink); }
+  .guide-body ul, .guide-body ol { margin: 0.75rem 0 0.75rem 1.3rem; line-height: 1.65; color: var(--color-ink-soft); }
+  .guide-body ul { list-style: square; }
+  .guide-body ol { list-style: decimal; }
+  .guide-body li { margin: 0.3rem 0; }
+  .guide-body a { text-decoration: underline; text-decoration-color: var(--color-rule-hard); text-underline-offset: 2px; }
+  .guide-body a:hover { text-decoration-color: var(--color-rust); }
+  .guide-body code {
+    font-family: var(--font-mono); font-size: 0.88em;
+    background: var(--color-paper-edge); padding: 0.05rem 0.3rem; border-radius: 2px;
+  }
+  .guide-body table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 1rem 0; }
+  .guide-body th {
+    text-align: left; font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--color-ink-faint); border-bottom: 1.5px solid var(--color-rule-hard); padding: 0.35rem 0.6rem 0.35rem 0;
+    font-weight: 600;
+  }
+  .guide-body td { border-bottom: 1px solid var(--color-rule); padding: 0.4rem 0.6rem 0.4rem 0; vertical-align: top; }
+  .guide-body blockquote {
+    border-left: 2px solid var(--color-ochre);
+    padding-left: 0.9rem; margin: 1rem 0; color: var(--color-ink-soft); font-style: normal;
+  }
+</style>

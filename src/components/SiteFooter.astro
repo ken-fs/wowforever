@@ -1,0 +1,37 @@
+---
+interface Props { build?: string }
+const { build } = Astro.props;
+const year = new Date().getFullYear();
+---
+<footer class="border-t border-rule mt-auto">
+  <div class="w-full max-w-[1100px] mx-auto px-5 sm:px-8 py-8 text-[0.8rem] text-ink-faint">
+    <div class="grid gap-6 sm:grid-cols-[2fr_1fr_1fr]">
+      <div class="max-w-[46ch] leading-relaxed">
+        <p>
+          Data pulled straight from the game client, not copied from another site.{" "}
+          {build && <>Current build: <span class="font-mono text-ink-soft">{build}</span>.</>}
+        </p>
+        <p class="mt-2">
+          Unofficial fan resource. World of Warcraft and all related assets are trademarks of
+          Blizzard Entertainment, Inc. Not affiliated with or endorsed by Blizzard.
+        </p>
+      </div>
+      <div>
+        <p class="tag mb-2">Data</p>
+        <ul class="space-y-1">
+          <li><a href="/tools/" class="hover:text-rust">Tools</a></li>
+          <li><a href="/race-class/" class="hover:text-rust">Race × Class</a></li>
+          <li><a href="/changes/" class="hover:text-rust">What changed</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="tag mb-2">Reading</p>
+        <ul class="space-y-1">
+          <li><a href="/guides/" class="hover:text-rust">Guides</a></li>
+          <li><a href="/about/" class="hover:text-rust">About &amp; sources</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="mt-8 font-mono text-[0.7rem] tracking-wide">© {year} wowforever.one</p>
+  </div>
+</footer>

@@ -1,0 +1,225 @@
+---
+import Base from "../../layouts/Base.astro";
+import { all, val } from "../../data/db.ts";
+
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+
+const curve = all(`SELECT level, xp FROM xp_curve ORDER BY level`);
+const rawBuffs = all(
+  `SELECT DISTINCT name, pct, tooltip, cn_only FROM xp_spell WHERE reliable = 1 AND aura = 200 ORDER BY pct DESC, name`,
+);
+// 客户端的 $s1 / $w1 就是本法术自己的数值 —— 解析出来，别把变量名丢给读者
+const buffs = rawBuffs.map((b) => ({
+  ...b,
+  tooltip: (b.tooltip || "")
+    .replace(/\$[sw]\d+/g, String(b.pct))
+    .replace(/\(CN Only\)/g, "")
+    .replace(/\s+/g, " ")
+    .trim(),
+}));
+const skipped = all(`SELECT DISTINCT name, tooltip FROM xp_spell WHERE reliable = 0`);
+const questXp = all(`SELECT level, normal FROM quest_xp ORDER BY level`);
+
+const checkpoint = Object.fromEntries(curve.map((c) => [c.level, c.xp]));
+
+const total = curve.filter((c) => c.level < 60).reduce((a, c) => a + c.xp, 0);
+const title = "WoW Forever XP calculator — what 1 to 60 actually costs";
+const desc =
+  "Stack every experience buff in World of Warcraft: Forever and see the real cost of leveling. Buff percentages read straight from the game client, level curve included.";
+---
+<Base title={title} description={desc} crumbs={[
+  { href: "/", label: "Home" },
+  { href: "/tools/", label: "Tools" },
+  { label: "XP calculator" },
+]} {build}>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <p class="tag mb-3">Tool</p>
+    <h1 class="text-[2rem] sm:text-[2.4rem] leading-tight max-w-[22ch]">What does 1&ndash;60 actually cost?</h1>
+    <p class="mt-3 max-w-[64ch] text-ink-soft leading-relaxed">
+      Without touching a single buff it's <strong class="font-mono">{total.toLocaleString()}</strong> experience
+      to go from level 1 to 60. Everything below comes out of the client &mdash; the level curve and the buff
+      percentages are both read from the game files, not typed in by hand.
+    </p>
+  </header>
+
+  <section class="py-8">
+    <div class="border border-rule-hard bg-card">
+      <div class="p-5 border-b border-rule">
+        <div class="flex flex-wrap gap-x-8 gap-y-4 items-end">
+          <div>
+            <label for="from" class="block text-[0.75rem] uppercase tracking-wider text-ink-faint mb-1">From level</label>
+            <input id="from" type="number" min="1" max="59" value="1"
+              class="w-20 border border-rule-hard bg-paper px-2 py-1 font-mono text-[1.05rem]" />
+          </div>
+          <div>
+            <label for="to" class="block text-[0.75rem] uppercase tracking-wider text-ink-faint mb-1">To level</label>
+            <input id="to" type="number" min="2" max="60" value="60"
+              class="w-20 border border-rule-hard bg-paper px-2 py-1 font-mono text-[1.05rem]" />
+          </div>
+          <div>
+            <label for="xph" class="block text-[0.75rem] uppercase tracking-wider text-ink-faint mb-1">
+              Your XP / hour <span class="normal-case tracking-normal">(guess it)</span>
+            </label>
+            <input id="xph" type="number" min="100" step="500" value="20000"
+              class="w-28 border border-rule-hard bg-paper px-2 py-1 font-mono text-[1.05rem]" />
+          </div>
+        </div>
+      </div>
+
+      <div class="p-5 border-b border-rule">
+        <p class="text-[0.75rem] uppercase tracking-wider text-ink-faint mb-3">Buffs you'll have up</p>
+        <div class="grid gap-2 sm:grid-cols-2">
+          {
+            buffs.map((b) => (
+              <label class="flex items-start gap-2.5 cursor-pointer group">
+                <input type="checkbox" data-pct={b.pct} class="mt-0.5 accent-[#a63d1c]" />
+                <span>
+                  <span class="font-medium group-hover:text-rust">{b.name}</span>
+                  <span class="font-mono text-ochre ml-2">+{b.pct}%</span>
+                  {b.cn_only ? <span class="tag ml-1.5">CN only</span> : null}
+                  <span class="block text-[0.78rem] text-ink-faint mt-0.5">
+                    {b.tooltip}
+                  </span>
+                </span>
+              </label>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="p-5 grid gap-5 sm:grid-cols-3">
+        <div>
+          <p class="text-[0.75rem] uppercase tracking-wider text-ink-faint">Base XP needed</p>
+          <p id="out-base" class="font-mono text-[1.6rem] text-ink">—</p>
+        </div>
+        <div>
+          <p class="text-[0.75rem] uppercase tracking-wider text-ink-faint">
+            XP multiplier <span id="out-mult-pct" class="text-ochre normal-case"></span>
+          </p>
+          <p id="out-mult" class="font-mono text-[1.6rem] text-ochre">—</p>
+        </div>
+        <div>
+          <p class="text-[0.75rem] uppercase tracking-wider text-ink-faint">Hours at your rate</p>
+          <p id="out-hours" class="font-mono text-[1.6rem] text-rust">—</p>
+        </div>
+      </div>
+      <div class="px-5 pb-5 text-[0.85rem] text-ink-soft" id="out-extra"></div>
+    </div>
+  </section>
+
+  <section class="py-8 grid gap-10 lg:grid-cols-[1.25fr_1fr] border-t border-rule">
+    <div>
+      <h2 class="text-[1.35rem] mb-3">Where these percentages come from</h2>
+      <p class="text-[0.92rem] text-ink-soft leading-relaxed mb-4">
+        Every row above is a spell the client marks with aura <span class="font-mono">200</span>, which the game
+        describes verbatim as <em>&ldquo;Experience gains increased by X%&rdquo;</em>. The numbers aren't
+        estimates &mdash; they're the effect values in the spell data.
+      </p>
+      {
+        skipped.length > 0 && (
+          <div class="border-l-2 border-ochre pl-3 mb-5">
+            <p class="text-[0.85rem] text-ink-soft">
+              <strong>Left out on purpose:</strong>
+              {skipped.map((s, i) => (
+                <>
+                  {i > 0 && ", "}
+                  <span class="font-mono">{s.name}</span>
+                </>
+              ))}
+              &mdash; its value is stored as a reference to another spell
+              (<span class="font-mono text-[0.85em]">{'$429959s0'}</span>) that isn't in the client. Rather than
+              guess, it's excluded. The well-known rested bonus is still worth roughly double XP on its own.
+            </p>
+          </div>
+        )
+      }
+
+      <h2 class="text-[1.35rem] mb-3 mt-6">Do the buffs stack?</h2>
+      <p class="text-[0.92rem] text-ink-soft leading-relaxed">
+        They add, they don't multiply. Two +50% buffs land you at +100%, not +125%. That's why the multiplier
+        column tops out fast and then flattens &mdash; and why chasing a fourth buff is usually worse than
+        just playing the game faster.
+      </p>
+      <p class="text-[0.92rem] text-ink-soft leading-relaxed mt-3">
+        Note the fine print on two of them: <span class="font-mono">Well Fed XP Boost</span> only applies to
+        kills, and <span class="font-mono">Winds of Wisdom</span> is flagged <span class="tag">CN only</span> in
+        the client. If you're on a US or EU realm, don't plan around it.
+      </p>
+    </div>
+
+    <aside>
+      <h2 class="text-[1.15rem] mb-3">Level curve checkpoints</h2>
+      <table class="data">
+        <thead><tr><th>Level</th><th class="text-right">XP to next</th><th class="text-right">Cumulative</th></tr></thead>
+        <tbody id="curve-body"></tbody>
+      </table>
+      <p class="mt-3 text-[0.8rem] text-ink-faint">
+        Read from the client's <span class="font-mono">LevelExperience</span> table and matching Classic's
+        numbers exactly.
+      </p>
+    </aside>
+  </section>
+
+  <script type="application/json" id="xp-data" is:inline set:html={JSON.stringify({ curve, questXp })}></script>
+  <script is:inline>
+    const DATA = JSON.parse(document.getElementById("xp-data").textContent);
+    const CURVE = DATA.curve, QXP = DATA.questXp;
+    const el = (id) => document.getElementById(id);
+    const need = (from, to) => {
+      let x = 0;
+      for (const c of CURVE) if (c.level >= from && c.level < to) x += c.xp;
+      return x;
+    };
+    const fmt = (n) => Math.round(n).toLocaleString();
+
+    function render() {
+      let from = Math.min(59, Math.max(1, +el("from").value || 1));
+      let to = Math.min(60, Math.max(2, +el("to").value || 60));
+      if (to <= from) to = Math.min(60, from + 1);
+      const xph = Math.max(100, +el("xph").value || 20000);
+
+      const base = need(from, to);
+      let bonus = 0;
+      document.querySelectorAll("input[type=checkbox][data-pct]").forEach((cb) => {
+        if (cb.checked) bonus += parseFloat(cb.dataset.pct);
+      });
+      const mult = 1 + bonus / 100;
+      const eff = base / mult;
+
+      el("out-base").textContent = fmt(base);
+      el("out-mult").textContent = mult.toFixed(2) + "\u00d7";
+      el("out-mult-pct").textContent = bonus ? "+ " + bonus + "%" : "no buffs";
+      el("out-hours").textContent = (eff / xph).toFixed(1) + " h";
+
+      const saved = base - eff;
+      const q = QXP.find((x) => x.level === from);
+      let extra = "";
+      if (saved > 0) extra += "Buffs save you " + fmt(saved) + " XP. ";
+      if (q && q.normal > 0) {
+        extra += "At level " + from + " a normal quest pays about " + fmt(q.normal)
+               + " XP, so that is roughly " + fmt(eff / q.normal) + " quests if you only quested.";
+      }
+      el("out-extra").textContent = extra;
+    }
+
+    const SHOW = [1, 2, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 59];
+    let run = 0, rows = "";
+    for (const c of CURVE) {
+      if (c.level >= 60) continue;   // 60 级那行是 60→61 的 XP，游戏里不存在
+      run += c.xp;
+      if (SHOW.includes(c.level)) {
+        rows += '<tr><td class="font-mono">' + c.level + '</td><td class="text-right font-mono">'
+              + fmt(c.xp) + '</td><td class="text-right font-mono text-ink-faint">' + fmt(run) + "</td></tr>";
+      }
+    }
+    rows += '<tr><td class="font-mono text-rust">60</td><td class="text-right text-ink-faint">\u2014</td>'
+          + '<td class="text-right font-mono text-rust">' + fmt(run) + "</td></tr>";
+    document.getElementById("curve-body").innerHTML = rows;
+
+    document.querySelectorAll("input").forEach((i) => {
+      i.addEventListener("input", render);
+      i.addEventListener("change", render);
+    });
+    render();
+  </script>
+</Base>

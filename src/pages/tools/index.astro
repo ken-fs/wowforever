@@ -1,0 +1,63 @@
+---
+import Base from "../../layouts/Base.astro";
+import { all, val, count } from "../../data/db.ts";
+
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+const combos = all(`SELECT race, class FROM race_class`);
+const classCount = [...new Set(combos.map((c) => c.class))].length;
+const raceCount = [...new Set(combos.map((c) => c.race))].length;
+const talents = val(`SELECT COUNT(*) FROM talent_full`);
+const recipes = val(`SELECT COUNT(*) FROM recipe`);
+const xpBuffs = val(`SELECT COUNT(DISTINCT name) FROM xp_spell WHERE reliable = 1 AND aura = 200`);
+const dungeons = count("dungeons");
+---
+<Base title="WoW Forever tools — calculators and sortable data" description="Every World of Warcraft: Forever calculator and lookup table on this site, in one place. XP math, race and class combinations, talents and professions." crumbs={[{ href: "/", label: "Home" }, { label: "Tools" }]} {build}>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <h1 class="text-[2rem] leading-tight">Tools</h1>
+    <p class="mt-3 max-w-[62ch] text-ink-soft leading-relaxed">
+      Sortable, filterable, and rebuilt from the client every patch. Where a number isn't in the game
+      files, this site says so instead of inventing one.
+    </p>
+  </header>
+
+  <section class="py-8">
+    <div class="space-y-4">
+      <a href="/tools/xp-calculator/" class="block border border-rule-hard bg-card p-5 hover:border-rust transition-colors">
+        <div class="flex flex-wrap items-baseline gap-3">
+          <h2 class="text-[1.25rem]">XP &amp; leveling calculator</h2>
+          <span class="tag">live</span>
+        </div>
+        <p class="mt-2 text-[0.9rem] text-ink-soft max-w-[70ch]">
+          The full 1&ndash;60 curve read out of <span class="font-mono text-[0.9em]">LevelExperience</span>, plus
+          every experience buff in the client. Tick what you'll have running and watch what the trip to 60
+          actually costs. {xpBuffs} buffs have verified percentages.
+        </p>
+      </a>
+
+      <a href="/race-class/" class="block border border-rule-hard bg-card p-5 hover:border-rust transition-colors">
+        <div class="flex flex-wrap items-baseline gap-3">
+          <h2 class="text-[1.25rem]">Race × class matrix</h2>
+          <span class="tag">live</span>
+        </div>
+        <p class="mt-2 text-[0.9rem] text-ink-soft max-w-[70ch]">
+          {combos.length} legal combinations across {raceCount} races and {classCount} classes, straight from
+          the character creator's own table. Includes both Skyborne races.
+        </p>
+      </a>
+
+      {[
+        { t: "Talent lookup", d: `${Number(talents).toLocaleString()} talent points across 27 trees, indexed from the client.`, href: "/classes/" },
+        { t: "Professions & recipes", d: `${Number(recipes).toLocaleString()} recipes with their reagents.`, href: "/classes/" },
+        { t: "Dungeon reference", d: `${dungeons} dungeons and their encounters.`, href: "/guides/" },
+      ].map((x) => (
+        <div class="block border border-rule bg-card/50 p-5">
+          <div class="flex flex-wrap items-baseline gap-3">
+            <h2 class="text-[1.25rem] text-ink-soft">{x.t}</h2>
+            <span class="tag">in progress</span>
+          </div>
+          <p class="mt-2 text-[0.9rem] text-ink-faint max-w-[70ch]">{x.d}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>

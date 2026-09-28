@@ -1,0 +1,131 @@
+---
+import Base from "../layouts/Base.astro";
+import { all, val, slug, count } from "../data/db.ts";
+
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+
+const summary = all(`SELECT what, classic, forever FROM v_change_summary`)[0];
+const added = all(`SELECT race, class, race_id, is_skyborne FROM race_class_new ORDER BY is_skyborne, race, class`);
+const oldRaces = added.filter((a) => !a.is_skyborne);
+const skyborne = added.filter((a) => a.is_skyborne);
+
+const totals = {
+  items: count("items_rare"),
+  recipes: val(`SELECT COUNT(*) FROM recipe`),
+  talents: val(`SELECT COUNT(*) FROM talent_full`),
+};
+---
+<Base
+  title="What changed in WoW Forever versus Classic — the full comparison"
+  description="A side-by-side of WoW: Forever and Classic Era built from both clients' data. 16 new race and class combinations, and not a single one removed."
+  crumbs={[{ href: "/", label: "Home" }, { label: "What changed" }]}
+  {build}
+>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <p class="tag mb-3">Client vs client</p>
+    <h1 class="text-[2rem] sm:text-[2.35rem] leading-tight max-w-[24ch]">Forever adds. It doesn't take away.</h1>
+    <p class="mt-3 max-w-[66ch] text-ink-soft leading-relaxed">
+      This page compares two real clients: the live Classic Era build and the current Forever beta.
+      Both are read from Blizzard's own data, so the diff below isn't opinion or patch-note summary.
+    </p>
+  </header>
+
+  <section class="py-8">
+    <div class="grid gap-4 sm:grid-cols-3">
+      <div class="border-t-2 border-rule-hard pt-3">
+        <p class="text-[0.75rem] uppercase tracking-wider text-ink-faint">Classic Era</p>
+        <p class="font-mono text-[2.1rem]">{summary?.classic}</p>
+        <p class="text-[0.85rem] text-ink-soft">legal race and class combinations</p>
+      </div>
+      <div class="border-t-2 border-rust pt-3">
+        <p class="text-[0.75rem] uppercase tracking-wider text-ink-faint">Forever</p>
+        <p class="font-mono text-[2.1rem] text-rust">{summary?.forever}</p>
+        <p class="text-[0.85rem] text-ink-soft">legal race and class combinations</p>
+      </div>
+      <div class="border-t-2 border-rule-hard pt-3">
+        <p class="text-[0.75rem] uppercase tracking-wider text-ink-faint">Removed</p>
+        <p class="font-mono text-[2.1rem] text-moss">0</p>
+        <p class="text-[0.85rem] text-ink-soft">nothing was taken away</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-8 border-t border-rule">
+    <h2 class="text-[1.4rem] mb-1">Six new options for races that already existed</h2>
+    <p class="text-[0.9rem] text-ink-soft mb-5 max-w-[68ch]">
+      This is the part with no write-up anywhere. Every one of these was illegal in Classic.
+    </p>
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        oldRaces.map((a) => (
+          <a
+            href={`/race-class/${slug(a.race)}-${slug(a.class)}/`}
+            class="block border border-rule-hard bg-card p-4 hover:border-rust transition-colors"
+          >
+            <span class="font-serif text-[1.1rem]">{a.race} {a.class}</span>
+            <span class="block mt-1 text-[0.82rem] text-ink-faint">
+              never possible in Classic
+            </span>
+          </a>
+        ))
+      }
+    </div>
+    <div class="mt-6 border-l-2 border-ochre pl-4 max-w-[70ch]">
+      <p class="text-[0.92rem] text-ink-soft leading-relaxed">
+        <strong>Undead Paladin</strong> got a fourteen-thousand-view forum thread on its own.
+        It's one of six. Dwarf Shaman and Troll Warlock are the same kind of change and almost nobody
+        has picked up on them &mdash; Classic players spent twenty years treating those combinations as
+        things that don't exist.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-8 border-t border-rule">
+    <h2 class="text-[1.4rem] mb-1">Ten options that come with the new race</h2>
+    <p class="text-[0.9rem] text-ink-soft mb-5 max-w-[68ch]">
+      The Skyborne land with ten combinations across two separate race entries the client keeps apart.
+    </p>
+    <div class="grid gap-6 sm:grid-cols-2">
+      {
+        ["High Order Skyborne", "Windshaper Skyborne"].map((race) => (
+          <div>
+            <h3 class="font-serif text-[1.15rem] mb-2">
+              <a href={`/races/${slug(race)}/`} class="hover:text-rust">{race}</a>
+            </h3>
+            <ul class="text-[0.9rem] text-ink-soft space-y-1">
+              {skyborne.filter((s) => s.race === race).map((s) => (
+                <li>
+                  <a href={`/race-class/${slug(s.race)}-${slug(s.class)}/`} class="hover:text-rust">{s.class}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+    <div class="mt-6 border-l-2 border-ochre pl-4 max-w-[70ch]">
+      <p class="text-[0.92rem] text-ink-soft leading-relaxed">
+        <strong>The two Skyborne are the two factions.</strong> High Order takes a Mage and no Shaman;
+        Windshaper takes a Shaman and no Mage. Creators in the beta put it plainly &mdash; the Alliance
+        Skyborne get the mage, the Horde Skyborne get the shaman &mdash; and the client's class lists line
+        up with that exactly.
+      </p>
+      <p class="text-[0.87rem] text-ink-faint mt-2">
+        So the race that looked like an unexplained data quirk is really the neutral-race faction split,
+        stored as two rows.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-8 border-t border-rule">
+    <h2 class="text-[1.3rem] mb-3">What this page doesn't cover yet</h2>
+    <p class="text-[0.92rem] text-ink-soft leading-relaxed max-w-[70ch]">
+      Items, spells and talents ship in numbers that make an honest diff slower than a race/class table:
+      {" "}{Number(totals.items).toLocaleString()} rare-or-better items,{" "}
+      {Number(totals.talents).toLocaleString()} talent points and{" "}
+      {Number(totals.recipes).toLocaleString()} recipes are all indexed, and a first pass at the item
+      diff turned up mostly noise &mdash; incidental changes like item level 0 flipping to 1. That work
+      is in progress and will land here when the signal is good enough to publish.
+    </p>
+  </section>
+</Base>

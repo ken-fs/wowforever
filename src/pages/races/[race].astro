@@ -1,0 +1,105 @@
+---
+import Base from "../../layouts/Base.astro";
+import { all, one, slug, val } from "../../data/db.ts";
+
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+
+export async function getStaticPaths() {
+  const races = all(`SELECT DISTINCT race FROM race_class ORDER BY race`);
+  return races.map((r) => ({ params: { race: slug(r.race) }, props: { race: r.race } }));
+}
+
+const { race } = Astro.props;
+const classes = all(`SELECT class FROM race_class WHERE race = ? ORDER BY class`, race);
+const isSky = classes.length && race.includes("Skyborne");
+
+const FACTIONS = {
+  Human: "Alliance", Dwarf: "Alliance", "Night Elf": "Alliance", Gnome: "Alliance",
+  Orc: "Horde", Undead: "Horde", Tauren: "Horde", Troll: "Horde",
+};
+const faction = FACTIONS[race] ?? null;
+// 另一个天裔分支
+const sibling = isSky ? (race.includes("High Order") ? "Windshaper Skyborne" : "High Order Skyborne") : null;
+
+const BLURB = {
+  Human: "The default pick, and the one with the widest class list in Forever.",
+  Dwarf: "Alliance, sturdy, and one of only three races that can be a Paladin.",
+  "Night Elf": "Shadowmeld, agility, and a slot in the four-race Druid club.",
+  Gnome: "Small, clever, and Escape Artist still matters in PvP.",
+  Orc: "Horde, Blood Fury, and the widest class spread on that side.",
+  Undead: "Will of the Forsaken — and in Forever, the ability to be a Paladin.",
+  Tauren: "War Stomp, plainswalking, and the Horde's Druid answer.",
+  Troll: "Berserking, regeneration, and the fastest leveling on the Horde side.",
+};
+---
+<Base
+  title={`${race} in WoW Forever — all ${classes.length} classes it can play`}
+  description={`${race} in World of Warcraft: Forever: which of the ${classes.length} classes it can play, its faction, and the details the client actually stores.`}
+  crumbs={[{ href: "/", label: "Home" }, { href: "/races/", label: "Races" }, { label: race }]}
+  {build}
+>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <div class="flex flex-wrap gap-2 mb-3">
+      {faction && <span class="tag">{faction}</span>}
+      {isSky && <span class="tag">new in Forever</span>}
+      <span class="tag">{classes.length} classes</span>
+    </div>
+    <h1 class="text-[2rem] leading-tight">{race}</h1>
+    <p class="mt-3 max-w-[62ch] text-ink-soft leading-relaxed">
+      {isSky
+        ? "One of the two Skyborne entries the client ships as separate playable races."
+        : (BLURB[race] ?? "A playable race in World of Warcraft: Forever.")}
+    </p>
+  </header>
+
+  <section class="py-8 grid gap-10 lg:grid-cols-[1.25fr_1fr]">
+    <div>
+      <h2 class="text-[1.3rem] mb-3">Class list</h2>
+      <table class="data">
+        <thead><tr><th>Class</th><th class="text-right">Races that share it</th><th></th></tr></thead>
+        <tbody>
+          {
+            classes.map((c) => {
+              const shared = val(`SELECT COUNT(*) FROM race_class WHERE class = ?`, c.class);
+              return (
+                <tr>
+                  <td><a href={`/race-class/${slug(race)}-${slug(c.class)}/`} class="hover:text-rust">{c.class}</a></td>
+                  <td class="text-right font-mono text-ink-faint">{shared}</td>
+                  <td class="text-right text-[0.82rem] text-ink-faint">
+                    <a href={`/classes/${slug(c.class)}/`} class="hover:text-rust">class →</a>
+                  </td>
+                </tr>
+              );
+            })
+          }
+        </tbody>
+      </table>
+      <p class="mt-3 text-[0.82rem] text-ink-faint">
+        Counts on the right are how many races can play that class overall — useful for spotting the narrow ones.
+      </p>
+    </div>
+
+    <aside class="space-y-4">
+      {
+        isSky && (
+          <div class="border border-rule-hard bg-card p-4">
+            <h2 class="font-serif text-[1.05rem] mb-2">The other Skyborne</h2>
+            <p class="text-[0.85rem] text-ink-soft">
+              The client also ships <a href={`/races/${slug(sibling)}/`} class="hover:text-rust underline decoration-rule-hard underline-offset-2">{sibling}</a>
+              as a separate playable race. Blizzard's announcement described one Skyborne race, not two.
+            </p>
+          </div>
+        )
+      }
+      <div class="border border-rule-hard bg-card p-4">
+        <h2 class="font-serif text-[1.05rem] mb-2">Before you roll this</h2>
+        <p class="text-[0.85rem] text-ink-soft">
+          Check what 1&ndash;60 costs with the
+          <a href="/tools/xp-calculator/" class="hover:text-rust underline decoration-rule-hard underline-offset-2">XP calculator</a>,
+          then confirm you actually like the class by looking at its
+          <a href="/classes/" class="hover:text-rust underline decoration-rule-hard underline-offset-2">talent trees</a>.
+        </p>
+      </div>
+    </aside>
+  </section>
+</Base>
