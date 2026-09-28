@@ -1,0 +1,121 @@
+---
+/**
+ * LaunchTimeline —— 发布时间线，状态和倒计时自更新。
+ *
+ * 为什么日期写在 HTML 里、状态交给 JS：
+ *   - 日期是内容，爬虫该看得到，关掉 JS 也要能读
+ *   - 但"已过去 / 进行中 / 即将到来"和倒计时必须随时间变，硬编码就会过期
+ *
+ * 日期全部有官方出处（见 data/sources/24301508.txt 等），不是估的。
+ * 时区：官方用 PST。2026-11-04 15:00 PST == 2026-11-04T23:00Z == 北京 11-05 07:00。
+ */
+interface Milestone {
+  /** ISO 8601 UTC */
+  at: string;
+  /** 结束时间（区间事件用） */
+  until?: string;
+  label: string;
+  note: string;
+  /** 只在国服发生的 */
+  cn?: boolean;
+  /** 主事件（上线），用来加醒目标签 */
+  key?: boolean;
+}
+
+const MILESTONES: Milestone[] = [
+  { at: "2026-09-17T00:00:00Z", until: "2026-10-21T00:00:00Z", label: "Global beta", note: "Runs through October 21. Included with the Skyborne Epic Pack or the Warcraft Forever Collection." },
+  { at: "2026-10-06T00:00:00Z", label: "China beta opens", note: "Separate from the global beta, and a wipe test.", cn: true },
+  { at: "2026-10-20T00:00:00Z", label: "Invite codes emailed", note: "Invite-A-Friend codes start going out to pre-purchase buyers." },
+  { at: "2026-10-27T00:00:00Z", until: "2026-11-04T08:00:00Z", label: "Name reservation", note: "Create and customise up to three characters. Names are first-come, first-served." },
+  { at: "2026-11-04T23:00:00Z", label: "Launch", note: "3:00 p.m. PST — 07:00 in Beijing. Included with a subscription or game time.", key: true },
+  { at: "2026-11-11T00:00:00Z", label: "Invite week closes", note: "Launch-week access for invited friends ends." },
+  { at: "2027-01-11T00:00:00Z", label: "Collection retires", note: "The Warcraft Forever Collection stops being sold." },
+];
+---
+<section class="py-9 border-t border-rule" id="timeline">
+  <div class="flex flex-wrap items-baseline justify-between gap-2 mb-1">
+    <h2 class="text-[1.6rem]">When it happens</h2>
+    <p class="font-mono text-[0.8rem] text-ink-faint" id="tl-countdown" aria-live="polite"></p>
+  </div>
+  <p class="text-[0.9rem] text-ink-soft mb-6 max-w-[68ch]">
+    Dates from Blizzard's own pre-purchase page. The countdown runs on your machine, so it stays right
+    even when this page is a few days old.
+  </p>
+
+  <ol class="relative border-l border-rule-hard ml-1.5 space-y-5">
+    {
+      MILESTONES.map((m, i) => (
+        <li class="pl-5 relative" data-at={m.at} data-until={m.until ?? ""} data-i={i}>
+          <span
+            class="tl-dot absolute -left-[5px] top-[0.45rem] h-[9px] w-[9px] rounded-full border-2 border-paper bg-rule-hard"
+            aria-hidden="true"
+          />
+          <div class="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+            <time datetime={m.at} class="tl-date font-mono text-[0.82rem] text-ink-faint">
+              {new Date(m.at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" })}
+            </time>
+            <span class="tl-label font-serif text-[1.05rem]">{m.label}</span>
+            {m.cn && <span class="tag">China only</span>}
+            {m.key && <span class="tl-badge tag">launch</span>}
+          </div>
+          <p class="tl-note text-[0.86rem] text-ink-soft mt-1 max-w-[64ch] leading-relaxed">{m.note}</p>
+        </li>
+      ))
+    }
+  </ol>
+
+  <p class="mt-6 text-[0.82rem] text-ink-faint max-w-[70ch]">
+    Times shown in your local timezone where relevant. Forever launches globally at once —
+    there is no region-first rollout.
+  </p>
+</section>
+
+<script is:inline>
+  (function () {
+    var LAUNCH = Date.parse("2026-11-04T23:00:00Z");
+    var list = document.querySelectorAll("#timeline li[data-at]");
+    var cd = document.getElementById("tl-countdown");
+    var now = Date.now();
+
+    // 每条的过去/进行中/未来状态。区间事件以 until 判断结束。
+    list.forEach(function (li) {
+      var at = Date.parse(li.dataset.at);
+      var until = li.dataset.until ? Date.parse(li.dataset.until) : at;
+      var dot = li.querySelector(".tl-dot");
+      var label = li.querySelector(".tl-label");
+
+      if (now >= until) {
+        li.style.opacity = "0.55";
+        dot.style.background = "var(--color-rule-hard)";
+        label.style.textDecoration = "none";
+      } else if (now >= at) {
+        // 进行中
+        dot.style.background = "var(--color-moss)";
+        dot.style.boxShadow = "0 0 0 3px color-mix(in srgb, var(--color-moss) 25%, transparent)";
+        var live = document.createElement("span");
+        live.className = "tag";
+        live.style.borderColor = "var(--color-moss)";
+        live.style.color = "var(--color-moss)";
+        live.textContent = "now";
+        label.after(live);
+      } else {
+        dot.style.background = "var(--color-rust)";
+      }
+    });
+
+    function tick() {
+      var ms = LAUNCH - Date.now();
+      if (ms <= 0) {
+        cd.textContent = "Live now";
+        cd.style.color = "var(--color-moss)";
+        return false;
+      }
+      var d = Math.floor(ms / 864e5);
+      var h = Math.floor((ms % 864e5) / 36e5);
+      var m = Math.floor((ms % 36e5) / 6e4);
+      cd.textContent = d + "d " + h + "h " + m + "m to launch";
+      return true;
+    }
+    if (tick()) setInterval(tick, 60000);
+  })();
+</script>

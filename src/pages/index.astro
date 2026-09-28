@@ -3,6 +3,7 @@ import Base from "../layouts/Base.astro";
 import { all, val, one, count, slug } from "../data/db.ts";
 import { Image } from "astro:assets";
 import { hero, ogImage, classIcon, specFor, attribution } from "../data/assets.ts";
+import LaunchTimeline from "../components/LaunchTimeline.astro";
 
 const build = val(`SELECT value FROM meta WHERE key='build'`);
 
@@ -102,7 +103,9 @@ const NEWSWORTHY = [
     }
   </section>
 
-  <section class="py-9 grid gap-10 lg:grid-cols-[1.35fr_1fr]">
+  <LaunchTimeline />
+
+  <section class="py-9 border-t border-rule grid gap-10 lg:grid-cols-[1.35fr_1fr]">
     <div>
       <h2 class="text-[1.6rem] mb-1">Start here</h2>
       <p class="text-ink-soft text-[0.92rem] mb-5">Two tools nobody else has built yet.</p>

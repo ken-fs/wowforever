@@ -170,6 +170,12 @@ table.data tbody tr td:first-child::before {
 }
 table.data tbody tr:hover td:first-child::before { transform: scaleY(1); }
 
+/* ── 锚点跳转时留出吸顶导航的高度 ──────────────────────────────
+   没有这个，跳转到 #timeline 之类的锚点时标题会被导航盖住。 */
+:target,
+section[id],
+[id][data-anchor] { scroll-margin-top: 5.5rem; }
+
 /* ── 无障碍：系统开了「减少动态效果」就全关 ────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
