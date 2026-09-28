@@ -1,0 +1,23 @@
+---
+/**
+ * BrandMark —— 页头左侧的徽记。
+ *
+ * 为什么用自己画的标记、不放暴雪游戏 logo：
+ *   页头是**身份位**（这是谁的站），不是**内容位**（这站在讲什么）。
+ *   官方 logo 放内容区是引用（已署名），放身份位会让人以为这是官方站。
+ *   同行也这么干 —— wowhead / icy-veins / wow.gg 都是自家标记。
+ *
+ * 图形和 favicon.svg 同源：锈红圆角方 + 米白衬线 W。
+ *
+ * ⚠️ 试过放官方 logo（素材在 data/assets.ts 的 logo），34px 高度下糊成一团 ——
+ * 它带文字和细节，要 120px+ 才认得出。所以徽记位只能用简单图形，和商标无关。
+ */
+const SIZE = 34;
+
+// 徽记本身内联 —— 它要在首屏渲染，不该额外发一个请求
+---
+<span
+  class="inline-flex shrink-0 items-center justify-center rounded-[7px] bg-rust text-paper font-serif font-semibold"
+  style={`width:${SIZE}px;height:${SIZE}px;font-size:${Math.round(SIZE * 0.6)}px;line-height:1`}
+  aria-hidden="true"
+>W</span>
