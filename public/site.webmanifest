@@ -1,0 +1,13 @@
+{
+  "name": "WoW Forever",
+  "short_name": "WoW Forever",
+  "description": "World of Warcraft: Forever reference built from the game client.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fdfbf6",
+  "theme_color": "#a63d1c",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

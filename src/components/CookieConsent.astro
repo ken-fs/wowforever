@@ -1,0 +1,85 @@
+---
+/**
+ * CookieConsent —— 真正**门控** GA 的同意条。
+ *
+ * 为什么不是直接贴 GA snippet：
+ *   GA 会写 cookie。只要有 EU 访客，未取得同意就加载就是违反 GDPR/ePrivacy，
+ *   Google 自己的条款也要求这么做。原始 snippet 一贴，就是无条件加载。
+ *
+ * 怎么工作：
+ *   - Base.astro 只定义 `window.__wowLoadTrackers()`，不静态注入 GA。
+ *   - 这个组件在没有选择时显示；Accept 才调用它，Decline 则永不加载。
+ *   - 选择存 localStorage，回访不再弹。
+ *   - 没设 PUBLIC_GA_ID 时组件根本不渲染 → 零 JS。
+ */
+const GA_ENABLED = Boolean(import.meta.env.PUBLIC_GA_ID);
+---
+{
+  GA_ENABLED && (
+    <>
+    <div
+      id="cookie-consent"
+      hidden
+      class="fixed inset-x-0 bottom-0 z-50 border-t-2 border-rule-hard bg-card"
+      role="dialog"
+      aria-live="polite"
+      aria-label="Analytics consent"
+    >
+      <div class="w-full max-w-[1100px] mx-auto px-5 sm:px-8 py-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <p class="text-[0.85rem] text-ink-soft leading-relaxed max-w-[62ch]">
+          <span class="font-serif text-[0.95rem] text-ink">One question about analytics:</span>{" "}
+          this site would like to count visits with Google Analytics. It sets cookies. Say no and the
+          script never loads.{" "}
+          <a href="/privacy/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">
+            Privacy
+          </a>
+        </p>
+        <div class="flex shrink-0 items-center gap-2 sm:ml-auto">
+          <button
+            type="button"
+            data-consent="declined"
+            class="px-3 py-1.5 text-[0.85rem] text-ink-faint hover:text-ink transition-colors"
+          >
+            No thanks
+          </button>
+          <button
+            type="button"
+            data-consent="accepted"
+            class="px-4 py-1.5 text-[0.85rem] bg-rust text-paper border border-rust hover:bg-ink hover:border-ink transition-colors"
+          >
+            Allow
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script is:inline>
+  (function () {
+    var bar = document.getElementById("cookie-consent");
+    if (!bar) return; // 没配 GA_ID → 这个组件没渲染 → 到此为止
+
+    var KEY = "wowforever-consent";
+    var stored = null;
+    try { stored = localStorage.getItem(KEY); } catch (e) { /* 隐私模式 */ }
+
+    if (stored === "accepted") {
+      if (window.__wowLoadTrackers) window.__wowLoadTrackers();
+      return;
+    }
+    if (stored === "declined") return;
+
+    bar.hidden = false;
+
+    bar.addEventListener("click", function (ev) {
+      var btn = ev.target.closest("[data-consent]");
+      if (!btn) return;
+      var choice = btn.dataset.consent;
+      try { localStorage.setItem(KEY, choice); } catch (e) { /* 忽略 */ }
+      bar.hidden = true;
+      if (choice === "accepted" && window.__wowLoadTrackers) window.__wowLoadTrackers();
+    });
+  })();
+    </script>
+    </>
+  )
+}

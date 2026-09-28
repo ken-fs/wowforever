@@ -1,0 +1,64 @@
+---
+import Base from "../layouts/Base.astro";
+import { val } from "../data/db.ts";
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+---
+<Base
+  title="Privacy"
+  description="What wowforever.one collects, what it doesn't, and how to say no to analytics."
+  crumbs={[{ href: "/", label: "Home" }, { label: "Privacy" }]}
+  {build}
+>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <h1 class="text-[2rem] leading-tight">Privacy</h1>
+    <p class="mt-3 max-w-[62ch] text-ink-soft leading-relaxed">
+      Short version: this site sets no cookies unless you allow analytics, and there is nothing else
+      collecting anything about you.
+    </p>
+  </header>
+
+  <section class="py-8 max-w-[72ch]">
+    <h2 class="font-serif text-[1.35rem] mt-0 mb-2">Analytics</h2>
+    <p class="text-ink-soft leading-relaxed mb-3">
+      The site would like to count visits with <strong>Google Analytics 4</strong>, which sets cookies and
+      sends a hashed identifier to Google. It is the only third-party script on the site.
+    </p>
+    <p class="text-ink-soft leading-relaxed mb-3">
+      <strong>It does not load until you say yes.</strong> Every page ships with the analytics tag
+      commented out in effect — a small script defines a loader function and nothing calls it. Choosing
+      <em>No thanks</em> means that function is never invoked, this visit or any future one. Your answer is
+      stored in your browser's <code class="font-mono text-[0.9em]">localStorage</code>, not on a server.
+    </p>
+    <p class="text-ink-soft leading-relaxed mb-3">
+      If you allowed it and want to change your mind, clear site data for this domain — the question will
+      come back. IP addresses are anonymised before they reach Google.
+    </p>
+
+    <h2 class="font-serif text-[1.35rem] mt-8 mb-2">What the site doesn't do</h2>
+    <ul class="text-ink-soft leading-relaxed space-y-1.5 list-square ml-5">
+      <li>No account, no sign-in, no email collection.</li>
+      <li>No advertising networks, no ad slots, no pixel trackers.</li>
+      <li>No server-side logs that identify you. This is a static site served from Cloudflare's edge.</li>
+      <li>Nothing you read or click on this site is sold, shared, or reported anywhere.</li>
+    </ul>
+
+    <h2 class="font-serif text-[1.35rem] mt-8 mb-2">Hosting</h2>
+    <p class="text-ink-soft leading-relaxed">
+      Pages are served by Cloudflare. Cloudflare processes standard request data to deliver the site and
+      defend it from abuse, under their own privacy terms — that is true of every website you visit, and it
+      is not something this site can switch off.
+    </p>
+
+    <h2 class="font-serif text-[1.35rem] mt-8 mb-2">Game data and artwork</h2>
+    <p class="text-ink-soft leading-relaxed">
+      The numbers on this site come from World of Warcraft's own client files. Artwork is reproduced from
+      Blizzard's public press and marketing assets. No personal data is involved in any of it.
+    </p>
+
+    <h2 class="font-serif text-[1.35rem] mt-8 mb-2">Trademarks</h2>
+    <p class="text-ink-soft leading-relaxed">
+      Unofficial fan resource. World of Warcraft, Warcraft and all associated assets are trademarks of
+      Blizzard Entertainment, Inc. This site is not affiliated with, endorsed by, or sponsored by Blizzard.
+    </p>
+  </section>
+</Base>

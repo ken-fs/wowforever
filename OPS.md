@@ -348,3 +348,60 @@ import { hero, classIcon, guideImage } from "../data/assets.ts";
 
 页脚已写「Artwork © Blizzard Entertainment, reproduced from Blizzard's own press and marketing assets.」
 **别删这行**。
+
+
+---
+
+## 图标与统计
+
+### favicon
+
+```bash
+# 改设计后重新生成（源在 public/favicon.svg）
+cd ~/Desktop/david/Ship/wow-forever
+for s in 16 32 48; do rsvg-convert -w $s -h $s public/favicon.svg -o /tmp/f$s.png; done
+magick /tmp/f16.png /tmp/f32.png /tmp/f48.png public/favicon.ico
+for s in 180 192 512; do rsvg-convert -w $s -h $s public/favicon.svg -o public/$( [ $s = 180 ] && echo apple-touch-icon.png || echo icon-$s.png ); done
+```
+
+设计是「锈红圆角方 + 米白衬线 W」—— 域名的首字母，和页头衬线字对得上。
+
+⚠️ **不用暴雪的官方游戏图标当 favicon**：那是品牌标识，会暗示官方关联。
+仓库里 `src/assets/official/icon_512x512.png` 是官方素材，可以放在**页面里**配署名使用，
+但不该当作本站的身份标识。
+
+⚠️ **光栅 .ico 才是主 favicon**：`favicon.svg` 里的 `<text>` 依赖客户端有那个字体，
+不同系统渲染不一致。多个尺寸的 `.ico` 保证各处一致。
+
+### Google Analytics（同意门控）
+
+```
+GA4 属性   G-ND17C7D4G4
+注入点     Cloudflare 构建变量 PUBLIC_GA_ID（不是写死在代码里）
+门控       src/components/CookieConsent.astro
+```
+
+**GA 不会无条件加载。** 流程：
+
+```
+Base.astro 定义 window.__wowLoadTrackers()，但没人调用它
+   ↓
+CookieConsent 读 localStorage 的 wowforever-consent
+   ├─ 没选择      → 显示同意条，什么都不加载
+   ├─ accepted    → 调用 __wowLoadTrackers()
+   └─ declined    → 永不加载
+```
+
+**为什么不能直接贴 GA snippet**：只要有一个 EU 访客，未取得同意就加载就是违反
+GDPR/ePrivacy，Google 自己的条款也这么要求。你 AGENTS.md 里记过这个坑。
+
+**没设 PUBLIC_GA_ID 时页面零 JS** —— 门控块整体包在条件里，不是只把 div 藏起来。
+
+验证（本地）：
+```bash
+PUBLIC_GA_ID=G-ND17C7D4G4 npx astro build
+node ../scripts/browser/browser.mjs eval "http://localhost:4399/" "
+  JSON.stringify({条可见:!document.getElementById('cookie-consent')?.hidden,
+                  gtag:typeof window.gtag})"
+# 期望：{条可见:true, gtag:undefined}
+```
