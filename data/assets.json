@@ -1,8 +1,14 @@
 {
- "generated": "2026-09-28T04:45:36.883Z",
+ "generated": "2026-09-28T10:13:15.460Z",
  "sources": {
   "marketing": "blz-contentstack-images.akamaized.net — Blizzard 官网 Forever 落地页素材",
   "classIcons": "render.worldofwarcraft.com/us/icons — 游戏图标官方渲染 CDN（fdid 经 wago.tools/api/info 解析）"
+ },
+ "counts": {
+  "marketing": 33,
+  "classIcons": 9,
+  "specIcons": 27,
+  "buffIcons": 6
  },
  "marketing": [
   {
@@ -170,22 +176,22 @@
    "name": "Skyborne-BG.jpg",
    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blta3214baff005e0a5/6a99ff662924f5c4358aa988/Skyborne-BG-sm.jpg",
    "ok": true,
-   "kb": 133,
-   "dim": "960x1880"
+   "kb": 301,
+   "dim": "2600x1500"
   },
   {
    "name": "Skyborne-bg.jpg",
    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/bltf8b2b1b23755de4e/6aa1d6e5f8f124ea95bcba3e/Skyborne-bg-md.jpg",
    "ok": true,
-   "kb": 133,
-   "dim": "960x1880"
+   "kb": 301,
+   "dim": "2600x1500"
   },
   {
    "name": "Skyborne-BG.jpg",
    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt86ec9f1909d2e4f3/6a99ff068102310aeb81e0de/Skyborne-BG.jpg",
    "ok": true,
-   "kb": 133,
-   "dim": "960x1880"
+   "kb": 301,
+   "dim": "2600x1500"
   },
   {
    "name": "WoWForever_Collection.jpg",
@@ -240,66 +246,328 @@
  "classIcons": [
   {
    "name": "Warrior",
+   "fdid": 626008,
    "file": "classicon_warrior",
    "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_warrior.jpg",
-   "ok": true,
-   "kb": 2
+   "ok": true
   },
   {
    "name": "Paladin",
+   "fdid": 626003,
    "file": "classicon_paladin",
    "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_paladin.jpg",
-   "ok": true,
-   "kb": 3
+   "ok": true
   },
   {
    "name": "Hunter",
+   "fdid": 626000,
    "file": "classicon_hunter",
    "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_hunter.jpg",
-   "ok": true,
-   "kb": 2
+   "ok": true
   },
   {
    "name": "Rogue",
+   "fdid": 626005,
    "file": "classicon_rogue",
    "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_rogue.jpg",
-   "ok": true,
-   "kb": 3
+   "ok": true
   },
   {
    "name": "Priest",
+   "fdid": 626004,
    "file": "classicon_priest",
    "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_priest.jpg",
-   "ok": true,
-   "kb": 2
+   "ok": true
   },
   {
    "name": "Shaman",
+   "fdid": 626006,
    "file": "classicon_shaman",
    "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_shaman.jpg",
-   "ok": true,
-   "kb": 3
+   "ok": true
   },
   {
    "name": "Mage",
+   "fdid": 626001,
    "file": "classicon_mage",
    "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_mage.jpg",
-   "ok": true,
-   "kb": 3
+   "ok": true
   },
   {
    "name": "Warlock",
+   "fdid": 626007,
    "file": "classicon_warlock",
    "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_warlock.jpg",
-   "ok": true,
-   "kb": 3
+   "ok": true
   },
   {
    "name": "Druid",
+   "fdid": 625999,
    "file": "classicon_druid",
    "url": "https://render.worldofwarcraft.com/us/icons/56/classicon_druid.jpg",
-   "ok": true,
-   "kb": 2
+   "ok": true
+  }
+ ],
+ "specIcons": [
+  {
+   "cls": "Mage",
+   "spec": "Fire",
+   "fdid": 135810,
+   "file": "spell_fire_firebolt02",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_fire_firebolt02.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Mage",
+   "spec": "Frost",
+   "fdid": 135846,
+   "file": "spell_frost_frostbolt02",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_frost_frostbolt02.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Mage",
+   "spec": "Arcane",
+   "fdid": 135932,
+   "file": "spell_holy_magicalsentry",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_holy_magicalsentry.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Warrior",
+   "spec": "Arms",
+   "fdid": 132292,
+   "file": "ability_rogue_eviscerate",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/ability_rogue_eviscerate.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Warrior",
+   "spec": "Protection",
+   "fdid": 134952,
+   "file": "inv_shield_06",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/inv_shield_06.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Warrior",
+   "spec": "Fury",
+   "fdid": 132347,
+   "file": "ability_warrior_innerrage",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/ability_warrior_innerrage.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Rogue",
+   "spec": "Combat",
+   "fdid": 132090,
+   "file": "ability_backstab",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/ability_backstab.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Rogue",
+   "spec": "Assassination",
+   "fdid": 132292,
+   "file": "ability_rogue_eviscerate",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/ability_rogue_eviscerate.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Rogue",
+   "spec": "Subtlety",
+   "fdid": 132320,
+   "file": "ability_stealth",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/ability_stealth.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Priest",
+   "spec": "Discipline",
+   "fdid": 135987,
+   "file": "spell_holy_wordfortitude",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_holy_wordfortitude.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Priest",
+   "spec": "Holy",
+   "fdid": 237542,
+   "file": "spell_holy_guardianspirit",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_holy_guardianspirit.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Priest",
+   "spec": "Shadow",
+   "fdid": 136207,
+   "file": "spell_shadow_shadowwordpain",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_shadow_shadowwordpain.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Shaman",
+   "spec": "Elemental",
+   "fdid": 136048,
+   "file": "spell_nature_lightning",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_nature_lightning.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Shaman",
+   "spec": "Restoration",
+   "fdid": 136052,
+   "file": "spell_nature_magicimmunity",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_nature_magicimmunity.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Shaman",
+   "spec": "Enhancement",
+   "fdid": 136051,
+   "file": "spell_nature_lightningshield",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_nature_lightningshield.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Druid",
+   "spec": "Feral Combat",
+   "fdid": 132276,
+   "file": "ability_racial_bearform",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/ability_racial_bearform.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Druid",
+   "spec": "Restoration",
+   "fdid": 136041,
+   "file": "spell_nature_healingtouch",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_nature_healingtouch.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Druid",
+   "spec": "Balance",
+   "fdid": 136096,
+   "file": "spell_nature_starfall",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_nature_starfall.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Warlock",
+   "spec": "Destruction",
+   "fdid": 136186,
+   "file": "spell_shadow_rainoffire",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_shadow_rainoffire.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Warlock",
+   "spec": "Affliction",
+   "fdid": 136145,
+   "file": "spell_shadow_deathcoil",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_shadow_deathcoil.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Warlock",
+   "spec": "Demonology",
+   "fdid": 136172,
+   "file": "spell_shadow_metamorphosis",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_shadow_metamorphosis.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Hunter",
+   "spec": "Beast Mastery",
+   "fdid": 132164,
+   "file": "ability_hunter_beasttaming",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/ability_hunter_beasttaming.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Hunter",
+   "spec": "Survival",
+   "fdid": 132215,
+   "file": "ability_hunter_swiftstrike",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/ability_hunter_swiftstrike.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Hunter",
+   "spec": "Marksmanship",
+   "fdid": 132222,
+   "file": "ability_marksmanship",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/ability_marksmanship.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Paladin",
+   "spec": "Retribution",
+   "fdid": 135873,
+   "file": "spell_holy_auraoflight",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_holy_auraoflight.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Paladin",
+   "spec": "Holy",
+   "fdid": 135920,
+   "file": "spell_holy_holybolt",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_holy_holybolt.jpg",
+   "ok": true
+  },
+  {
+   "cls": "Paladin",
+   "spec": "Protection",
+   "fdid": 135893,
+   "file": "spell_holy_devotionaura",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_holy_devotionaura.jpg",
+   "ok": true
+  }
+ ],
+ "buffIcons": [
+  {
+   "name": "Adventure Awaits",
+   "fdid": 132327,
+   "file": "ability_townwatch",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/ability_townwatch.jpg",
+   "ok": true
+  },
+  {
+   "name": "Discoverer's Delight",
+   "fdid": 1120721,
+   "file": "wow_token01",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/wow_token01.jpg",
+   "ok": true
+  },
+  {
+   "name": "Well Fed XP Boost",
+   "fdid": 894556,
+   "file": "xp_icon",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/xp_icon.jpg",
+   "ok": true
+  },
+  {
+   "name": "Well-Rested",
+   "fdid": 132802,
+   "file": "inv_drink_15",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/inv_drink_15.jpg",
+   "ok": true
+  },
+  {
+   "name": "Winds of Wisdom",
+   "fdid": 1120721,
+   "file": "wow_token01",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/wow_token01.jpg",
+   "ok": true
+  },
+  {
+   "name": "WoW Variety Show - The Winds of Inspiration!",
+   "fdid": 135833,
+   "file": "spell_frost_arcticwinds",
+   "url": "https://render.worldofwarcraft.com/us/icons/56/spell_frost_arcticwinds.jpg",
+   "ok": true
   }
  ]
 }

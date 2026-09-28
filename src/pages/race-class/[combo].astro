@@ -2,7 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import { all, one, slug, val } from "../../data/db.ts";
 import { Image } from "astro:assets";
-import { classIcon } from "../../data/assets.ts";
+import { classIcon, specFor } from "../../data/assets.ts";
 
 const build = val(`SELECT value FROM meta WHERE key='build'`);
 
@@ -77,7 +77,15 @@ const desc = `${race} can be a ${cls} in World of Warcraft: Forever. ${raceClass
           <tbody>
             {talents.map((t) => (
               <tr>
-                <td>{t.tab || "—"}</td>
+                <td>
+                  <span class="flex items-center gap-2.5">
+                    {t.tab && specFor(cls, t.tab) && (
+                      <Image src={specFor(cls, t.tab)!} alt="" width={26} height={26}
+                        format="webp" class="shrink-0" aria-hidden="true" />
+                    )}
+                    <span>{t.tab || "—"}</span>
+                  </span>
+                </td>
                 <td class="text-right font-mono">{t.n}</td>
                 <td class="text-right font-mono text-ink-faint">{t.minTier + 1}–{t.maxTier + 1}</td>
                 <td class="text-right"><a href={`/classes/${slug(cls)}/`} class="text-[0.82rem] hover:text-rust arrow-link">all trees <span class="arrow">→</span></a></td>
@@ -118,7 +126,7 @@ const desc = `${race} can be a ${cls} in World of Warcraft: Forever. ${raceClass
       {Boolean(is_skyborne) && (
         <div class="border-l-2 border-ochre pl-3 mt-5">
           <p class="text-[0.85rem] text-ink-soft">
-            Skyborne split into two races in the client — <strong>High Order</strong> and
+            Skyborne split into two races in the client — <strong>High Order</strong> and{" "}
             <strong>Windshaper</strong>. Blizzard's announcement only described one.
           </p>
         </div>

@@ -14,6 +14,10 @@ const marketing = import.meta.glob<{ default: ImageMetadata }>(
   { eager: true },
 );
 const icons = import.meta.glob<{ default: ImageMetadata }>("/src/assets/classes/*.jpg", { eager: true });
+// 天赋树/专精图标 —— fdid 来自 TalentTab.SpellIconID（就是 fdid）
+const specImgs = import.meta.glob<{ default: ImageMetadata }>("/src/assets/specs/*.jpg", { eager: true });
+// XP 增益法术的图标 —— fdid 来自 spell_named.icon_fdid
+const buffImgs = import.meta.glob<{ default: ImageMetadata }>("/src/assets/buffs/*.jpg", { eager: true });
 
 /** 文件名（不含扩展名）→ ImageMetadata */
 const byName = Object.fromEntries(
@@ -98,6 +102,27 @@ export const classIcon: Record<string, ImageMetadata | undefined> = Object.fromE
     mod.default,
   ]),
 );
+
+// ── 天赋树 / 专精图标 ─────────────────────────────────────────
+// key 是 `<职业slug>-<专精slug>`，例如 warrior-arms / druid-feral-combat
+const byStem = (mods: Record<string, { default: ImageMetadata }>) =>
+  Object.fromEntries(Object.entries(mods).map(([p, m]) => [p.split("/").pop()!.replace(".jpg", ""), m.default]));
+
+export const specIcon: Record<string, ImageMetadata | undefined> = byStem(specImgs);
+
+/** 取某个职业某个专精的图标。专精名跟客户端 TalentTab.Name_lang 走 */
+export function specFor(cls: string, spec: string): ImageMetadata | undefined {
+  const s = (x: string) => x.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  return specIcon[`${s(cls)}-${s(spec)}`];
+}
+
+// ── XP 增益法术图标 ───────────────────────────────────────────
+export const buffIcon: Record<string, ImageMetadata | undefined> = byStem(buffImgs);
+
+/** 取某个增益法术的图标（按法术名） */
+export function buffFor(name: string): ImageMetadata | undefined {
+  return buffIcon[name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")];
+}
 
 export const attribution =
   "Artwork © Blizzard Entertainment. Reproduced from Blizzard's own press and marketing assets for reference.";

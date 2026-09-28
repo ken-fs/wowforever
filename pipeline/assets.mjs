@@ -89,26 +89,62 @@ for (const [base, url] of byBase) {
   await sleep(120);
 }
 
-// ── 2. 职业图标（fdid → 文件名 → 官方渲染 CDN）────────────────
-console.error("\n▸ 职业图标");
-const classes = JSON.parse(
-  execFileSync("sqlite3", ["-readonly", "-json", DB, "SELECT Name_lang AS name, IconFileDataID AS fdid FROM ChrClasses"], { encoding: "utf8" }),
+// ── 2. 游戏图标（fdid → 文件名 → 官方渲染 CDN）────────────────
+// 三组：职业徽记 9 · 天赋树/专精 27 · XP 增益 5
+const slug = (s) => String(s ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const iconCache = new Map(); // fdid → 文件名，避免重复请求
+
+async function iconUrl(fdid) {
+  if (iconCache.has(fdid)) return iconCache.get(fdid);
+  const info = await (await fetch(`https://wago.tools/api/info/${fdid}`, { headers: { "User-Agent": UA } })).json().catch(() => ({}));
+  const file = (info.filename || "").split("/").pop().replace(".blp", "");
+  const url = file ? `https://render.worldofwarcraft.com/us/icons/56/${file}.jpg` : null;
+  iconCache.set(fdid, url);
+  return url;
+}
+
+async function fetchIconSet(label, rows, outDir, nameOf) {
+  console.error(`\n▸ ${label}`);
+  mkdirSync(outDir, { recursive: true });
+  const out = [];
+  for (const r of rows) {
+    if (!r.fdid || String(r.fdid) === "0") { out.push({ ...r, ok: false, skip: "无 fdid" }); continue; }
+    const url = await iconUrl(r.fdid);
+    if (!url) { out.push({ ...r, ok: false, skip: "无文件名" }); continue; }
+    const dest = resolve(outDir, `${nameOf(r)}.jpg`);
+    const res = await grab(url, dest);
+    out.push({ ...r, file: url.split("/").pop().replace(".jpg", ""), url, ok: !!res.dest, skip: res.skip });
+    console.error(`  ${res.dest ? "✓" : "✗"} ${nameOf(r).padEnd(30)} ${url.split("/").pop().replace(".jpg", "")}`);
+    await sleep(120);
+  }
+  return out;
+}
+
+const q = (sql) => JSON.parse(execFileSync("sqlite3", ["-readonly", "-json", DB, sql], { encoding: "utf8" }));
+
+const classIcons = await fetchIconSet(
+  "职业徽记",
+  q("SELECT Name_lang AS name, IconFileDataID AS fdid FROM ChrClasses"),
+  ICONS,
+  (r) => slug(r.name),
 );
 
-const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-const classIcons = [];
-for (const c of classes) {
-  if (!c.fdid) { classIcons.push({ ...c, ok: false, skip: "无 fdid" }); continue; }
-  const info = await (await fetch(`https://wago.tools/api/info/${c.fdid}`, { headers: { "User-Agent": UA } })).json().catch(() => ({}));
-  const file = (info.filename || "").split("/").pop().replace(".blp", "");
-  if (!file) { classIcons.push({ ...c, ok: false, skip: "无文件名" }); continue; }
-  const url = `https://render.worldofwarcraft.com/us/icons/56/${file}.jpg`;
-  const dest = resolve(ICONS, `${slug(c.name)}.jpg`);
-  const r = await grab(url, dest);
-  classIcons.push({ name: c.name, file, url, ok: !!r.dest, kb: r.dest ? Math.round(statSync(r.dest).size / 1024) : 0, skip: r.skip });
-  console.error(`  ${r.dest ? "✓" : "✗"} ${c.name.padEnd(12)} ${file.padEnd(28)} ${r.dest ? Math.round(statSync(r.dest).size / 1024) + "KB" : r.skip}`);
-  await sleep(150);
-}
+const specIcons = await fetchIconSet(
+  "天赋树 / 专精",
+  // ClassMask 是位掩码 —— Talent.ClassID 在 Forever 客户端里整列是 0，别用
+  q(`SELECT c.Name_lang AS cls, tt.Name_lang AS spec, tt.SpellIconID AS fdid
+     FROM TalentTab tt
+     JOIN ChrClasses c ON (CAST(tt.ClassMask AS INTEGER) & (1 << (CAST(c.ID AS INTEGER)-1))) > 0`),
+  resolve(ROOT, "src/assets/specs"),
+  (r) => `${slug(r.cls)}-${slug(r.spec)}`,
+);
+
+const buffIcons = await fetchIconSet(
+  "XP 增益法术",
+  q(`SELECT DISTINCT s.name, s.icon_fdid AS fdid FROM xp_spell x JOIN spell_named s ON s.id = x.id WHERE s.icon_fdid > 0`),
+  resolve(ROOT, "src/assets/buffs"),
+  (r) => slug(r.name),
+);
 
 // ── 3. 清单 ───────────────────────────────────────────────────
 mkdirSync(dirname(MANIFEST), { recursive: true });
@@ -121,16 +157,20 @@ writeFileSync(
         marketing: "blz-contentstack-images.akamaized.net — Blizzard 官网 Forever 落地页素材",
         classIcons: "render.worldofwarcraft.com/us/icons — 游戏图标官方渲染 CDN（fdid 经 wago.tools/api/info 解析）",
       },
+      counts: { marketing: official.filter((x) => x.ok).length, classIcons: classIcons.filter((x) => x.ok).length, specIcons: specIcons.filter((x) => x.ok).length, buffIcons: buffIcons.filter((x) => x.ok).length },
       marketing: official,
       classIcons,
+      specIcons,
+      buffIcons,
     },
     null,
     1,
   ),
 );
 
-const okM = official.filter((x) => x.ok).length;
-const okC = classIcons.filter((x) => x.ok).length;
-console.error(`\n→ src/assets/official/  ${okM}/${official.length} 张营销素材`);
-console.error(`→ src/assets/classes/   ${okC}/${classIcons.length} 个职业图标`);
-console.error(`→ data/assets.json      清单`);
+console.error("");
+for (const [dir, arr] of [["official", official], ["classes", classIcons], ["specs", specIcons], ["buffs", buffIcons]]) {
+  const ok = arr.filter((x) => x.ok).length;
+  console.error(`→ src/assets/${dir.padEnd(9)} ${ok}/${arr.length}`);
+}
+console.error("→ data/assets.json   清单");

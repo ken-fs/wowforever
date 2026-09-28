@@ -1,8 +1,8 @@
 ---
 import Base from "../layouts/Base.astro";
-import { all, val, one, count } from "../data/db.ts";
+import { all, val, one, count, slug } from "../data/db.ts";
 import { Image } from "astro:assets";
-import { hero, ogImage, attribution } from "../data/assets.ts";
+import { hero, ogImage, classIcon, specFor, attribution } from "../data/assets.ts";
 
 const build = val(`SELECT value FROM meta WHERE key='build'`);
 
@@ -21,6 +21,15 @@ const counts = {
   xpbuffs: val(`SELECT COUNT(DISTINCT name) FROM xp_spell WHERE reliable = 1 AND aura = 200`),
   dungeons: count("dungeons"),
 };
+
+// 首页职业网格：每个职业 + 它的 3 个天赋树图标
+const specGroups = all(`SELECT DISTINCT class, tab FROM talent_full WHERE class <> '' ORDER BY class, tab`)
+  .reduce((acc, r) => {
+    let g = acc.find((x) => x.cls === r.class);
+    if (!g) { g = { cls: r.class, specs: [] }; acc.push(g); }
+    g.specs.push({ name: r.tab, img: specFor(r.class, r.tab) });
+    return acc;
+  }, [] as { cls: string; specs: { name: string; img: any }[] }[]);
 
 const NEWSWORTHY = [
   {
@@ -132,6 +141,42 @@ const NEWSWORTHY = [
         All three come from <span class="font-mono">CharBaseInfo</span> in the client. Nobody has written
         them up yet.
       </p>
+    </div>
+  </section>
+
+  <section class="py-9 border-t border-rule">
+    <div class="flex flex-wrap items-baseline justify-between gap-2 mb-1">
+      <h2 class="text-[1.6rem]">Nine classes, twenty-seven specs</h2>
+      <p class="text-[0.82rem] text-ink-faint">Icons from the game client.</p>
+    </div>
+    <p class="text-[0.9rem] text-ink-soft mb-5 max-w-[68ch]">
+      Every class Forever ships, with the three talent trees it actually has. Click through for the
+      points, tiers and spells inside each one.
+    </p>
+    <div class="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+      {
+        specGroups.map(({ cls, specs }) => (
+          <a href={`/classes/${slug(cls)}/`} class="card block p-3">
+            <span class="flex items-center gap-2 mb-2">
+              {classIcon[slug(cls)] && (
+                <Image src={classIcon[slug(cls)]!} alt="" width={30} height={30}
+                  format="webp" class="shrink-0" aria-hidden="true" />
+              )}
+              <span class="font-serif text-[0.98rem]">{cls}</span>
+            </span>
+            <span class="flex flex-wrap gap-1.5">
+              {specs.map((sp) => (
+                <span title={sp.name}>
+                  {sp.img ? (
+                    <Image src={sp.img} alt="" width={18} height={18} format="webp"
+                      class="border border-rule" aria-hidden="true" />
+                  ) : null}
+                </span>
+              ))}
+            </span>
+          </a>
+        ))
+      }
     </div>
   </section>
 

@@ -2,7 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import { all, one, slug, val } from "../../data/db.ts";
 import { Image } from "astro:assets";
-import { classIcon } from "../../data/assets.ts";
+import { classIcon, specFor } from "../../data/assets.ts";
 
 const build = val(`SELECT value FROM meta WHERE key='build'`);
 
@@ -68,7 +68,13 @@ const ROLE = {
               const tiers = [...new Set(pts.map((p) => p.tier))].sort((a, b) => a - b);
               return (
                 <div>
-                  <h3 class="font-serif text-[1.1rem] mb-2">{tree}</h3>
+                  <h3 class="flex items-center gap-2.5 font-serif text-[1.1rem] mb-2">
+                    {specFor(cls, tree) && (
+                      <Image src={specFor(cls, tree)!} alt="" width={30} height={30}
+                        format="webp" class="shrink-0" aria-hidden="true" />
+                    )}
+                    <span>{tree}</span>
+                  </h3>
                   <table class="data">
                     <thead>
                       <tr><th class="w-16">Tier</th><th>Talent</th></tr>
@@ -117,7 +123,7 @@ const ROLE = {
 
       <div class="border border-rule-hard bg-card p-4 mt-6">
         <p class="text-[0.85rem] text-ink-soft">
-          Leveling this class? The
+          Leveling this class? The{" "}
           <a href="/tools/xp-calculator/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">XP calculator</a>
           works out what 1&ndash;60 costs with your buffs up. {Number(recipeCount).toLocaleString()} profession
           recipes are indexed too.

@@ -107,6 +107,7 @@ git add -A && git commit && git push
 | `(CN Only)` 标记 | `xp_spell.cn_only` | `Winds of Wisdom` 是国服专属，美服拿不到 |
 | 响应体不像 CSV 表头就拒收 | `build.mjs` `fetchTable` | 实测 wago.tools 把 Cloudflare `520` 当 200 吐回来过 |
 | 表头被吃掉的哨兵检查 | `build.mjs` `importAll` | `.import --skip 1` 会把第一行数据变成列名 |
+| 关系列空值一律用 `CAST(x AS INTEGER) != 0` 判 | 查数据时 | 见下方「⚠️ 类型陷阱」|
 
 **已知拿不到的数据**（别硬凑，写在页面上）：
 
@@ -435,3 +436,44 @@ node ../scripts/browser/browser.mjs eval "http://localhost:4399/" "
 
 ⚠️ **毛玻璃铺在纯色纸面上是看不见的**（没东西可模糊），必须有内容从底下滚过才有意义。
 所以只用在吸顶导航上。别往卡片上加 —— 纸面是平的，加了只是变灰。
+
+
+---
+
+## ⚠️ 类型陷阱：`.import --csv` 的列是 `ANY` 类型
+
+**踩过一次，而且差点得出错误结论。**
+
+`.import --csv` 不动列类型，全部是 `ANY`。CSV 里写 `0` 的列，SQLite 可能存成**整数 0**，
+也可能存成**字符串 `'0'`**，取决于该列当行的其他值。
+
+于是这个判空写法**静默出错**：
+
+```sql
+-- ❌ 数字列会恒为真
+WHERE COALESCE(SpellID,'') NOT IN ('','0')
+```
+
+因为 SQLite 的类型排序是 `NULL < INTEGER < TEXT`，**整数 0 永远小于字符串 `'0'`**，
+所以 `0 NOT IN ('','0')` 求值为「真」。实测 432 行全零的列，这条会数出 432 个「非零」。
+
+**正确写法**：
+
+```sql
+-- ✅ 显式转整数
+WHERE CAST(SpellID AS INTEGER) != 0
+```
+
+排查手段：`SELECT typeof(列名), hex(列名) FROM 表 LIMIT 1` —— 别信屏幕上看到的 `0`。
+
+### 顺带：Forever 客户端挪过几个关系列
+
+三处都验证过，**原始 CSV 里就是空/0**，不是导入问题：
+
+| 表.列 | 状态 | 真值在哪 |
+|---|---|---|
+| `Talent.ClassID` | 整列 0 | `TalentTab.ClassMask` 位掩码，`1 << (ChrClasses.ID - 1)` |
+| `Talent.SpellID` | 整列 0 | `Talent.SpellRank_0`（415/432 能解析出名字）|
+| `QuestV2` | 只有 3 列 | 任务文本在服务端，客户端根本没有 |
+
+**教训**：拿到暴雪的表先别信列名，抽几个非零样本验证一遍再写 JOIN。

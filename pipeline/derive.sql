@@ -81,7 +81,7 @@ SELECT
   c.Name_lang                    AS class,
   CAST(c.ID AS INTEGER)          AS class_id,
   sn.name                        AS spell_name,
-  CAST(t.SpellID AS INTEGER)     AS spell_id
+  CAST(t.SpellRank_0 AS INTEGER) AS spell_id
 FROM "Talent" t
 LEFT JOIN "TalentTab" tt ON CAST(tt.ID AS INTEGER) = CAST(t.TabID AS INTEGER)
 -- ⚠️ Talent.ClassID 在 Forever 客户端里整列是 0（没填），职业要靠
@@ -89,7 +89,9 @@ LEFT JOIN "TalentTab" tt ON CAST(tt.ID AS INTEGER) = CAST(t.TabID AS INTEGER)
 -- 实测掩码集合 {1,2,4,8,16,64,128,256,1024} 正好对上 9 个职业。
 LEFT JOIN "ChrClasses" c
   ON (CAST(tt.ClassMask AS INTEGER) & (1 << (CAST(c.ID AS INTEGER) - 1))) > 0
-LEFT JOIN spell_named sn ON sn.id = CAST(t.SpellID AS INTEGER);
+-- ⚠️ Talent.SpellID 在 Forever 客户端里整列是 0，真法术 id 在 SpellRank_0
+-- （实测 415/432 能在 spell_named 里解析出名字）。别再改回 SpellID。
+LEFT JOIN spell_named sn ON sn.id = CAST(t.SpellRank_0 AS INTEGER);
 CREATE INDEX ix_talent_class ON talent_full(class_id);
 
 -- ── 支柱 ③ 专业 / 配方 ────────────────────────────────────────

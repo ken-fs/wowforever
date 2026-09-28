@@ -1,6 +1,8 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { all, val } from "../../data/db.ts";
+import { Image } from "astro:assets";
+import { buffFor } from "../../data/assets.ts";
 
 const build = val(`SELECT value FROM meta WHERE key='build'`);
 
@@ -72,7 +74,11 @@ const desc =
           {
             buffs.map((b) => (
               <label class="flex items-start gap-2.5 cursor-pointer group">
-                <input type="checkbox" data-pct={b.pct} class="mt-0.5 accent-[#a63d1c]" />
+                <input type="checkbox" data-pct={b.pct} class="mt-1 accent-[#a63d1c]" />
+                {buffFor(b.name) && (
+                  <Image src={buffFor(b.name)!} alt="" width={32} height={32} format="webp"
+                    class="shrink-0 border border-rule" aria-hidden="true" />
+                )}
                 <span>
                   <span class="font-medium group-hover:text-rust">{b.name}</span>
                   <span class="font-mono text-ochre ml-2">+{b.pct}%</span>
