@@ -62,7 +62,7 @@ const totals = {
         oldRaces.map((a) => (
           <a
             href={`/race-class/${slug(a.race)}-${slug(a.class)}/`}
-            class="block border border-rule-hard bg-card p-4 hover:border-rust transition-colors"
+            class="card block p-4"
           >
             <span class="flex items-center gap-2.5">
               {classIcon[slug(a.class)] && (

@@ -53,20 +53,22 @@ const editionShots = [
     skyborne && (
       <section class="py-8">
         <figure>
-          <Image
-            src={skyborne}
-            alt="Official Skyborne artwork for World of Warcraft: Forever"
-            widths={[600, 960]}
-            sizes="(max-width: 1100px) 100vw, 1100px"
-            format="webp"
-            loading="eager"
-            decoding="async"
-            class="w-full max-h-[520px] object-cover border border-rule-hard"
-          />
+          <span class="zoom-frame block border border-rule-hard">
+            <Image
+              src={skyborne}
+              alt="Official Skyborne artwork for World of Warcraft: Forever"
+              widths={[600, 960]}
+              sizes="(max-width: 1100px) 100vw, 1100px"
+              format="webp"
+              loading="eager"
+              decoding="async"
+              class="w-full max-h-[520px] object-cover border border-rule-hard"
+            />
+          </span>
           <figcaption class="mt-2 text-[0.85rem] text-ink-soft">
             <strong>The Skyborne.</strong> The client ships them as two races — High Order for the Alliance
             and Windshaper for the Horde. Blizzard's artwork shows one.{" "}
-            <a href="/guides/skyborne/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">More on the split →</a>
+            <a href="/guides/skyborne/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust arrow-link">More on the split <span class="arrow">→</span></a>
           </figcaption>
         </figure>
       </section>
@@ -83,16 +85,18 @@ const editionShots = [
       {
         zoneShots.map((z, i) => (
           <figure class={i === 0 ? "sm:col-span-2" : ""}>
-            <Image
-              src={z.img!}
-              alt={`${z.name} in World of Warcraft: Forever — official artwork`}
-              widths={i === 0 ? [700, 1200] : [400, 700]}
-              sizes={i === 0 ? "(max-width: 1100px) 100vw, 1100px" : "(max-width: 640px) 100vw, 520px"}
-              format="webp"
-              loading="lazy"
-              decoding="async"
-              class="w-full border border-rule-hard"
-            />
+            <span class="zoom-frame block border border-rule-hard">
+              <Image
+                src={z.img!}
+                alt={`${z.name} in World of Warcraft: Forever — official artwork`}
+                widths={i === 0 ? [700, 1200] : [400, 700]}
+                sizes={i === 0 ? "(max-width: 1100px) 100vw, 1100px" : "(max-width: 640px) 100vw, 520px"}
+                format="webp"
+                loading="lazy"
+                decoding="async"
+                class="w-full border border-rule-hard"
+              />
+            </span>
             <figcaption class="mt-2 text-[0.85rem]">
               <span class="font-serif text-[1rem]">{z.name}</span>
               <span class="block text-ink-soft mt-0.5 leading-relaxed">{z.note}</span>
@@ -112,16 +116,18 @@ const editionShots = [
       {
         featureShots.map((f) => (
           <figure>
-            <Image
-              src={f.img!}
-              alt={`${f.name} — official World of Warcraft: Forever artwork`}
-              widths={[360, 620]}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 340px"
-              format="webp"
-              loading="lazy"
-              decoding="async"
-              class="w-full border border-rule-hard"
-            />
+            <span class="zoom-frame block border border-rule-hard">
+              <Image
+                src={f.img!}
+                alt={`${f.name} — official World of Warcraft: Forever artwork`}
+                widths={[360, 620]}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 340px"
+                format="webp"
+                loading="lazy"
+                decoding="async"
+                class="w-full border border-rule-hard"
+              />
+            </span>
             <figcaption class="mt-2 text-[0.85rem]">
               <span class="font-serif text-[1rem]">{f.name}</span>
               <span class="block text-ink-soft mt-0.5 leading-relaxed">{f.note}</span>
@@ -144,16 +150,18 @@ const editionShots = [
       {
         editionShots.map((e) => (
           <figure>
-            <Image
-              src={e.img!}
-              alt={`${e.name} — World of Warcraft: Forever edition artwork`}
-              widths={[400, 720]}
-              sizes="(max-width: 640px) 100vw, 520px"
-              format="webp"
-              loading="lazy"
-              decoding="async"
-              class="w-full border border-rule-hard"
-            />
+            <span class="zoom-frame block border border-rule-hard">
+              <Image
+                src={e.img!}
+                alt={`${e.name} — World of Warcraft: Forever edition artwork`}
+                widths={[400, 720]}
+                sizes="(max-width: 640px) 100vw, 520px"
+                format="webp"
+                loading="lazy"
+                decoding="async"
+                class="w-full border border-rule-hard"
+              />
+            </span>
             <figcaption class="mt-2 text-[0.85rem]">
               <span class="font-serif text-[1rem]">{e.name}</span>
               <span class="block text-ink-soft mt-0.5 leading-relaxed">{e.note}</span>

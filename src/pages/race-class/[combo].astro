@@ -80,7 +80,7 @@ const desc = `${race} can be a ${cls} in World of Warcraft: Forever. ${raceClass
                 <td>{t.tab || "—"}</td>
                 <td class="text-right font-mono">{t.n}</td>
                 <td class="text-right font-mono text-ink-faint">{t.minTier + 1}–{t.maxTier + 1}</td>
-                <td class="text-right"><a href={`/classes/${slug(cls)}/`} class="text-[0.82rem] hover:text-rust">all trees →</a></td>
+                <td class="text-right"><a href={`/classes/${slug(cls)}/`} class="text-[0.82rem] hover:text-rust arrow-link">all trees <span class="arrow">→</span></a></td>
               </tr>
             ))}
           </tbody>
@@ -89,7 +89,7 @@ const desc = `${race} can be a ${cls} in World of Warcraft: Forever. ${raceClass
         <p class="text-ink-faint text-[0.9rem]">No talent data recorded for this class yet.</p>
       )}
       <p class="mt-4 text-[0.85rem] text-ink-soft">
-        <a href="/tools/xp-calculator/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">See how fast this race/class levels →</a>
+        <a href="/tools/xp-calculator/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust arrow-link">See how fast this race/class levels <span class="arrow">→</span></a>
       </p>
     </div>
 
@@ -101,7 +101,7 @@ const desc = `${race} can be a ${cls} in World of Warcraft: Forever. ${raceClass
             <>{i > 0 && ", "}<a href={`/race-class/${slug(race)}-${slug(r.class)}/`} class="hover:text-rust">{r.class}</a></>
           ))}
         </p>
-        <a href={`/races/${slug(race)}/`} class="text-[0.85rem] hover:text-rust">All {race} details →</a>
+        <a href={`/races/${slug(race)}/`} class="text-[0.85rem] hover:text-rust arrow-link">All {race} details <span class="arrow">→</span></a>
       </div>
 
       <div class="border border-rule-hard bg-card p-4 mt-4">
@@ -111,7 +111,7 @@ const desc = `${race} can be a ${cls} in World of Warcraft: Forever. ${raceClass
             <>{i > 0 && ", "}<a href={`/race-class/${slug(r.race)}-${slug(cls)}/`} class="hover:text-rust">{r.race}</a></>
           ))}
         </p>
-        <a href={`/classes/${slug(cls)}/`} class="text-[0.85rem] hover:text-rust">All {cls} details →</a>
+        <a href={`/classes/${slug(cls)}/`} class="text-[0.85rem] hover:text-rust arrow-link">All {cls} details <span class="arrow">→</span></a>
       </div>
 
       {/* 注意：is_skyborne 是 0/1，不能直接 `{x && ...}` —— 0 会渲染成字面量 "0" */}

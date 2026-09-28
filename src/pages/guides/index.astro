@@ -22,9 +22,9 @@ const guides = (await getCollection("guides")).sort(
     <div class="space-y-5">
       {
         guides.map((g) => (
-          <a href={`/guides/${g.id}/`} class="grid gap-4 sm:grid-cols-[180px_1fr] border-t-2 border-rule-hard pt-4 hover:border-rust transition-colors">
+          <a href={`/guides/${g.id}/`} class="card grid gap-4 p-4 sm:grid-cols-[180px_1fr]">
             {guideImage[g.id] && (
-              <Image
+              <span class="zoom-frame block self-start border border-rule-hard"><Image
                 src={guideImage[g.id]!}
                 alt=""
                 widths={[180, 360]}
@@ -32,8 +32,8 @@ const guides = (await getCollection("guides")).sort(
                 format="webp"
                 loading="lazy"
                 decoding="async"
-                class="w-full aspect-video object-cover border border-rule-hard self-start"
-              />
+                class="w-full aspect-video object-cover"
+              /></span>
             )}
             <span class="block">
             <h2 class="font-serif text-[1.3rem]">{g.data.title}</h2>

@@ -12,7 +12,7 @@ const NAV = [
 ];
 const path = Astro.url.pathname;
 ---
-<header class="border-b-2 border-rule-hard bg-paper-edge/60">
+<header class="glass sticky top-0 z-40 border-b-2 border-rule-hard">
   <div class="w-full max-w-[1100px] mx-auto px-5 sm:px-8">
     <div class="flex flex-wrap items-baseline gap-x-6 gap-y-2 py-4">
       <a href="/" class="group flex items-baseline gap-2 shrink-0">
@@ -26,7 +26,8 @@ const path = Astro.url.pathname;
             return (
               <a
                 href={n.href}
-                class:list={["py-0.5 transition-colors", on ? "text-rust border-b-2 border-rust" : "text-ink-soft hover:text-ink"]}
+                aria-current={on ? "page" : undefined}
+                class:list={["nav-link py-0.5", on ? "text-rust" : "text-ink-soft hover:text-ink"]}
               >
                 {n.label}
               </a>

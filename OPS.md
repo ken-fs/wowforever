@@ -405,3 +405,33 @@ node ../scripts/browser/browser.mjs eval "http://localhost:4399/" "
                   gtag:typeof window.gtag})"
 # 期望：{条可见:true, gtag:undefined}
 ```
+
+
+---
+
+## 动效
+
+全在 `src/styles/global.css` 末尾，**纯 CSS，零 JS**。
+
+参考 `aniimo.wiki` 的力度（300ms、微位移、边框变色），没做花哨的：
+实测那站是 71 处 transition + 85 处 hover + `backdrop-blur-sm`，没有动画库。
+
+| 类 | 效果 | 用在哪 |
+|---|---|---|
+| `.glass` | 半透明 + `backdrop-filter: blur(14px) saturate(1.4)` | 吸顶导航 |
+| `.card` | hover：`translateY(-2px)` + 锈红边框 + 双层阴影 | 首页工具卡 / 攻略索引 / changes |
+| `.zoom-frame` | 卡片 hover 时内部图 `scale(1.04)` | 攻略索引 / 图库 |
+| `.arrow-link` | 箭头 `translateX(0.28rem)` | 7 处「→」链接 |
+| `.nav-link` | 下划线从中间展开（`scaleX`） | 导航 |
+| `table.data tr` | hover 时首列滑出锈红标线（`scaleY`） | 数据表 |
+
+**三条约束**：
+
+1. **缓动不用 `ease`/`ease-in-out`** —— DESIGN-RULES 禁线性动画，统一用
+   `--ease-out-quint` 和 `--ease-spring`。
+2. **过渡不写 `all`** —— 只列 `color/background-color/border-color/box-shadow/transform`，
+   写 `all` 会把布局属性也带上，hover 时触发重排。
+3. **`prefers-reduced-motion: reduce` 全关** —— 系统开了减少动态效果就禁用位移和缩放。
+
+⚠️ **毛玻璃铺在纯色纸面上是看不见的**（没东西可模糊），必须有内容从底下滚过才有意义。
+所以只用在吸顶导航上。别往卡片上加 —— 纸面是平的，加了只是变灰。
