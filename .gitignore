@@ -11,3 +11,6 @@ out/
 
 # 字幕语料体积大且随时可重跑
 data/transcripts/
+
+# IndexNow key 本体不入库；public/<key>.txt 是它的公开副本（IndexNow 要抓的那个）
+.indexnow-key
