@@ -220,3 +220,70 @@ curl -sL "https://worldofwarcraft.blizzard.com/en-us/news/<id>" -o /tmp/n.html
 · `24301508` Pre-purchase · `24307383` **Legacy System**
 
 ---
+
+
+---
+
+## 部署（已接好）
+
+```
+GitHub   github.com/ken-fs/wowforever          （公开，repo id 1391681630）
+Workers  wowforever  ·  workers.dev: https://wowforever.493129720ljw.workers.dev
+触发     push 到 main → Cloudflare Git 集成自动构建
+zone     915927540a00804212ce71ffa276b1f5（wowforever.one）
+```
+
+⚠️ **本地 `npx wrangler deploy` 只是临时的**，会被下一次 CI push 覆盖。
+最终部署永远走 `git push`。
+
+### Cloudflare 构建配置（用 API 建的，备查）
+
+```
+POST /accounts/{acc}/builds/repos/connections
+  { repo_id:"1391681630", repo_name:"wowforever", provider_type:"github",
+    provider_account_id:"223587720", provider_account_name:"ken-fs" }
+
+POST /accounts/{acc}/builds/workers
+  { script_tag: "<Worker 的 script_tag hash，不是 Worker 名字>",
+    git_repository: { ...同上, branch:"main" },
+    previews_enabled: false,
+    production_settings: { build_command:"npm run build", deploy_command:"npx wrangler deploy",
+      root_directory:"/", build_caching_enabled:true, path_includes:["*"],
+      build_token_uuid:"0c55960d-77b2-474d-8c0e-3e39adb5053c" } }
+
+POST /accounts/{acc}/builds/triggers/{uuid}/builds   body: {"branch":"main"}
+```
+
+### ⚠️ 踩过的坑：`script_tag` 不是 Worker 名字
+
+第一次建配置时填了 `"wowforever"`，构建报 **`unable to verify Worker`** 然后超时。
+正确值要从 services API 取：
+
+```js
+GET /accounts/{acc}/workers/services
+  → result[i].default_environment.script_tag   // 形如 e40eca233c8c466b963b55c59bf3901a
+```
+
+### ⚠️ 建 Worker：raw JS 上传是 service-worker 语法
+
+`PUT /accounts/{acc}/workers/scripts/{name}` 用 `Content-Type: application/javascript` 可以绕开
+multipart（MCP 层会把 multipart 的 CRLF 转义弄坏，报 `No such module`），
+但**上传的内容必须是非模块语法**：
+
+```js
+// ✅ 能建成功
+addEventListener('fetch', function(e){ e.respondWith(new Response('placeholder')); });
+
+// ❌ "Uncaught SyntaxError: Unexpected token 'export'"
+export default { async fetch() { ... } };
+```
+
+这只是 bootstrap 用的占位符，CI 第一次构建就会用真正的 assets 覆盖掉。
+
+### wrangler OAuth token
+
+本机 wrangler 的 OAuth token 会过期（约 24h）。过期后 `npx wrangler deploy` 报
+`Invalid access token [code: 9109]`。**这不影响 CI**（CI 用 build token，不是你的 OAuth）。
+需要本地部署时跑一次 `npx wrangler login`。
+
+或者用 MCP：`cloudflare_execute` 的 token 权限比 wrangler 高，能建 zone（wrangler 只有 `zone:read`）。
