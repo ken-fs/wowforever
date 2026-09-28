@@ -598,3 +598,69 @@ AND (sl.CategoryID = '11' OR sl.DisplayName_lang IN ('Cooking','First Aid','Fish
 
 **顺带验到一次交叉印证**：`Mana Well = Peacebloom ×1 + Empty Vial ×1`，
 和语料里创作者原话 "it just takes a peace bloom and an empty vial" 完全对上。
+
+
+---
+
+## 广告位（Adsterra）
+
+```
+开关      Cloudflare 构建变量 PUBLIC_ADSTERRA=1
+组件      src/components/AdsterraSlot.astro（单元）+ AdBreak.astro（728/320 配对）
+素材      public/ads/<name>.html —— Adsterra 后台 "GET CODE" 原样，勿手改
+```
+
+| 单元 | 尺寸 | 出现 |
+|---|---|---|
+| `leaderboard-728x90` | 728×90 | 宽屏 |
+| `banner-320x50` | 320×50 | 窄屏 |
+
+放在：首页 · 攻略页 · 专业页 · 专业 hub · 职业页。
+**不放** `/about/` `/privacy/` `/404` `/screenshots/` `/videos/`。
+
+### ⚠️ 为什么必须 iframe 隔离
+
+Adsterra 的 banner 脚本**都往共享全局 `window.atOptions` 写自己的配置**。
+同一页内联两个单元 → 后一个覆盖前一个，两个位渲染成同一个广告。
+所以每个单元放独立 HTML，组件挂 iframe。
+
+sandbox 省略 `allow-top-navigation`（部分移动端素材会试图把整页导航走）。
+⚠️ 但 `allow-scripts` + `allow-same-origin` 同时存在时，
+**sandbox 是布局隔离 + 导航摩擦，不是安全边界** —— 真隔离需要独立 origin。
+
+### ⚠️ 同意门控
+
+和 GA 同一套：iframe 先不挂 `src`，真 URL 放 `data-src`。
+拿到 localStorage 的 `wowforever-consent === 'accepted'`
+或收到 `wow:consent-accepted` 事件后才提升。
+
+```
+同意前  2 个 iframe，0 个有 src
+点 Allow 后  2 个都被提升
+```
+
+验证命令：
+```bash
+node ../scripts/browser/browser.mjs eval "http://localhost:4399/" "
+JSON.stringify({iframe:document.querySelectorAll('iframe').length,
+  已加载:[...document.querySelectorAll('iframe')].filter(f=>f.getAttribute('src')).length})"
+# 期望 {iframe:2, 已加载:0}（点 Allow 前）
+```
+
+### ⚠️ 两个尺寸都要判可见性
+
+`hideOnMobile` 只管"窄屏隐藏"。**320 那个必须同时设 `hideOnDesktop`**，
+否则宽屏会**两个都显示**（一个页面出两个广告）。踩过。
+
+```astro
+<AdsterraSlot name="leaderboard-728x90" hideOnMobile />   <!-- 宽屏 -->
+<AdsterraSlot name="banner-320x50" hideOnDesktop />       <!-- 窄屏 -->
+```
+
+实测断点行为：390px → 320 那个；768/1280px → 728 那个。
+
+### 本机测不到广告内容
+
+`bauval.org` 对本机 IP 返 **403**（广告网络屏蔽机房 IP）。
+浏览器里看得到请求确实发出去了、无 console 报错即可 ——
+真实用户 IP 会正常出图。**别把这个 403 当成站上有 bug。**

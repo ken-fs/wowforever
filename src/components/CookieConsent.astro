@@ -12,7 +12,8 @@
  *   - 选择存 localStorage，回访不再弹。
  *   - 没设 PUBLIC_GA_ID 时组件根本不渲染 → 零 JS。
  */
-const GA_ENABLED = Boolean(import.meta.env.PUBLIC_GA_ID);
+// 只要「有 GA 或有广告」就需要同意条 —— 两者都会写 cookie
+const GA_ENABLED = Boolean(import.meta.env.PUBLIC_GA_ID || import.meta.env.PUBLIC_ADSTERRA);
 ---
 {
   GA_ENABLED && (
@@ -76,7 +77,11 @@ const GA_ENABLED = Boolean(import.meta.env.PUBLIC_GA_ID);
       var choice = btn.dataset.consent;
       try { localStorage.setItem(KEY, choice); } catch (e) { /* 忽略 */ }
       bar.hidden = true;
-      if (choice === "accepted" && window.__wowLoadTrackers) window.__wowLoadTrackers();
+      if (choice === "accepted") {
+        if (window.__wowLoadTrackers) window.__wowLoadTrackers();
+        // 广告位 iframe 也在等这个事件（见 AdsterraSlot.astro）
+        document.dispatchEvent(new Event("wow:consent-accepted"));
+      }
     });
   })();
     </script>

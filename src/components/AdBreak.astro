@@ -1,0 +1,14 @@
+---
+/**
+ * AdBreak —— 一个「广告断点」：宽屏出 728×90，窄屏出 320×50。
+ *
+ * 为什么要成对：固定尺寸素材在更窄的 iframe 里会裁切（728 的素材在 375px
+ * 视口只能显示约一半，还带内部滚动条）。所以两个尺寸各自 hideOnMobile 相反。
+ *
+ * 放在**章节之间**，不放首屏上沿 —— 首屏广告既伤体验又伤 LCP，
+ * 而且读者还没看到内容就撞上广告，点击率反而更低。
+ */
+import AdsterraSlot from "./AdsterraSlot.astro";
+---
+<AdsterraSlot name="leaderboard-728x90" width={728} height={90} hideOnMobile />
+<AdsterraSlot name="banner-320x50" width={320} height={50} hideOnDesktop />

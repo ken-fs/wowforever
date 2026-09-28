@@ -1,4 +1,5 @@
 ---
+import AdBreak from "../components/AdBreak.astro";
 import Base from "../layouts/Base.astro";
 import { all, val, one, count, slug } from "../data/db.ts";
 import { Image } from "astro:assets";
@@ -182,6 +183,8 @@ const NEWSWORTHY = [
       }
     </div>
   </section>
+
+<AdBreak />
 
   <section class="py-9 border-t border-rule">
     <div class="flex flex-wrap items-baseline justify-between gap-2 mb-4">

@@ -1,4 +1,5 @@
 ---
+import AdBreak from "../../components/AdBreak.astro";
 import Base from "../../layouts/Base.astro";
 import { render } from "astro:content";
 import { getCollection, getEntry } from "astro:content";
@@ -68,6 +69,8 @@ const others = all.filter((g) => g.id !== guide.id).slice(0, 6);
     <div class="py-8 max-w-[72ch] guide-body">
       <Content />
     </div>
+
+<AdBreak />
 
     {
       guide.data.sources.length > 0 && (

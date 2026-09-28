@@ -1,4 +1,5 @@
 ---
+import AdBreak from "../../components/AdBreak.astro";
 import Base from "../../layouts/Base.astro";
 import { all, one, slug, val } from "../../data/db.ts";
 import { Image } from "astro:assets";
@@ -104,6 +105,8 @@ const ROLE = {
         )
       }
     </div>
+
+<AdBreak />
 
     <aside>
       <h2 class="text-[1.15rem] mb-3">Races that can be a {cls}</h2>
