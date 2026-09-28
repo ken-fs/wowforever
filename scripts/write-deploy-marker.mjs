@@ -21,9 +21,14 @@ import { fileURLToPath } from "node:url";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const out = join(root, "public", ".well-known", "anvilwiki-deploy.txt");
 
+// 只认真正的 SHA。实测：Cloudflare 在**手动触发**的构建里会把
+// WORKERS_CI_COMMIT_SHA 设成分支名（拿到过 "main"），push 触发的才是 commit。
+// 不校验的话，手动重跑一次就会把 "main" 写进标记，巡检立刻误报。
+const SHA_RE = /^[0-9a-f]{40}$/i;
+
 function sha() {
-  const fromCi = process.env.WORKERS_CI_COMMIT_SHA;
-  if (fromCi) return fromCi.trim();
+  const fromCi = (process.env.WORKERS_CI_COMMIT_SHA || "").trim();
+  if (SHA_RE.test(fromCi)) return fromCi.toLowerCase();
   try {
     return execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
   } catch {
