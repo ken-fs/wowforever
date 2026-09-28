@@ -1,6 +1,6 @@
 ---
 title: "The Legacy System, explained: 65 challenges, 21 perks, 16 points"
-description: "How WoW Forever's account-wide Legacy System actually works — every challenge category, all 21 perks by tree, the 16-point cap, and the math that decides your build."
+description: "Every challenge category, all 21 perks, the 16-point spend cap, and the maths that decides your build. Account-wide progression that isn't gear."
 facts:
   - k: "Legacy Challenges"
     v: "65"
@@ -10,43 +10,48 @@ facts:
     v: "16 pts"
   - k: "earnable on one character"
     v: "29 pts"
-updated: 2026-09-27
+updated: 2026-09-28
 build: "1.60.1.70009"
 sources:
   - label: "Blizzard — Get to Know the World of Warcraft: Forever Legacy System"
     url: "https://worldofwarcraft.blizzard.com/en-us/news/24307383"
   - label: "Blizzard — Forever Deep Dive Panel Recap"
     url: "https://worldofwarcraft.blizzard.com/en-us/news/24303313"
-  - label: "Creator breakdowns: Tekn0de, Scottejaye, Hazpataz, MMO Unlocked (5 videos, ~17,000 words of beta footage)"
+  - label: "Creator breakdowns: Tekn0de, Scottejaye, Hazpataz, MMO Unlocked (~17,000 words of beta footage)"
 ---
 
-Legacy is the one system in Forever that isn't a remix of something Classic already had. It's an
-account-wide progression track that pays out in **perks your characters spend, not power they wear** —
-which is the whole point of the "horizontal progression" pitch.
+Legacy is the one system in Forever that isn't a remix of something Classic had.
 
-The short version: you earn points by doing achievements, and each character can spend up to **16** of
-them. That cap is doing more work than any single perk.
+It's an account-wide track that pays out in **perks your characters spend**, not power they wear. That's
+the whole "horizontal progression" pitch.
 
-## How you unlock it
+Short version: you earn points from achievements. Each character can spend **16** of them. That cap does
+more work than any single perk.
 
-Three different triggers, whichever you hit first:
+## How to unlock it
+
+Three triggers. Whichever you hit first:
 
 - Your first character reaches **level 25**
 - You reach **150 skill** in a non-gathering primary profession
-- You explore the entire world map
+- You explore the whole map
 
-Then it's a shield icon on the menu, or the **Y** key.
+Then it's the shield icon on your menu, or the **Y** key.
 
-Points are **Battle.net account-wide** and shared across every **non-Hardcore** character. What is *not*
-shared is the spending — see the cap below.
+Points are **Battle.net account-wide**. They're shared across every **non-Hardcore** character.
 
-## The 16-point cap, and why it matters
+The spending is not shared. That's the next section.
 
-This is the part most guides skip. You can hold 65 challenges' worth of points, but **at launch each
-character can only spend 16**. Blizzard gives two reasons: new players shouldn't fall permanently behind
-veterans, and you shouldn't be forced to level alts to get the full benefit.
+## The 16-point cap
 
-Here's the number that actually decides your build:
+Here's the part that trips people up.
+
+You can hold 65 challenges' worth of points. **At launch, each character can only spend 16.**
+
+Blizzard gives two reasons. New players shouldn't fall permanently behind. And you shouldn't have to level
+alts to get full value.
+
+Here's the number that decides your build:
 
 | Source | Points one character can earn |
 |---|---|
@@ -57,96 +62,92 @@ Here's the number that actually decides your build:
 | Dungeons and Raids | 6 |
 | **Total, no alts required** | **29** |
 
-So a single character can pull **29 points** while only being able to spend **16**. You will always be
-leaving something on the table — the system is designed so that specialization is a real choice, not a
-formality.
+One character can pull **29 points** and spend **16**. You always leave something on the table. That's
+the design. Specialisation has to be a real choice.
 
-The practical read: pick two trees, commit hard, and treat the third as closed. Spreading 16 points
-across all three gets you nothing at a useful rank in any of them.
+So pick two trees. Commit. Treat the third as closed. Spreading 16 points across all three gets you
+nothing at a useful rank in any of them.
 
 ## The three trees
 
-Seven perks each, 21 in total.
+Seven perks each. 21 total.
 
 ### Professions
 
 | Perk | What it does |
 |---|---|
 | **Working Overtime** | Chance at a skill point in every tradeskill, including class-only ones like Lockpicking |
-| **Bountiful Harvest** | Additional Scarce resources from mining, herbalism and skinning |
-| **Bartering** | Cheaper items from vendors |
-| **Performance Bonus** | Sometimes increased **Merchant's Favor** from the Azeroth Commerce Authority or Durotar Supply and Logistics |
+| **Bountiful Harvest** | Extra Scarce resources from mining, herbalism and skinning |
+| **Bartering** | Cheaper vendor items |
+| **Performance Bonus** | Sometimes more **Merchant's Favor** from the Azeroth Commerce Authority or Durotar Supply and Logistics |
 | **Master Chef** | Chance for cooking recipes to produce extra results |
-| **Luremaster** | Chance to fish up additional fish |
+| **Luremaster** | Chance to fish up extra fish |
 | **Dedicated Study** | Daily cooldown to speed up tradeskills — or free Elemental Essences once everything is at 300 |
 
-Two factions exist purely to feed this tree: the **Azeroth Commerce Authority** (Alliance) and
-**Durotar Supply and Logistics** (Horde). They're a major source of new tradeskill activity, and
-Performance Bonus multiplies what they hand out.
+Two factions exist to feed this tree. **Azeroth Commerce Authority** for Alliance, **Durotar Supply and
+Logistics** for Horde. They're a big source of new tradeskill work, and Performance Bonus multiplies what
+they hand out.
 
 ### Adventure
 
 | Perk | What it does |
 |---|---|
-| **Well Rested** | Raises the rested experience cap and speeds up how fast rested accumulates |
-| **Thrill of Adventure** | Small health and mana refund after every non-trivial kill |
+| **Well Rested** | Higher rested cap, and rested accumulates faster |
+| **Thrill of Adventure** | Small health and mana back after every non-trivial kill |
 | **High Alert** | Stealth detection outside battlegrounds |
 | **Field Guide** | Cuts the one-hour cooldown on placing camping features |
-| **Field Medicine** | Shortens the **Recently Bandaged** debuff — but only outside dungeons, raids and battlegrounds |
-| **Talented** | Unlocks talent points up to **5 levels earlier** than normal |
-| **Frequent Flier** | Cheaper flight paths, and faster ones |
+| **Field Medicine** | Shortens the **Recently Bandaged** debuff — outside dungeons, raids and battlegrounds only |
+| **Talented** | Unlocks talent points up to **5 levels early** |
+| **Frequent Flier** | Cheaper flights, and faster ones |
 
-`Well Rested` and `Talented` are the two that quietly compound. Faster rested accumulation feeds directly
-into the leveling curve, and a five-level talent head start changes what your class looks like while
-everyone else is still filling out their first tree.
+`Well Rested` and `Talented` are the two that compound quietly. Faster rested feeds straight into the XP
+curve. A five-level talent head start changes what your class looks like while everyone else is still
+filling out their first tree.
 
 ### Resourcefulness
 
 | Perk | What it does |
 |---|---|
-| **Gourmand** | Longer buffs from food |
-| **The Quick and the Dead** | Faster corpse runs, and party/raid buffs come back free after a resurrection |
+| **Gourmand** | Longer food buffs |
+| **The Quick and the Dead** | Faster corpse runs, and party/raid buffs come back free after a res |
 | **Reinforce** | Less durability damage from dying |
-| **For Great Honor** | More honor from PvP |
+| **For Great Honor** | More honour from PvP |
 | **Permanence** | Longer party, raid **and camping** buffs |
-| **Diplomat** | More reputation gains |
+| **Diplomat** | More reputation |
 | **Reagent Economy** | Class abilities stop needing purchasable reagents, and **tier 1 camping features cost no materials** |
 
-`Reagent Economy` interacts with camping in a way that's easy to miss: tier 1 camping features going
-materials-free means low-level alt characters can set up camp from day one.
+`Reagent Economy` has a nice side effect. Tier 1 camping features going materials-free means a low-level
+alt can set up camp from day one. [What camps cost to craft →](/guides/camping/)
 
-## The rewards track
+## Rewards
 
-Points you haven't spent still pile up on the account and unlock cosmetics. Four at launch:
+Points you don't spend still pile up. They unlock cosmetics. Four at launch:
 
-- **Replica Ironforge Air Rifle** — a toy that starts a shootout with other players and keeps score
-- A pet, described as a nod to the Dwarven Hunter and his companion from the cinematic
+- **Replica Ironforge Air Rifle** — a toy that starts a shootout and keeps score
+- A pet, a nod to the Dwarven Hunter and his companion from the cinematic
 - A tabard
 - **Reins of the Spectral Bear** — a spectral mount
 
-Blizzard has said the rewards track grows with each content update, and that new perks will arrive both
-inside the existing trees and as entirely new trees later.
+Blizzard says the rewards track grows every content update. New perks will land inside the existing trees
+first, then as new trees later.
 
 ## Hardcore changes the rules
 
-Hardcore isn't in at launch. When it lands:
+Hardcore isn't in at launch. When it arrives:
 
-- Challenges finished in non-Hardcore rulesets **do not** carry into Hardcore
-- Challenges finished **in** Hardcore grant that challenge in every other ruleset
+- Challenges done outside Hardcore **don't** carry in
+- Challenges done **in** Hardcore grant that challenge everywhere
 - PvP challenges are impossible in Hardcore by definition
-- **12 new Hardcore-specific challenges** arrive alongside it
+- **12 new Hardcore-specific challenges** come with it
 
-That asymmetry is deliberate — Hardcore players get credit everywhere, while regular players can't
-pre-farm the Hardcore track.
+Deliberate asymmetry. Hardcore players get credit everywhere. Everyone else can't pre-farm the track.
 
 ## What's still unclear
 
-Honest gaps, since this is a beta:
+- Blizzard says 65 challenges across six categories. Our count of the category list comes to about 64.
+  Close enough that we're not going to guess which one we miscounted.
+- Perk costs haven't been published. Everything above is about earning and spending **capacity**, not
+  pricing.
+- Hardcore's 12 challenges are announced, not detailed.
 
-- Blizzard says 65 challenges across six categories. The category list adds up to roughly 64 by our
-  count — close enough that we're not going to guess which one we miscounted.
-- The exact point cost of individual perks hasn't been published. Everything above is about earning and
-  spending *capacity*, not pricing.
-- Hardcore's 12 challenges are announced but not detailed.
-
-When the client exposes the perk costs, this page gets rebuilt from the data like everything else here.
+When the client exposes perk costs, this page rebuilds from the data like the rest of the site.

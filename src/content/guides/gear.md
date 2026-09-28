@@ -1,6 +1,6 @@
 ---
-title: "Gear: new tier sets, reworked dungeon drops, and pet scaling"
-description: "Blizzard rewrote dungeon loot for Forever and added new tier sets. What changed in gearing, plus the Hunter pet stat scaling that alters how the class gears."
+title: "Gear: new tier sets, rewritten loot, and pet scaling"
+description: "Blizzard rewrote dungeon loot for Forever and added tier sets for all nine classes. Plus the Hunter pet change that inverts how you gear."
 facts:
   - k: "rare+ items indexed"
     v: "4,581"
@@ -10,7 +10,7 @@ facts:
     v: "Mount Hyjal"
   - k: "pet health per stamina"
     v: "2"
-updated: 2026-09-27
+updated: 2026-09-28
 build: "1.60.1.70009"
 sources:
   - label: "Client data — Item / ItemSparse / ItemSet tables, build 1.60.1.70009"
@@ -18,81 +18,85 @@ sources:
   - label: "Blizzard — Forever Deep Dive Panel Recap"
 ---
 
-Two things changed about gearing: **Blizzard rewrote dungeon drops across the board**, and **new tier sets
-exist for all nine classes**.
+Two things changed about gearing. Blizzard **rewrote dungeon drops**, and there are **new tier sets for all
+nine classes**.
 
-## Dungeon loot was rewritten
+## Your Classic drop knowledge is out
 
-This is described by creators as something Blizzard hasn't done before at this scale — the drop tables
-for dungeons were updated, not inherited from Classic.
+Creators describe this as something Blizzard hasn't done at this scale. The drop tables were rewritten,
+not inherited.
 
-The practical upside is that you can't rely on Classic drop knowledge for anything beyond the broad
-shape. Item names and slots are recognisable; the specific stats are not.
+So you can't trust Classic drop knowledge beyond the broad shape. Item names and slots look familiar.
+The stats don't.
 
 Some examples from the level 13–20 band, read off the beta:
 
-| Item | Level | Notable stats |
+| Item | Level | Stats |
 |---|---|---|
 | Subterranean Cape | 13 | +3 Strength, 5 health per 5 sec, 17 armor |
 | Crystalline Cuffs (cloth wrists) | 13 | +2 Intellect, +3 Spirit |
 | Footpads of the Fang | — | **+6 Agility, +6 Stamina** |
 
-That last one is the tell. **+6/+6 on one item is a lot for the level band**, and it's a good illustration
-of why "not perfectly itemised" still belongs in the same sentence as "strong" — Forever is keeping
-Classic's uneven item design, just with better numbers available if you know where to look.
+That last one is the tell. **+6/+6 is a lot for that level band.**
 
-## New tier sets
+It's also why "not perfectly itemised" and "strong" still belong in the same sentence. Forever keeps
+Classic's uneven item design. The numbers are just better if you know where to look.
 
-Tier sets exist for all nine classes, and creator coverage of the Druid set:
+## Tier sets
 
-- Rendered in the Classic idiom — crescent-moon motifs, no modern-graphics drift
+All nine classes get one. Creator coverage of the Druid set:
+
+- Drawn in the Classic idiom — crescent-moon motifs, no modern-graphics drift
 - Described as "exactly what a new tier set in Classic would look like"
 
-The likely source is the **Mount Hyjal** raid, which appears in the challenge list as **13 bosses** —
-one of the largest encounters in the game. Nothing about the set's stat budget has been published.
+Likely source: the **Mount Hyjal** raid. It shows up in the challenge list as **13 bosses**, one of the
+biggest encounters in the game. No stat budget has been published.
 
-The client holds **536 item sets**, though the majority of those are legacy entries. Filtering down to
-Forever's actual tier sets is ongoing work.
+The client holds **536 item sets**. Most are legacy entries. Narrowing down to Forever's real tier sets
+is ongoing work.
 
-## Hunter pets now scale with your stats
+## Hunter pets scale with your gear now
 
-A quiet change with an outsized effect on how Hunters gear:
+Quiet change. Big effect on how Hunters itemise.
 
-| Player stat | Pet receives |
+| Your stat | Pet gets |
 |---|---|
 | 1 Stamina | **2 Health** |
-| Armor | **30%** transferred |
+| Armor | **30% transferred** |
 
-In Classic, a pet's stats were entirely its own. Now your gear feeds it. The consequence is that
-**Stamina on gear is worth more to a Hunter than it is to anyone else**, and gear that looks like
-survivability for you is damage output for your pet.
+In Classic a pet's stats were its own. Now your gear feeds it.
 
-Expect Hunter itemisation advice to be rewritten. It's one of the few places where a stat priority
-genuinely inverted rather than shifted.
+So **Stamina on gear is worth more to a Hunter than to anyone else.** Gear that looks like survivability
+for you is damage for your pet.
 
-## The horizontal progression claim, and the honest caveat
+Expect Hunter itemisation guides to get rewritten. This is one of the few places a stat priority actually
+flipped, rather than just shifting.
 
-Forever's pitch is that item level stops climbing: level cap stays 60, and the world expands sideways
-instead of upward. That's the design intent, and it's why "what's best" should stay answerable longer
-here than in a version that keeps raising the ceiling.
+## The horizontal progression promise
 
-But there's a real risk that gets discussed a lot in the beta: **if power does creep vertically, the
-content behind you gets retired.** Nobody wants to run a raid that only exists to be outgrown.
+Forever's pitch: item level stops climbing. Level cap stays 60. The world grows sideways instead of up.
 
-Blizzard's stated answer is that new content adds options rather than replacing them. Whether that holds
-across multiple content releases is the thing to watch, and no amount of beta data settles it.
+That's the design intent, and it's why "what's best" should stay answerable longer here than in a version
+that keeps raising the ceiling.
 
-## What this site can and can't do about gearing
+But there's a real risk, and the beta talks about it a lot. **If power does creep upward, the content
+behind you gets retired.** Nobody wants to run a raid that only exists to be outgrown.
+
+Blizzard says new content adds options rather than replacing them. Whether that holds across several
+releases is the thing to watch. Beta data can't settle it.
+
+## What this site can and can't do
 
 **Can:** the client carries **31,818 items** and **536 item sets**, with names, quality, item level,
-required level, class, subclass and icon IDs. That's enough to build item pages and set lists.
+required level, class, subclass and icon IDs. That's enough for item pages and set lists.
 
-**Can't, yet:** BiS lists. A BiS list is a claim about what's best for a spec at a level band, which
-requires stat weights, which requires either simulation or a large body of field data. Any BiS list
-published right now for Forever is someone's opinion about a beta. We'd rather not dress that up as data.
+**Can't, yet:** BiS lists.
 
-**Also missing:** auction house values. Anything about what gear is *worth* needs live economy data from
-Blizzard's API, which this site isn't connected to.
+A BiS list says what's best for a spec at a level band. That needs stat weights. Stat weights need either
+simulation or a mountain of field data. Any BiS list for Forever right now is someone's opinion about a
+beta. We'd rather not dress that up as data.
 
-So the honest position: item lookup is coming, because the data is there. BiS rankings are not, because
-the data isn't.
+**Also missing:** auction house prices. What gear is *worth* needs live economy data from Blizzard's API.
+This site isn't connected to that.
+
+So: item lookup is coming, because the data exists. BiS rankings aren't, because it doesn't.

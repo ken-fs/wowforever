@@ -1,16 +1,16 @@
 ---
-title: "Gold on day one: the level-1 alt trick and the blueprint economy"
-description: "Two things changed gold making in Forever — a level-1 alt can now craft your bags, and profession blueprints drop from dungeon bosses. What that opens up."
+title: "Gold on day one: the level-1 alt and the blueprint economy"
+description: "Two changes moved gold making in Forever — a level-1 alt can craft your bags, and profession blueprints drop from dungeon bosses. What that opens up."
 facts:
   - k: "seed money needed"
     v: "~10s"
   - k: "first day target"
     v: "~10g"
-  - k: "camp objects unlock at skill"
-    v: "~20"
+  - k: "camp objects unlock at"
+    v: "skill ~20"
   - k: "blueprint source"
     v: "dungeon bosses"
-updated: 2026-09-27
+updated: 2026-09-28
 build: "1.60.1.70009"
 sources:
   - label: "Creator gold-making coverage on the beta (~8,200 words across four videos)"
@@ -18,87 +18,94 @@ sources:
   - label: "Client data — SkillLineAbility / SpellReagents tables, build 1.60.1.70009"
 ---
 
-Two structural changes moved gold making in Forever. One is a convenience that becomes a business; the
-other ties professions to dungeon content in a way Classic never did.
+Two changes moved gold making in Forever.
 
-## The level-1 bag factory
+One is a convenience that turns into a business. The other ties professions to dungeons in a way Classic
+never did.
+
+## Your bag factory is a level 1 alt
 
 **A level-1 character can craft your bags.**
 
-Tailoring has always made bags. What's new is that storage and banking changes removed the reason you
-needed a levelled character to do it. A level-1 alt can now:
+Tailoring always made bags. What changed is storage and banking. You don't need a levelled character any
+more.
 
-1. Walk into a capital city
+1. Walk into a capital
 2. Train tailoring
-3. Craft linen bags immediately
+3. Craft linen bags
 
-The whole loop takes about **ten minutes**. In Classic you mailed linen to a main and hoped they had
-the skill; now you roll a bank alt, park it in Goldshire or Ironforge, and it's a bag factory forever.
-Every character you make after that starts with real bag space instead of a backpack and hope.
+Ten minutes, start to finish.
 
-It also means the **first gold you don't spend** is on bags, which at low levels is a surprising amount.
+In Classic you mailed linen to your main and hoped they had the skill. Now you roll a bank alt, park it in
+Goldshire or Ironforge, and it prints bag space forever.
 
-## Blueprints come from dungeon bosses
+Every character you make after that starts with real bags instead of a backpack and a prayer. And the
+first gold you *don't* spend goes on something else. At low levels that's a surprising amount.
 
-This is the change with the bigger long-term footprint.
+## Blueprints drop from dungeon bosses
 
-The first campsite objects become learnable around **profession skill 20**. Beyond that, **advanced
-blueprint recipes drop from dungeon bosses**.
+This is the one with the longer shadow.
 
-Read that again with the leveling change in mind: Forever forces you through dungeons for experience,
-and dungeons are also where the profession recipes live. Professions and instanced content are now
-wired together instead of running in parallel.
+Campsite objects become learnable around **profession skill 20**. Past that, **advanced blueprints drop
+from dungeon bosses**.
 
-The practical effect on the economy:
+Put that next to the leveling change. Forever pushes you through dungeons for XP. Dungeons are also where
+your profession recipes live.
 
-- **Recipe access is gated behind content, not gold.** You can't buy your way to the good patterns on day
-  one — you have to run the dungeon.
-- **Early dungeon runners have a real head start** on crafting markets that won't be reset by someone
-  with deeper pockets.
-- **Campsite objects become tradeable goods.** They're consumable, they're required for group buffs, and
-  they share a one-hour cooldown. That's a steady demand curve from people who won't level the profession
-  themselves.
+So professions and instances now run together. They used to run in parallel.
 
-## Making roughly 10 gold in your first six hours
+What that does to the economy:
 
-The reported approach, which needs about **10 silver** to start:
+- **Recipe access is gated behind content, not gold.** You can't buy your way to good patterns on day one.
+  You have to run the dungeon.
+- **Early dungeon runners get a head start** on crafting markets that a fat wallet can't buy into.
+- **Campsite objects become tradeable goods.** They're consumable, groups need them, and they share an
+  hourly cooldown. Steady demand from everyone who won't level the profession themselves.
 
-1. **Get seed money.** Roughly ten silver is enough. Vendoring early quest rewards covers it.
-2. **Get skinning going immediately.** If you're a **Troll or Orc**, do the **Cactus Apple** quest as
-   early as possible — the reward is the item that lets you start skinning. Don't wait.
-3. **Skin everything.** Beasts are everywhere in the starting zones and Forever now has **skinning and
-   gathering trainable in the starting zone**, so there's no city trip.
-4. **Sell the leather, and bank the rest.** Auction house prices in the first days are chaotic. Materials
-   that crafters need for their profession skill-ups hold value; finished goods mostly don't yet.
-5. **Keep one gathering profession and one crafting profession** if you plan to be self-sufficient, or
-   **two gathering professions** if you're optimising purely for income.
+## About 10 gold in your first six hours
 
-The reason to bank rather than sell everything: the blueprint economy means crafters need materials
-they can't get without running dungeons. Early materials feed people who are about to be able to make
-things nobody else can.
+The reported route. You need about **10 silver** to start.
 
-## Campsites are a market
+1. **Get seed money.** Ten silver covers it. Vendor your early quest rewards.
+2. **Start skinning right away.** Troll or Orc? Do the **Cactus Apple** quest as early as you can. The
+   reward is what lets you skin. Don't sleep on it.
+3. **Skin everything.** Beasts are everywhere in the starting zones. And you can train gathering where you
+   spawn now, so there's no city trip.
+4. **Sell the leather. Bank the rest.** Auction prices in the first days are chaos. Materials hold value.
+   Finished goods mostly don't.
+5. **Pick your pair.** One gathering plus one crafting if you want to be self-sufficient. Two gathering if
+   you only care about income.
 
-Worth restating because it's easy to file camping under "flavour": camp objects include **bank access,
-repairs, and vendors**, on top of the buffs. A camp is infrastructure. People will pay for a repair bot
-in the middle of nowhere rather than walk back to town, and the objects are consumable with an hourly
-cooldown — which means recurring demand, not a one-time purchase.
+Why bank instead of sell? Because of the blueprint economy. Crafters need materials they can only get by
+running dungeons. Feed them early and you're selling to people who are about to make things nobody else
+can.
 
-The candidates to watch are the tedious-to-craft ones with the widest usability:
+## Camps are infrastructure, not flavour
+
+Easy to file camping under "cosmetic". Don't.
+
+Camp objects include **bank access, repairs and vendors** on top of the buffs. A camp is a service
+station.
+
+People will pay for a repair bot in the middle of nowhere over walking back to town. And the objects are
+consumable with an hourly cooldown. Recurring demand, not a one-off sale.
+
+Three to watch. Tedious to craft, widest use:
 
 - **Repair Bot** (Engineering, tier 2) — universal convenience
-- **Reagent Bot** (Engineering, tier 1) — solves the "I ran out of reagents in the field" problem
-- **Fishbowl** (Fishing, tier 1) — the single biggest buff number in the game at +8% stats
+- **Reagent Bot** (Engineering, tier 1) — solves "I ran out of reagents out here"
+- **Fishbowl** (Fishing, tier 1) — +8% stats, the biggest buff number in the game
 
 ## What we can't tell you
 
-**Whether any of this stays profitable.** Everything above is a beta economy with a few thousand testers,
-no auction house history, and prices that reset whenever a build lands. Forever's beta was receiving a
-new build roughly daily during this period.
+**Whether any of it stays profitable.**
 
-**Crafting profit margins need live auction house data**, which comes from Blizzard's API. This site
-doesn't have that connection yet, so there are no "most profitable recipe" tables here — anyone
-publishing those right now is working from a snapshot that's already stale.
+Everything above is a beta economy. A few thousand testers. No auction house history. Prices reset
+whenever a build lands, and the beta was taking a new build roughly daily while this was written.
 
-What will still be true after launch is the structure: bags are free if you use an alt, blueprints are
-gated behind dungeons, and camps are consumable infrastructure.
+**Crafting margins need live auction house data**, which comes from Blizzard's API. This site isn't
+connected to that. So there are no "most profitable recipe" tables here. Anyone publishing those right now
+is working from a snapshot that's already stale.
+
+What survives launch is the structure. Bags are free if you use an alt. Blueprints sit behind dungeons.
+Camps are consumable infrastructure.

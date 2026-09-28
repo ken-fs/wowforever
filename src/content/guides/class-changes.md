@@ -1,6 +1,6 @@
 ---
-title: "Class changes: what Forever rewrote, class by class"
-description: "Forever pulls abilities forward from later expansions and rebuilds talent trees. Every class change we could confirm, listed class by class."
+title: "Class changes: what Forever rewrote"
+description: "Forever pulls abilities forward from later expansions and rebuilds talent trees. What each of the nine classes actually got, and what's still unclear."
 facts:
   - k: "classes"
     v: "9"
@@ -8,7 +8,7 @@ facts:
     v: "432"
   - k: "trees"
     v: "27"
-updated: 2026-09-27
+updated: 2026-09-28
 build: "1.60.1.70009"
 sources:
   - label: "Client data — Talent / TalentTab / Spell tables, build 1.60.1.70009"
@@ -17,104 +17,93 @@ sources:
   - label: "Wowhead — beta development notes and datamined tuning passes"
 ---
 
-Forever's class design has one consistent rule: **abilities that later expansions made core to a spec get
-pulled back into a level-60 game.** Lava Burst, Mutilate, Victory Rush and Holy Strike are all things
-Classic players know from later eras, restored here as baseline parts of the kit.
+Forever's class design runs on one rule. Abilities that later expansions made core to a spec get pulled
+back into a level-60 game.
 
-Below is what's confirmed. The client holds the full picture — **432 talent points across 27 trees** —
-and that data drives the class pages on this site.
+Lava Burst. Mutilate. Victory Rush. Holy Strike. All back, all baseline.
+
+The client holds the rest — **432 talent points across 27 trees**. That's what the
+[class pages](/classes/) are built from.
 
 ## Warrior
 
-- **Victory Rush** becomes a baseline ability for all three specs. Kill an enemy, heal yourself. That's a
-  meaningful change to solo questing, which is where Warriors have historically suffered most.
-- **Sunder Armor** threat values corrected across all ranks, with a small increase from attack power.
-- **Protection**: the positions of **Bastion** and **Focused Rage** were swapped, pushing Focused Rage
-  earlier so progression smooths out instead of spiking.
-- Rage generation remains the most-discussed Warrior issue on the beta forums by a wide margin. Multiple
-  large threads ask for the normalisation to be reverted rather than compensated for.
+- **Victory Rush** is baseline for all three specs. Kill something, heal yourself. That fixes solo
+  questing, which is where Warriors hurt most.
+- **Sunder Armor** threat values corrected across every rank.
+- **Protection** swapped **Bastion** and **Focused Rage**. Focused Rage lands earlier, so the spec
+  smooths out instead of spiking.
+- Rage generation is still the loudest Warrior complaint on the beta forums. Several big threads want the
+  normalisation reverted, not compensated.
 
 ## Paladin
 
-- **Holy** gets a new capstone, **Light's Vigil**, which finally gives the spec AoE healing or AoE damage
-  potential. A spec built for twenty years around single-target triage now has an area button.
-- **Voice of Truth** grants **6 seconds of immunity to silence and interrupts** — a real Holy Paladin
-  problem solved directly.
-- **Infusion of Light** is in, with better mana regeneration alongside it.
-- **Retribution** gets **Holy Strike**, a short-cooldown strike combining weapon and holy damage, and an
-  absorb shield that procs on attacks.
-- **Retribution Aura** now scales dynamically with spell power instead of sitting at a fixed value.
-- Consecration bugs fixed, including one where it failed to apply its effect.
-- **Undead can be Paladins now**, which is the single loudest change in the expansion.
+- **Holy** gets a new capstone, **Light's Vigil**. The spec finally has an area button. Twenty years of
+  single-target triage, and now it can heal or damage a group.
+- **Voice of Truth** gives **6 seconds of immunity to silence and interrupts**. That's a real Holy
+  problem, solved directly.
+- **Infusion of Light** is in, plus better mana regen.
+- **Retribution** gets **Holy Strike**, a short-cooldown weapon-and-holy hit, plus an absorb shield on
+  attacks.
+- **Retribution Aura** scales with spell power now instead of sitting at a fixed number.
+- Consecration bugs fixed, including one where it simply didn't apply.
+- **Undead can be Paladins.** Loudest change in the expansion.
 
 ## Shaman
 
-- **Lava Burst is back.** It's the ability Elemental players have missed most, and it unlocks a different
-  play pattern rather than just adding a button.
-- **Totemic Projection** and **Totemic Recall** are both added: summon all four totems at once, or recall
-  them all for mana back. Casting them together takes about **3 seconds**.
-- **Fire Nova reworked** — it no longer occupies its own totem slot and simply deals AoE damage from your
-  fire totem. Improved Fire Nova is also in.
-- **Windfury, Tranquil Air and Grace of Air no longer stack**, even from different shamans in the same
-  group. Stacking shamans is meaningfully worse than it was.
-- **Elemental**: Elemental Fury and Elemental Alacrity swapped positions, putting crit damage earlier in
-  the tree.
-- **Dwarf Shamans** are new — one of six new race/class combinations in Forever.
+- **Lava Burst is back.** Elemental players missed it most, and it changes the rotation rather than just
+  adding a button.
+- **Totemic Projection** and **Totemic Recall** are in. Drop all four totems at once, or pull them back
+  for mana. Both together take about **3 seconds**.
+- **Fire Nova reworked.** It doesn't eat a totem slot any more — it just deals AoE from your fire totem.
+- **Windfury, Tranquil Air and Grace of Air no longer stack.** Not even from different shamans in one
+  group. Stacking shamans is worse than it was.
+- **Elemental** swapped Elemental Fury and Elemental Alacrity, putting crit damage earlier in the tree.
+- **Dwarf Shamans** are new.
 
 ## Rogue
 
-- **Rogues can wield axes.** This is a quiet change with loud consequences: Fury Warriors now compete with
-  Rogues for the same weapon drops.
-- **Assassination** leans much harder into poison damage, and **Mutilate** is added as a major attack.
-- The class received what creators describe as a substantial rework rather than a tuning pass — large
-  enough that it was covered as its own news item during the beta.
+- **Rogues can wield axes now.** Quiet change, loud result: Fury Warriors and Rogues want the same drops.
+- **Assassination** leans hard into poisons. **Mutilate** lands as a major attack.
+- Creators call this a rework, not a tuning pass. It got its own beta news post, which is unusual.
 
 ## Hunter
 
-- **Summon Hawks** is a new ability that sits between the existing shots. It's another creature-management
-  button on top of a pet rotation.
-- **Marksmanship** sees the deeper changes; the other two specs are described as familiar.
+- **Summon Hawks** is new. Another creature to manage on top of your pet.
+- **Marksmanship** carries the deeper changes. The other two specs feel familiar.
 
 ## Mage
 
-- **Orc Mages and Alliance Skyborne Mages** are both new.
-- **Frostfire Bolt** becomes baseline, giving every Mage a mixing option and opening up cross-tree builds
-  instead of forcing a single element.
-- Mages get their own profession-flavoured system for **ciphering scrolls**.
+- **Orc Mages** and **Alliance Skyborne Mages** are both new.
+- **Frostfire Bolt** is baseline. Cross-tree fire/frost builds open up instead of forcing one element.
+- Mages get their own system for **ciphering scrolls**.
 
 ## Warlock
 
-The lightest touch of any class:
+Barely touched:
 
-- A fix so that healing correctly scales with **10% of the Warlock's spell healing**
-- Otherwise largely unchanged
+- Healing now scales correctly off **10% of the Warlock's spell healing**
+- Otherwise unchanged
 
-Given that Warlocks are consistently rated a top leveling class in the beta, "unchanged" is arguably a
-buff.
+Warlocks are consistently rated a top leveling class in the beta. Unchanged is arguably a buff.
 
 ## Druid
 
-- **Skyborne Druids get their own unique forms** — the first new shapeshift set added to Classic-era
-  Azeroth
-- Feral has a community-documented design problem that isn't just about tuning, and there's a long forum
-  thread making that argument
+- **Skyborne Druids get their own forms.** First new shapeshift set added to Classic-era Azeroth.
+- Feral has a design problem that isn't about tuning. There's a long forum thread making that case.
 
-## How to read this
+## Two warnings before you plan around this
 
-Two cautions, both important:
+**Talent positions move between builds.** The beta was taking a new build roughly **every day** while this
+was written. A tree that was right last week may be wrong now. The [class pages](/classes/) rebuild from
+the client, so they track the current build instead of a snapshot.
 
-**Talent positions move between builds.** Forever's beta was receiving a new build roughly **every day**
-during the period this covered. A tree layout that was accurate last week may not be this week. The
-class pages on this site regenerate from the client, so they track the current build rather than a
-snapshot.
+**Creator coverage isn't patch notes.** Most of the above came from people reading tooltips on stream.
+Treat tuning numbers as provisional. Mechanics are safer.
 
-**Creator coverage is not patch notes.** Most of what's above comes from people reading tooltips on
-stream. Where a claim is a tuning number rather than a mechanic, treat it as provisional.
+## What's still missing
 
-## What's missing
-
-- **Racials for the Skyborne** aren't documented in effect terms yet
-- Full per-spec ability lists exist in the client (31,703 named spells) but mapping them to specs and
-  pruning the unused ones is ongoing work
-- The **432 talent points** are indexed and browsable on the [class pages](/classes/), but the actual
-  talent *trees* with their point costs are still being assembled
+- **Skyborne racials** aren't documented in effect terms yet
+- The client has per-spec ability lists (31,703 named spells), but sorting them by spec and cutting the
+  unused ones is ongoing
+- The **432 talent points** are browsable on the [class pages](/classes/), but the trees with their point
+  costs aren't assembled yet

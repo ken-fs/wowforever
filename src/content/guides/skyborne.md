@@ -10,7 +10,7 @@ facts:
     v: "4"
   - k: "client race IDs"
     v: "95 / 96"
-updated: 2026-09-27
+updated: 2026-09-28
 build: "1.60.1.70009"
 sources:
   - label: "Client data — CharBaseInfo and ChrRaces tables, build 1.60.1.70009"
@@ -19,9 +19,9 @@ sources:
   - label: "Blizzard — Forever Deep Dive Panel Recap"
 ---
 
-Blizzard announced one new race. The client ships two, and their class lists explain why.
+Blizzard announced one new race. The client ships two. And their class lists explain why.
 
-## Two rows in the data
+## Two rows, not one
 
 `ChrRaces` carries them as separate playable entries:
 
@@ -30,12 +30,12 @@ Blizzard announced one new race. The client ships two, and their class lists exp
 | 95 | **High Order Skyborne** | Elf | Alliance |
 | 96 | **Windshaper Skyborne** | Elf | Horde |
 
-Both count as full playable races with their own class lists, their own starting experience on Zephras
-Isle, and their own character creation options.
+Both are full races. Their own class lists, their own starting experience on Zephras Isle, their own
+character creation options.
 
 ## The class lists give it away
 
-This is the part that resolves it. Both versions get the same four classes, and then they diverge by
+Here's the bit that resolves everything. Both versions get the same four classes. Then they split by
 exactly one:
 
 | | Warrior | Hunter | Rogue | Druid | Mage | Shaman |
@@ -43,67 +43,76 @@ exactly one:
 | **High Order** (Alliance) | ● | ● | ● | ● | ● | — |
 | **Windshaper** (Horde) | ● | ● | ● | ● | — | ● |
 
-Mage for one, Shaman for the other, nothing else. Beta creators describe the split in exactly these
-terms — the Alliance Skyborne get the mage, the Horde Skyborne get the shaman — and the client's class
-lists match with no exceptions.
+Mage for one. Shaman for the other. Nothing else.
 
-**So the Skyborne are a neutral race with two faction variants, stored as two rows.** What looked like an
-unexplained asymmetry is just how the game handles a race that can join either side.
+Beta creators describe it the same way: the Alliance Skyborne get the mage, the Horde Skyborne get the
+shaman. The client's class lists match with no exceptions.
+
+**So the Skyborne are one neutral race with two faction variants.** Stored as two rows. What looked like
+an unexplained asymmetry is just how the game handles a race that can join either side.
 
 ## What they can play
 
-Four classes are open to both factions:
+Four classes for both factions:
 
-- **Warrior** — and Skyborne warriors get Blood Fury-adjacent tools via their racials
-- **Hunter** — the pet classes are the forgiving picks
-- **Rogue** — stealth, and in Forever, the ability to wield **axes**
-- **Druid** — with **unique Skyborne druid forms**
+- **Warrior**
+- **Hunter** — pets make it the forgiving pick
+- **Rogue** — stealth, and now axe access
+- **Druid** — with **unique Skyborne forms**
 
-Then one faction-exclusive each: **Mage** for Alliance, **Shaman** for Horde.
+Then one exclusive each. **Mage** for Alliance, **Shaman** for Horde.
 
-The Druid entry is the interesting one. Every other Druid race has had its forms set for twenty years.
-Skyborne Druids get their own, which is the first genuinely new shapeshift art set the game has added
-to Classic-era Azeroth.
+The Druid entry is the interesting one. Every other Druid race has had its forms locked in for twenty
+years. Skyborne get their own. That's the first genuinely new shapeshift art added to Classic-era
+Azeroth.
 
 ## Who they are
 
-The Skyborne are elves — the client's own short name for both entries is literally "Elf". The lore
-positions them as **Shan'dorei**, cousins to both the blood elves and the night elves, descended from
-the ancient Kalimdor stock that split after the Sundering rather than from either modern nation.
+Elves. The client's own short name for both entries is literally "Elf".
 
-They arrive from **Zephras Isle**, their starting zone, which is included with the Skyborne Heroic and
-Epic packs along with early name reservation.
+The lore calls them **Shan'dorei**. Cousins to blood elves and night elves. Descended from the old
+Kalimdor stock that split after the Sundering, not from either modern nation.
 
-And no, they don't have to be blue. Customisation covers a normal range; the blue is a marketing
-impression, not a rule.
+They start on **Zephras Isle**. That comes with the Skyborne Heroic and Epic packs, along with early name
+reservation.
 
-## Where they fit
+And no, they don't have to be blue. Customisation covers a normal range. The blue is marketing, not a
+rule.
 
-Being neutral means Skyborne can be recruited by either faction, which is why they're the only race in
-the client with two entries instead of one. Functionally:
+[Full race and class matrix →](/race-class/)
 
-- Pick Skyborne on Alliance → you're playing the High Order variant, and you can be a Mage
-- Pick Skyborne on Horde → you're playing the Windshaper variant, and you can be a Shaman
-- Either way you get Druid, which is otherwise restricted to Night Elf, Tauren, and you
+## Why the split matters
 
-That last point matters more than it looks. Before Skyborne, Alliance Druid meant Night Elf and nothing
-else — a twenty-year monopoly that a lot of players wanted broken.
+Skyborne are neutral, so either faction can recruit them. That's why they're the only race in the client
+with two entries.
 
-## The community did not ask for this
+In practice:
 
-Worth stating plainly, because it's the loudest thing about the race: the beta forums are heavily
-against them. The biggest threads include *"Consider pumping the brakes on Skyborne"* with over ten
-thousand views, *"Can We Get A Toggle to Turn Off Skyborn?"*, and a self-described analysis thread
-claiming **59% disapproval against 12% in favour**.
+- Skyborne on Alliance → High Order variant → you can be a Mage
+- Skyborne on Horde → Windshaper variant → you can be a Shaman
+- Either way, you get Druid
 
-Blizzard has shown no sign of reversing the addition. If you're making a character decision rather than
-a forum argument, the class list above is what actually constrains you.
+That last point is bigger than it looks. Before Skyborne, Alliance Druid meant Night Elf. Nothing else.
+A twenty-year monopoly, and plenty of players wanted it broken.
+
+## The forums hate them
+
+This is the loudest thing about the race, so let's not dance around it.
+
+The beta forums are heavily against them. Three of the biggest threads:
+
+- *"Consider pumping the brakes on Skyborne"* — over ten thousand views
+- *"Can We Get A Toggle to Turn Off Skyborn?"*
+- A self-described analysis thread claiming **59% disapproval, 12% in favour**
+
+Blizzard hasn't shown any sign of reversing it. If you're picking a character rather than picking a
+forum fight, the class list above is what actually limits you.
 
 ## What's uncertain
 
-- Whether the character creator presents them as one race with a faction choice, or as two visibly
-  separate options, isn't confirmed. The data says two.
-- Their **racials** aren't fully documented yet — this site has the Skyborne class list from the client,
-  but not the effect values for their racial abilities.
-- The faction inference above is a strong one, not an official statement. It rests on the mage/shaman
-  split being corroborated by both the client and independent creator coverage.
+- Whether the character creator shows them as one race with a faction choice, or two separate options.
+  The data says two. Nobody has confirmed the UI.
+- Their **racials** aren't documented in effect terms yet. This site has the class list from the client,
+  not the numbers behind their racial abilities.
+- The faction mapping is a strong inference, not an official statement. It rests on the mage/shaman
+  split, which both the client and independent creator coverage agree on.

@@ -1,6 +1,6 @@
 ---
-title: "Camping: every profession buff, and how the camps actually stack"
-description: "The full WoW Forever camping table — all 12 professions across three tiers, what each object does, and the social rule that shapes every camp."
+title: "Camping: every profession buff, and how camps stack"
+description: "All 12 professions across three tiers, what each camp object does, and the social rule that shapes every camp. Plus what each object costs to craft."
 facts:
   - k: "unlocks at"
     v: "Lv 5"
@@ -10,7 +10,7 @@ facts:
     v: "3 / 5 / 10"
   - k: "sit time for buffs"
     v: "1 min"
-updated: 2026-09-27
+updated: 2026-09-28
 build: "1.60.1.70009"
 sources:
   - label: "Blizzard — Forever Deep Dive Panel Recap (camping design intent)"
@@ -21,84 +21,92 @@ sources:
   - label: "Client spell data for camp objects and buff auras, build 1.60.1.70009"
 ---
 
-Camping is Forever's attempt to make the campfire a place rather than a consumable. You put objects down,
-other people sit at them, and the buffs you get depend on which professions bothered to show up.
+Camping tries to make the campfire a place, not a consumable.
 
-It is not a max-level system. It starts at **level 5**.
+You drop objects. Other people sit at them. What you get depends on which professions showed up.
 
-## Unlocking it
+It starts at **level 5**, not at max level.
 
-Around level 5 you get a quest called **The Great Outdoors**. It asks you to sit by the campfire next to
-the quest giver, then sends you into town to train Cooking and learn your first campfire.
+## How you unlock it
 
-Your first campfire costs **simple wood** and **flint and tinder**, both sold by the cooking trainer. That's
-deliberately cheap — Blizzard wants the system running from the first hour, not the fortieth.
+Around level 5 you get a quest called **The Great Outdoors**. Sit by the fire next to the quest giver.
+Then head into town to train Cooking and learn your first campfire.
 
-## How a camp is built
+Your first fire costs **simple wood** and **flint and tinder**. The cooking trainer sells both.
 
-The campfire is the anchor. Everything else attaches to it, and the fire has a hard limit on how many
-extra objects it can hold:
+That's on purpose. Blizzard wants this running in your first hour, not your fortieth.
 
-| Campfire | Extra features it holds |
+## How a camp gets built
+
+The fire is the anchor. Everything else hangs off it. And the fire has a hard limit:
+
+| Campfire | Extra objects it holds |
 |---|---|
 | Basic | 3 |
 | Journeyman | 5 |
 | Expert | 10 |
 
-The restriction that matters isn't the number, though:
+The number isn't the interesting part. This is:
 
-> You can place **one** of those features yourself. The rest have to come from other players.
+> You can place **one** object yourself. The rest come from other players.
 
-That's the design working as intended, not a beta limitation. A camp with ten slots is a camp built by
-ten professions, and the panel recap makes the goal explicit — the minute you spend sitting is a minute
-where you might meet someone on the same quest.
+That's the design, not a beta limit. A camp with ten slots is a camp ten professions built.
 
-**Sitting or crafting near the fire for 1 minute** applies the camp's buffs. Most individual camp objects
-are consumable and share a **one-hour placement cooldown**. The fire itself has a shorter separate cooldown.
+Sit or craft near the fire for **1 minute** and the buffs land on you. Most camp objects are consumable
+and share a **one-hour cooldown**. The fire has its own shorter one.
 
 ## Every profession's camp object
 
-The rule that makes this table readable: **tier 3 gives you tier 1 and tier 2 as well.** Upgrading never
-replaces anything, so a maxed camp object is three buffs stacked.
+One rule makes this table easy to read. **Tier 3 also gives you tier 1 and tier 2.** Upgrading never
+removes anything. A maxed object is three buffs stacked.
 
 | Profession | Tier 1 | Tier 2 | Tier 3 |
 |---|---|---|---|
-| **Cooking** | Basic Campfire Kit — anchors 3 features | Journeyman Campfire Kit — 5 features, plus **Cookie's Feast** (stamina food) | Expert Campfire Kit — **10 features** |
-| **Alchemy** | Mana Well — mana regeneration | Fermentor — produces higher-tier reagents | Alchemy Laboratory — unlocks lab-only recipes |
-| **Blacksmithing** | Sharpening Wheel — **Strength** | Anvil — repair gear in the field | Master Forge — forge recipes anywhere |
-| **Enchanting** | Enchanted Loot — armor, all stats and resistances | Arcane Salvager — more efficient disenchanting | Arcane Forge — arcane-forge recipes |
-| **Engineering** | Reagent Bot — buy reagents in the world | Repair Bot — repair anywhere | Anarchist's Workbench — its own recipe unlock |
-| **Leatherworking** | Camp Tent — **one bar of rested XP** | Tanning Rack — higher-tier leatherworking reagents | Sewing Machine — its own recipe unlock |
-| **Tailoring** | Faction Banner — **Spirit** | Spinning Wheel — higher-tier reagents | Loom — its own recipe unlock |
-| **Fishing** | Fishbowl — **+8% to stats** | Fishing Rack — uncommon fish for 1 hour, plus skill and lures | Fishing Hut — rare fish for 1 hour, on top of everything above |
-| **Mining** | Lodestone — **melee attack power** | Rock Garden — spawns a mining node over time | Molten Foundry — its own recipe unlock |
-| **Herbalism** | Incense Candle — **Intellect** | Greenhouse — grow herbs from planted seeds | *(higher tier cut off in current footage)* |
+| **Cooking** | Basic Campfire Kit — 3 features | Journeyman Campfire Kit — 5 features, plus **Cookie's Feast** (stamina food) | Expert Campfire Kit — **10 features** |
+| **Alchemy** | Mana Well — mana regen | Fermentor — higher-tier reagents | Alchemy Laboratory — lab-only recipes |
+| **Blacksmithing** | Sharpening Wheel — **Strength** | Anvil — repair in the field | Master Forge — forge recipes anywhere |
+| **Enchanting** | Enchanted Loot — armor, stats, resistances | Arcane Salvager — better disenchanting | Arcane Forge — arcane-forge recipes |
+| **Engineering** | Reagent Bot — buy reagents out there | Repair Bot — repair anywhere | Anarchist's Workbench — recipe unlock |
+| **Leatherworking** | Camp Tent — **one bar of rested XP** | Tanning Rack — higher-tier reagents | Sewing Machine — recipe unlock |
+| **Tailoring** | Faction Banner — **Spirit** | Spinning Wheel — higher-tier reagents | Loom — recipe unlock |
+| **Fishing** | Fishbowl — **+8% to stats** | Fishing Rack — uncommon fish for 1 hour, plus skill and lures | Fishing Hut — rare fish, on top of the above |
+| **Mining** | Lodestone — **melee attack power** | Rock Garden — spawns a mining node over time | Molten Foundry — recipe unlock |
+| **Herbalism** | Incense Candle — **Intellect** | Greenhouse — grow herbs from seeds | *(not visible in current footage)* |
 | **Skinning** | Camping Chair — **+2% crit** | Field Guide — track beasts | Trapper's Workbench — holds one trap |
-| **First Aid** | First Aid Kit — **Stamina** | Toxin Study — healing potions and antivenoms | Plague Doctor's Laboratory — higher-tier potions and elixirs |
+| **First Aid** | First Aid Kit — **Stamina** | Toxin Study — healing potions and antivenoms | Plague Doctor's Laboratory — higher-tier potions |
 
-Read the tier 3 column again and notice what most of them are: **recipe unlocks**. Alchemy, Blacksmithing,
-Enchanting, Engineering, Leatherworking, Tailoring, Mining and First Aid all end on "you can now craft the
-things that used to require a city". That turns a camp into a portable workshop, and it's the reason a
-raiding group wants a fully-tiered camp before a run rather than just a fire.
+Look down the tier 3 column. Nearly all of them are **recipe unlocks**. Alchemy, Blacksmithing,
+Enchanting, Engineering, Leatherworking, Tailoring, Mining and First Aid all end on "you can now craft
+the things that used to need a city".
 
-## What the buffs are actually worth
+That turns a camp into a portable workshop. It's why a raid group wants a fully-tiered camp before a
+run, not just a fire.
 
-Four of these are stat buffs you'd otherwise get from a class: **Sharpening Wheel** (Strength), **Incense
-Candle** (Intellect), **Faction Banner** (Spirit), **First Aid Kit** (Stamina). A camp can cover most of a
-group's missing buff slots without a single druid or priest.
+## What the buffs are worth
 
-Two others are the ones people argue about:
+Four are stats you'd otherwise get from a class:
 
-- **Fishbowl at +8% to stats** is the biggest single number on this list by a wide margin
-- **Camp Tent's one bar of rested XP** is widely called the weakest option — but it applies to *everyone
-  sitting there*, and rested XP is a multiplier on top of whatever the leveling changes already did. One
-  creator put it plainly: getting a bar of rested instead of a stat buff "feels weird". Whether that
-  survives launch is unknown.
+| Object | Buff |
+|---|---|
+| Sharpening Wheel | Strength |
+| Incense Candle | Intellect |
+| Faction Banner | Spirit |
+| First Aid Kit | Stamina |
 
-## What each camp object costs to craft
+So a camp can cover most of a group's missing buffs without a druid or a priest.
 
-The client ships the recipe for every one of these, so the material lists aren't guesswork. Tiers are the
-skill level where the recipe goes trivial — see the [professions pages](/professions/) for the full list.
+Two others are the ones people argue about.
+
+**Fishbowl at +8% to stats** is the biggest single number on this list. Not close.
+
+**Camp Tent's one bar of rested XP** gets called the weakest option. But it applies to **everyone sitting
+there**, and rested XP multiplies whatever the leveling changes already gave you. One creator put it
+bluntly: getting a bar of rested instead of a stat buff "feels weird". Whether it survives launch is
+anyone's guess.
+
+## What each camp object costs
+
+The client ships a recipe for most of these. So the material lists below aren't guesswork.
 
 | Object | Profession | Trivial at |
 |---|---|---|
@@ -107,18 +115,19 @@ skill level where the recipe goes trivial — see the [professions pages](/profe
 | Faction Banner | Tailoring | 25 |
 | Field Guide | Skinning | 145 |
 
-Each profession page lists the exact materials. Camp Tent, for example, is **5× Light Leather** — cheap
-enough that the argument against it isn't the cost, it's that a bar of rested experience is a weaker
-payoff than a stat buff for the same slot.
+[Each profession page](/professions/) lists the exact materials. Camp Tent is **5× Light Leather**, for
+example.
 
-## What's still uncertain
+That's cheap. So the argument against the tent isn't the cost. It's that a bar of rested XP is a weaker
+payoff than a stat buff in the same slot.
 
-- **The Greenhouse and Rock Garden** both generate resources over time, and nobody has published numbers
-  on how fast. Mining's node is described in the client only as "common", which raises an obvious question
-  about whether it can roll rare nodes. It's untested.
+## What we don't know yet
+
+- **Greenhouse and Rock Garden** both make resources over time. Nobody has published numbers. Mining's
+  node is described in the client only as "common", which begs a question about rare nodes. Untested.
 - **Herbalism's tier 3** object wasn't visible in the footage we have.
-- **Exact buff magnitudes** for most objects aren't in the tooltips we've seen — +8%, +2% crit and the
-  stat names are confirmed, the rest are described qualitatively.
+- **Exact buff magnitudes** for most objects aren't in the tooltips we've seen. +8%, +2% crit and the
+  stat names are confirmed. The rest are described in words, not numbers.
 
-This page gets rebuilt from client data as soon as the camp objects expose real effect values. The camp
-spells are already in the database; the numbers just aren't attached to them yet.
+This page rebuilds from client data the moment camp objects expose real effect values. The camp spells
+are already in the database. The numbers just aren't attached to them.

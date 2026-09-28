@@ -1,6 +1,6 @@
 ---
-title: "Professions: passive bonuses, camping objects, and the recipe economy"
-description: "Forever gives every profession a passive character bonus on top of its camp object. What each grants, and how to pick."
+title: "Professions: what each one actually gives you"
+description: "Every profession now carries a passive bonus and a camp object. Here's what each one grants, and how to pick without wasting a slot."
 facts:
   - k: "recipes in the client"
     v: "2,436"
@@ -8,95 +8,94 @@ facts:
     v: "12"
   - k: "profession slots"
     v: "2"
-updated: 2026-09-27
+updated: 2026-09-28
 build: "1.60.1.70009"
 sources:
-  - label: "Client data — SkillLineAbility / SpellReagents tables, build 1.60.1.70009 (2,436 recipes after filtering out weapon skills)"
+  - label: "Client data — SkillLineAbility / SpellReagents tables, build 1.60.1.70009"
   - label: "Blizzard — Forever Deep Dive Panel Recap (profession bonuses, trade factions)"
   - label: "Creator coverage: profession tier lists and beta crafting footage (~26,000 words)"
 ---
 
-Classic professions were a way to spend time for gear you could almost always buy. Forever attaches two
-things to them that Classic never had: **a passive bonus that applies to your character at all times**,
-and **a camp object that gives your group a buff**. Picking a profession is now a character-building
-decision, not just a crafting one.
+Professions in Classic were a time sink. You made gear you could buy anyway.
 
-## The two-structure model
+Forever gives them two jobs they never had.
 
-Every profession does two jobs in Forever:
+1. **A passive bonus.** Always on. No button to press.
+2. **A camp object.** Three tiers, placed at a campfire, buffs everyone sitting there. ([Full camping guide](/guides/camping/))
 
-1. **A passive bonus** — always on, no action required
-2. **A camp object** — three tiers, placed at a campfire for area buffs
+So picking a profession is now a character decision, not a crafting one.
 
-The second one is covered in full in the [camping guide](/guides/camping/). This page is about the
-first, and about what you can actually make.
+## What each profession gives you
 
-## What each profession grants
-
-| Profession | Passive / notable | Camp object buff |
+| Profession | Passive bonus | Camp object |
 |---|---|---|
-| **Mining** | **+5% total health** | Blessing of Might (melee attack power) |
-| **Blacksmithing** | Belt buckle — an extra socket-like upgrade | Strength (Sharpening Wheel) |
-| **Alchemy** | **Mixology** — flasks and elixirs last longer; the Alchemist's Trinket | Mana regeneration |
-| **Engineering** | Rocket boots, grenades, and level-scaled summons | Repair and reagent bots |
-| **Tailoring** | **Cloth Embroidery** cloak enchant across **5 tiers**, plus extra cloth from humanoids | Spirit |
-| **Leatherworking** | … | Camp Tent — rested XP |
-| **Enchanting** | Enchanting, obviously | Armor, all stats and resistances |
-| **Herbalism** | … | Intellect |
-| **Skinning** | … | +2% crit |
-| **Cooking** | Feasts, plus food buffs that camping extends | The campfire itself |
-| **Fishing** | … | **+8% stats** |
-| **First Aid** | Bandages, potions, antivenoms | Power Word: Fortitude (Stamina) |
+| **Mining** | **+5% total health** | Blessing of Might |
+| **Blacksmithing** | Belt buckle | Strength (Sharpening Wheel) |
+| **Alchemy** | **Mixology** — longer flasks and elixirs | Mana regen |
+| **Engineering** | Rocket boots, grenades, summons | Repair and reagent bots |
+| **Tailoring** | **Cloth Embroidery** cloak enchant, 5 tiers | Spirit |
+| **Leatherworking** | — | Camp Tent — rested XP |
+| **Enchanting** | — | Armor, all stats, resistances |
+| **Herbalism** | — | Intellect |
+| **Skinning** | — | +2% crit |
+| **Cooking** | Feasts | The campfire itself |
+| **Fishing** | — | **+8% stats** |
+| **First Aid** | Bandages, potions, antivenoms | Power Word: Fortitude |
 
-**Mining's +5% total health** is the one that gets called out most. It's flat, it's always on, and it
-scales as your gear does — genuinely relevant for PvP.
+**Mining** is the one people shout about. +5% total health, flat, always on. It scales with your gear.
+That matters in PvP.
 
-**Tailoring's Cloth Embroidery** is the other one to look at closely, because it breaks the normal rule.
-Its cloak enchant comes in five tiers and offers spell power, attack power **or** stamina. That's a
-real stat budget that doesn't compete with anything else you're wearing.
+**Tailoring** breaks the usual rule. Its cloak enchant comes in five tiers and gives spell power,
+attack power or stamina. That's a real stat budget, and it doesn't fight with anything else you're
+wearing.
 
-## The recipe economy is now interlocked
+## Professions feed each other now
 
-Forever adds materials that only exist to feed other professions, which Classic never did much of:
+Classic barely did this. Forever adds materials that only exist to serve another profession:
 
-- **Cerulean Dye** — fermented by alchemists, consumed by tailors
-- **Sulfuric Acid** — an alchemist product
-- **Frilled Lyken** — a drop that comes from gathering herbs
+- **Cerulean Dye** — an alchemist ferments it, a tailor uses it
+- **Sulfuric Acid** — alchemist-made
+- **Frilled Lyken** — drops while you gather herbs
 
-The practical effect: a solo player can't be self-sufficient the way they were in Classic. If a tailoring
-pattern needs an alchemist's fermentation, you need an alchemist — a guildmate, a customer, or a second
-character.
+Here's what that means. You can't be self-sufficient any more. If a tailoring pattern needs an
+alchemist's fermentation, you need an alchemist. A guildmate, a customer, or a second character.
 
-Blizzard reinforced this with two new trade factions, the **Azeroth Commerce Authority** (Alliance) and
-**Durotar Supply and Logistics** (Horde), which are a major source of new tradeskill activity. Their
-turn-ins pay **50 coins on the first hand-in**, enough to buy a recipe outright — which means your first
-profession decision is also your first choice about which recipe gap to close.
+Blizzard pushed it further with two trade factions. **Azeroth Commerce Authority** for Alliance,
+**Durotar Supply and Logistics** for Horde. They hand out most of the new tradeskill work.
 
-## Gathering is more flexible than it used to be
+Their first turn-in pays **50 coins**. That's enough to buy a recipe outright. So your first
+profession pick is also your first decision about which gap to close.
 
-Two changes that matter more than they look:
+## Gathering got easier
 
-- **You can train gathering professions in the starting zone**, immediately, without running to a city
-- **Herbalism and mining can both be active at once.** In Classic you could only track one node type on
-  the minimap at a time, which made running both a chore. That restriction is gone.
+Two changes, both bigger than they look.
 
-Running two gathering professions is now described as the obvious money play, and it's a real change
-rather than a convenience.
+**You train gathering where you spawn.** Mining, herbalism, skinning. No trip to a city.
 
-## Picking, in one paragraph
+**You can track both herb and ore nodes at once.** In Classic you got one node type on the minimap.
+Running both was a chore. That's gone.
 
-If you want raw character power: **Mining** for the health, or **Tailoring** for the cloak enchant.
-If you want group value: whichever profession's camp object your usual group is missing — Cooking and
-Fishing are the two with the biggest numbers. If you want gold: two gathering professions, and sell to
-the crafters who now can't substitute for you. If you want utility: **Engineering**, which the beta
-consensus rates highest on quality-of-life and which nobody wants to give up once they've had it.
+Two gathering professions is the obvious money play now. It's a real change, not a convenience.
 
-## What the client can and can't tell us
+## Which to pick
 
-The client holds **2,436 recipes** with their reagent lists, filtered to real professions. That's the
-number this site indexes, and it's the basis for the recipe pages that are being built.
+Want raw power? **Mining** for the health. Or **Tailoring** for the cloak enchant.
 
-What the client doesn't hold is the *output value* of anything. Forecasting crafting profit needs live
-auction house data, which comes from Blizzard's API — a connection this site doesn't have yet. Until
-then, treat any "best money-making profession" claim, including from creators in the beta, as a snapshot
-of an economy that hasn't launched.
+Want your group to like you? Take whatever camp object your usual group is missing. Cooking and
+Fishing have the biggest numbers.
+
+Want gold? Two gathering professions. Sell to crafters who can't substitute for you any more.
+
+Want an easier life? **Engineering.** The beta consensus rates it highest on quality of life, and
+nobody gives it up once they've had it.
+
+## What the client can't tell us
+
+The client holds **2,436 recipes** with their reagent lists. That's what the [profession pages](/professions/)
+are built from.
+
+What it doesn't hold is what anything sells for. Working out crafting profit needs live auction house
+data, which comes from Blizzard's API. This site isn't connected to that yet.
+
+So treat every "best money-making profession" claim as a guess. That includes the ones from creators
+in the beta. The economy hasn't launched.

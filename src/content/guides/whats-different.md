@@ -1,5 +1,5 @@
 ---
-title: "Ten things Forever does differently, and the habits they break"
+title: "Ten things Forever does differently"
 description: "Classic habits that will cost you in Forever: dungeon XP, camping at level 5, starting-zone gathering, a group finder, and addons that no longer work."
 facts:
   - k: "camping unlocks"
@@ -10,7 +10,7 @@ facts:
     v: "16"
   - k: "dungeon XP from"
     v: "quests"
-updated: 2026-09-27
+updated: 2026-09-28
 build: "1.60.1.70009"
 sources:
   - label: "Client data — CharBaseInfo, LevelExperience, xp_spell tables, build 1.60.1.70009"
@@ -18,54 +18,60 @@ sources:
   - label: "Blizzard — Forever Deep Dive and What's Next Panel Recaps"
 ---
 
-If you've played Classic, most of Forever is familiar and a handful of things are quietly inverted. The
-awkward period is when your twenty-year habits are still running and the game has moved.
+Played Classic for years? Most of Forever will feel familiar. A handful of things are quietly flipped.
 
-## 1. Dungeons are no longer skippable
+The awkward bit is the first week, while twenty-year habits are still running and the game has moved.
 
-Classic speed levelers skipped dungeons unless a group was already assembled. **Dungeon mobs now pay
-almost nothing and dungeon quests pay enormously** — up to two levels per run.
+## 1. You can't skip dungeons
 
-If you're routing the Classic way, you're leaving the best experience in the game in the instance.
+Classic speed levelers skipped dungeons. Grouping cost more than the instance paid back.
+
+Not any more. **Dungeon mobs pay almost nothing. Dungeon quests pay a fortune** — up to two levels per
+run. Route the Classic way and you're leaving the best XP in the game lying in the instance.
+
+[Dungeon levels and quest spots →](/guides/dungeons/)
 
 ## 2. Camping starts at level 5, not 60
 
-A quest called **The Great Outdoors** arrives around **level 5**. It sends you to town to train Cooking
+A quest called **The Great Outdoors** shows up around **level 5**. It sends you to town to train Cooking
 and build your first campfire.
 
-This is not an endgame system. Camps give group buffs, repairs, bank access and vendors, and the buffs
-last an hour. Skipping it until you're levelled is skipping free stats for sixty levels.
+This isn't an endgame system. Camps give group buffs, repairs, bank access and vendors. Buffs last an
+hour. Skipping it means skipping free stats for sixty levels.
 
-## 3. Gathering trains in the starting zone
+[Every camp object →](/guides/camping/)
 
-You can learn **mining, herbalism and skinning without leaving the starting zone**, and the nodes are
-there to match. The Classic ritual of running to a capital city at level 5 to train professions is gone.
+## 3. Gathering trains where you spawn
 
-Also: **herbalism and mining can both be tracked at once now.** In Classic you could only have one node
-type on the minimap, which is why nobody ran both.
+Mining, herbalism and skinning are all learnable in the starting zone. The nodes are there to match. The
+Classic ritual of running to a capital at level 5 is gone.
 
-## 4. A level-1 alt can craft your bags
+Also: **you can track herb and ore nodes at the same time now.** In Classic you got one at a time, which
+is why nobody ran both.
 
-Storage changes mean a **level-1 tailoring alt** can make your bags in about ten minutes. Roll one, park
-it in a capital, never think about bag space again.
+## 4. A level-1 alt can make your bags
+
+Storage changes mean a **level-1 tailoring alt** can craft your bags in about ten minutes. Roll one, park
+it in a capital, stop thinking about bag space.
 
 ## 5. There's a group finder
 
-Classic didn't have one. Forever has a **group browser you can filter by dungeon**. Combined with the
-dungeon XP change, this is the difference between "assembling a group is a project" and "assembling a
-group is a step".
+Classic didn't have one. Forever has a **group browser you can filter by dungeon**.
+
+Put that next to the dungeon XP change and it's the difference between "assembling a group is a project"
+and "assembling a group is a step".
 
 ## 6. Addons work differently
 
 Forever inherits **retail's addon and API restrictions**. WeakAuras-style combat tracking is heavily
-limited, DoT tracking is disabled, and automation addons don't work.
+limited. DoT tracking is off. Automation addons don't work.
 
-Blizzard ships a **Cooldown Manager**, a **damage meter**, and an improved **Inspect** window to cover
-some of it. See the [addons guide](/guides/addons/) for what still works.
+Blizzard ships a **Cooldown Manager**, a **damage meter** and an improved **Inspect** window to cover
+some of it. [What still works →](/guides/addons/)
 
-## 7. Sixteen race and class combinations are new
+## 7. Sixteen race and class combos are new
 
-Six of them are on **existing races**:
+Six are on **existing races**:
 
 | Race | New class |
 |---|---|
@@ -76,48 +82,51 @@ Six of them are on **existing races**:
 | Troll | Warlock |
 | Undead | **Paladin** |
 
-The other ten come with the Skyborne. If you've been deciding your class from a Classic chart, that
-chart is out of date. The [race × class matrix](/race-class/) has all 56 legal combinations.
+The other ten come with the Skyborne.
 
-## 8. Legacy unlocks at level 25
+Deciding your class from a Classic chart? That chart is out of date.
+[All 56 legal combinations →](/race-class/)
 
-An account-wide progression track opens when your first character hits **25** — or when you reach 150
-skill in a non-gathering profession, or explore the whole map. Points buy perks in three trees, capped
-at **16 per character**.
+## 8. Legacy unlocks at 25
 
-You can earn 29 on one character and spend 16, so specialization is real. Full breakdown in the
-[Legacy guide](/guides/legacy-system/).
+An account-wide track opens when your first character hits **25**. Or at 150 skill in a non-gathering
+profession. Or by exploring the whole map.
 
-## 9. Exploration gives experience
+Points buy perks in three trees, capped at **16 per character**. You can earn 29 on one character, so
+you always leave something on the table.
+[Full breakdown →](/guides/legacy-system/)
 
-Running somewhere new and discovering it pays XP, and it's enough to matter early. A walkthrough of the
-opening route hits **level 6 on leaving the starting zone** partly on exploration experience, where
-skipping the detours leaves you at 5.
+## 9. Walking around pays XP
 
-Wandering is not a waste of time the way it was in Classic.
+Go somewhere new and the discovery itself gives XP. It matters early.
+
+One opening walkthrough hits **level 6** leaving the starting zone, partly on exploration XP. Skip the
+detours and you leave at 5.
+
+Wandering isn't a waste of time any more.
 
 ## 10. Recipes come from dungeon bosses
 
-The first camp objects unlock around **profession skill 20**. Past that, **advanced blueprints drop from
+First camp objects unlock around **profession skill 20**. Past that, **advanced blueprints drop from
 dungeon bosses**.
 
-You cannot buy your way to the good patterns. If you want a crafting profession to matter, you have to
-run the content that drops its recipes.
+You can't buy your way to good patterns. Want a crafting profession to matter? Run the content that
+drops the recipes.
 
-## The three mistakes that actually cost people
+## Three habits that actually cost people
 
-Beyond the list, these are the ones that show up over and over in beta footage:
+These come up in beta footage over and over:
 
-- **Rushing quest text.** Quest descriptions tell you where to go and what drops. In a game with fewer
-  maps and new dungeon layouts, skipping them costs more than it saves.
-- **Not banking.** Bank space exists in every city for a reason — hauling quest items around with a full
-  inventory means leaving loot on the floor.
-- **Treating professions as optional.** Camp objects tie professions to group buffs, and blueprints tie
-  them to dungeons. A character with no profession is a character with no camp contribution.
+- **Rushing quest text.** Quest descriptions tell you where to go. In a game with new dungeon layouts,
+  skipping them costs more than it saves.
+- **Not banking.** Bank space exists in every city for a reason. Haul a full inventory around and you
+  leave loot on the floor.
+- **Treating professions as optional.** Camp objects tie professions to group buffs. Blueprints tie them
+  to dungeons. No profession means you bring nothing to a camp.
 
-## Not covered here
+## What's not here
 
-Class-by-class leveling advice and bis lists are their own guides, and both are still being written.
-The tools that are live and worth using right now are the [XP calculator](/tools/xp-calculator/) —
-which will tell you exactly what your buff stack is worth — and the
-[race × class matrix](/race-class/).
+Class-by-class leveling and BiS lists are their own guides, and both are still being written.
+
+Two things you can use right now: the [XP calculator](/tools/xp-calculator/), which tells you what your
+buff stack is actually worth, and the [race × class matrix](/race-class/) with all 56 combinations.
