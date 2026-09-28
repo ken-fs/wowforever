@@ -477,3 +477,50 @@ WHERE CAST(SpellID AS INTEGER) != 0
 | `QuestV2` | 只有 3 列 | 任务文本在服务端，客户端根本没有 |
 
 **教训**：拿到暴雪的表先别信列名，抽几个非零样本验证一遍再写 JOIN。
+
+
+---
+
+## 每日巡检覆盖了什么
+
+`node ~/Desktop/david/Ship/scripts/site-hygiene.mjs wowforever`（每天 10:00 自动）
+
+```
+✓ 部署标记    /.well-known/anvilwiki-deploy.txt == 本地 HEAD
+✓ sitemap     99 条 URL 全部指向本站
+✓ 关键页      首页 / 计算器 / 矩阵 / 攻略 / 视频 / robots
+✓ 数据新鲜度  站点 build vs 暴雪当前 build
+✓ 图片存活    从线上页现抽 content-hash 图 HEAD 一遍
+✓ GA 门控     确认没有无条件加载的 gtag
+```
+
+### 「运营内容」这层是干什么的
+
+前四项回答「**站挂了没有**」。后两项回答另一个问题：**站活着，但在悄悄说错话**。
+这类故障不会让任何页面变红：
+
+| 故障 | 后果 | 谁发现 |
+|---|---|---|
+| 管线停了 | 站上写着「每个补丁自动重建」，实际数据停在两周前 | 数据新鲜度 |
+| 图片 404 | 卡片空一块，肉眼要逐页看 | 图片存活 |
+| 门控被拆 | 有人手贴 GA snippet 绕过了同意条，EU 访客直接违规 | GA 门控 |
+
+### ⚠️ 数据过期报 🔔 不报 ✗
+
+和 Roblox badge 检查同一个道理：**新 build 是「该重跑 `npm run data` 了」的信号，
+不是站出了故障**。计入 fails 会让巡检天天报红（beta 期一天一个构建），
+反而把真故障淹掉。
+
+看到 🔔 时的动作：
+
+```bash
+cd ~/Desktop/david/Ship/wow-forever
+npm run data
+git status --short          # ⚠️ 必须看到 M data/site.db
+git add -A && git commit && git push
+```
+
+### ⚠️ 图片检查必须先验页面本身
+
+负向测试抓到的：404 页上也有一张 `_astro` 图（恰好返回 200），
+只检查图片会把挂掉的页面判成正常。所以 `checkImages` 先看页面 status。
