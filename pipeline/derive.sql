@@ -79,12 +79,16 @@ SELECT
   CAST(t.TierID AS INTEGER)      AS tier,
   CAST(t.ColumnIndex AS INTEGER) AS col,
   c.Name_lang                    AS class,
-  CAST(t.ClassID AS INTEGER)     AS class_id,
+  CAST(c.ID AS INTEGER)          AS class_id,
   sn.name                        AS spell_name,
   CAST(t.SpellID AS INTEGER)     AS spell_id
 FROM "Talent" t
 LEFT JOIN "TalentTab" tt ON CAST(tt.ID AS INTEGER) = CAST(t.TabID AS INTEGER)
-LEFT JOIN "ChrClasses" c ON CAST(c.ID AS INTEGER)  = CAST(t.ClassID AS INTEGER)
+-- ⚠️ Talent.ClassID 在 Forever 客户端里整列是 0（没填），职业要靠
+-- TalentTab.ClassMask 的位掩码反解：bit = 1 << (ChrClasses.ID - 1)。
+-- 实测掩码集合 {1,2,4,8,16,64,128,256,1024} 正好对上 9 个职业。
+LEFT JOIN "ChrClasses" c
+  ON (CAST(tt.ClassMask AS INTEGER) & (1 << (CAST(c.ID AS INTEGER) - 1))) > 0
 LEFT JOIN spell_named sn ON sn.id = CAST(t.SpellID AS INTEGER);
 CREATE INDEX ix_talent_class ON talent_full(class_id);
 

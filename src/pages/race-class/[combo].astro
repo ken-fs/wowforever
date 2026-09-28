@@ -114,7 +114,8 @@ const desc = `${race} can be a ${cls} in World of Warcraft: Forever. ${raceClass
         <a href={`/classes/${slug(cls)}/`} class="text-[0.85rem] hover:text-rust">All {cls} details →</a>
       </div>
 
-      {is_skyborne && (
+      {/* 注意：is_skyborne 是 0/1，不能直接 `{x && ...}` —— 0 会渲染成字面量 "0" */}
+      {Boolean(is_skyborne) && (
         <div class="border-l-2 border-ochre pl-3 mt-5">
           <p class="text-[0.85rem] text-ink-soft">
             Skyborne split into two races in the client — <strong>High Order</strong> and
