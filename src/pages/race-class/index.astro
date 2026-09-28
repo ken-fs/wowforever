@@ -1,6 +1,8 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { all, one, slug, val } from "../../data/db.ts";
+import { Image } from "astro:assets";
+import { classIcon } from "../../data/assets.ts";
 
 const build = val(`SELECT value FROM meta WHERE key='build'`);
 
@@ -41,7 +43,16 @@ const byRace = Object.fromEntries(
         <thead>
           <tr>
             <th class="sticky left-0 bg-paper pr-4">Race</th>
-            {classes.map((c) => <th class="text-center w-[1%] whitespace-nowrap">{c}</th>)}
+            {classes.map((c) => (
+              <th class="text-center w-[1%] whitespace-nowrap">
+                <span class="flex flex-col items-center gap-1">
+                  {classIcon[slug(c)] && (
+                    <Image src={classIcon[slug(c)]!} alt="" width={20} height={20} format="webp" aria-hidden="true" />
+                  )}
+                  <span>{c}</span>
+                </span>
+              </th>
+            ))}
             <th class="text-right">Total</th>
           </tr>
         </thead>

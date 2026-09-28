@@ -71,3 +71,10 @@ table.data tr:hover td { background: color-mix(in srgb, var(--color-ochre) 7%, t
 
 a { color: inherit; }
 a:hover { color: var(--color-rust); }
+
+/* 视频门面：点击前只是图片 + 播放键，点完才注入 iframe */
+.video-facade { padding: 0; cursor: pointer; }
+.video-facade img { transition: opacity 0.2s ease; }
+.video-facade:hover img { opacity: 0.86; }
+.video-facade:focus-visible { outline: 2px solid var(--color-rust); outline-offset: 2px; }
+.play-btn { color: var(--color-ink); }

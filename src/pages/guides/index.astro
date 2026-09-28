@@ -1,6 +1,8 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
+import { guideImage } from "../../data/assets.ts";
 import { val } from "../../data/db.ts";
 const build = val(`SELECT value FROM meta WHERE key='build'`);
 const guides = (await getCollection("guides")).sort(
@@ -20,7 +22,20 @@ const guides = (await getCollection("guides")).sort(
     <div class="space-y-5">
       {
         guides.map((g) => (
-          <a href={`/guides/${g.id}/`} class="block border-t-2 border-rule-hard pt-4 hover:border-rust transition-colors">
+          <a href={`/guides/${g.id}/`} class="grid gap-4 sm:grid-cols-[180px_1fr] border-t-2 border-rule-hard pt-4 hover:border-rust transition-colors">
+            {guideImage[g.id] && (
+              <Image
+                src={guideImage[g.id]!}
+                alt=""
+                widths={[180, 360]}
+                sizes="180px"
+                format="webp"
+                loading="lazy"
+                decoding="async"
+                class="w-full aspect-video object-cover border border-rule-hard self-start"
+              />
+            )}
+            <span class="block">
             <h2 class="font-serif text-[1.3rem]">{g.data.title}</h2>
             <p class="mt-1.5 text-[0.9rem] text-ink-soft leading-relaxed max-w-[70ch]">{g.data.description}</p>
             <p class="mt-2 font-mono text-[0.75rem] text-ink-faint">
@@ -28,6 +43,7 @@ const guides = (await getCollection("guides")).sort(
                 <>{i > 0 && <span class="text-rule-hard"> · </span>}<span class="text-rust">{f.v}</span>{" "}{f.k}</>
               ))}
             </p>
+            </span>
           </a>
         ))
       }

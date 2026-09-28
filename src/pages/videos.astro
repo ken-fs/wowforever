@@ -1,0 +1,193 @@
+---
+import Base from "../layouts/Base.astro";
+import { val } from "../data/db.ts";
+import { attribution } from "../data/assets.ts";
+
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+
+// 全部来自 Blizzard 官方 YouTube 频道（channelTitle === "World of Warcraft"）。
+// 想加新的：搜官方频道，别用第三方搬运。
+const VIDEOS = [
+  {
+    id: "xXaXYxcbA6A", date: "2026-09-12", len: "trailer",
+    title: "New Horizons — Cinematic Trailer",
+    note: "The announcement cinematic. Introduces the Skyborne and the rebuilt Azeroth.",
+    feature: true,
+  },
+  {
+    id: "uQuKE0KDgiM", date: "2026-09-12", len: "trailer",
+    title: "Gameplay Trailer",
+    note: "Actual footage of the reworked zones, combat and UI.",
+    feature: true,
+  },
+  {
+    id: "dvueCoFTkCk", date: "2026-09-23", len: "short",
+    title: "What is World of Warcraft: Forever?",
+    note: "Blizzard's own explainer. The fastest way to understand what this version is versus Retail and Classic.",
+  },
+  {
+    id: "nQPS_QSOYCU", date: "2026-09-13", len: "panel",
+    title: "Deep Dive | BlizzCon 2026",
+    note: "The systems panel — camping, Legacy, professions and combat. Most of the mechanics on this site come from here.",
+  },
+  {
+    id: "OEX-i55We5c", date: "2026-09-13", len: "panel",
+    title: "What's Next Panel | BlizzCon 2026",
+    note: "Where Forever goes after launch, and how the content plan differs from a normal expansion cycle.",
+  },
+  {
+    id: "bsg2HmvLT-A", date: "2026-09-14", len: "panel",
+    title: "Evolving a Timeless World",
+    note: "Why zones are rebuilt rather than remastered — the design argument behind the whole project.",
+  },
+  {
+    id: "e0B4Bw3ehHA", date: "2026-09-13", len: "panel",
+    title: "Creator Showcase | BlizzCon 2026",
+    note: "Creators playing the beta on stage. Useful for seeing how the game actually moves.",
+  },
+  {
+    id: "m49-jvGPCkA", date: "2026-09-24", len: "podcast",
+    title: "Unpacking Beta Launch — The WoW: Forever Podcast, Ep. 1",
+    note: "Blizzard's own podcast. They take community questions, which makes it the best source for design intent.",
+  },
+  {
+    id: "Y5zzSMSVhRo", date: "2026-09-17", len: "panel",
+    title: "World of Warcraft Developer Q&A",
+    note: "Straight answers to beta questions, including the addon and API restrictions.",
+  },
+  {
+    id: "BAsMFcHkM6U", date: "2026-09-13", len: "panel",
+    title: "BlizzCon 2026 Opening Ceremony",
+    note: "The full ceremony, including the Forever reveal in context.",
+  },
+];
+
+const featured = VIDEOS.filter((v) => v.feature);
+const rest = VIDEOS.filter((v) => !v.feature);
+
+const thumb = (id: string) => `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+const label = (v: (typeof VIDEOS)[number]) => `${v.title} — official Blizzard video`;
+---
+<Base
+  title="WoW Forever videos — every official Blizzard video"
+  description="All of Blizzard's official World of Warcraft: Forever videos in one place — the cinematic and gameplay trailers, the BlizzCon panels and the developer podcast."
+  crumbs={[{ href: "/", label: "Home" }, { label: "Videos" }]}
+  {build}
+>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <p class="tag mb-3">Official video</p>
+    <h1 class="text-[2rem] sm:text-[2.35rem] leading-tight max-w-[22ch]">Every Forever video Blizzard has published</h1>
+    <p class="mt-3 max-w-[66ch] text-ink-soft leading-relaxed">
+      Trailers, BlizzCon panels, the developer Q&amp;A and the podcast — all from Blizzard's own channel.
+      Players load only when you click, so the page stays light.
+    </p>
+  </header>
+
+  <section class="py-8">
+    <div class="grid gap-8 sm:grid-cols-2">
+      {
+        featured.map((v) => (
+          <figure>
+            <button
+              type="button"
+              class="video-facade group relative block w-full border border-rule-hard bg-ink/5"
+              data-id={v.id}
+              data-title={v.title}
+              aria-label={`Play: ${v.title}`}
+            >
+              <img
+                src={thumb(v.id)}
+                alt={`${v.title} — official World of Warcraft: Forever video thumbnail`}
+                loading="lazy"
+                decoding="async"
+                width="1280"
+                height="720"
+                class="w-full block aspect-video object-cover"
+              />
+              <span class="absolute inset-0 flex items-center justify-center">
+                <span class="play-btn flex h-16 w-16 items-center justify-center rounded-full bg-paper/90 border border-rule-hard group-hover:bg-rust group-hover:border-rust group-hover:text-paper transition-colors">
+                  <svg width="22" height="24" viewBox="0 0 22 24" aria-hidden="true"><path d="M0 0l22 12L0 24z" fill="currentColor" /></svg>
+                </span>
+              </span>
+            </button>
+            <figcaption class="mt-2 text-[0.85rem]">
+              <span class="font-serif text-[1.05rem]">{v.title}</span>
+              <span class="block text-ink-soft mt-0.5 leading-relaxed">{v.note}</span>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="py-8 border-t border-rule">
+    <h2 class="text-[1.5rem] mb-1">Panels, podcast and Q&amp;A</h2>
+    <p class="text-[0.9rem] text-ink-soft mb-6 max-w-[68ch]">
+      These are the sources behind most of the guides on this site. If you want to check our work, this is
+      where to start.
+    </p>
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        rest.map((v) => (
+          <figure>
+            <button
+              type="button"
+              class="video-facade group relative block w-full border border-rule-hard bg-ink/5"
+              data-id={v.id}
+              data-title={v.title}
+              aria-label={`Play: ${v.title}`}
+            >
+              <img
+                src={thumb(v.id)}
+                alt={`${v.title} — official World of Warcraft: Forever video thumbnail`}
+                loading="lazy"
+                decoding="async"
+                width="1280"
+                height="720"
+                class="w-full block aspect-video object-cover"
+              />
+              <span class="absolute inset-0 flex items-center justify-center">
+                <span class="play-btn flex h-11 w-11 items-center justify-center rounded-full bg-paper/90 border border-rule-hard group-hover:bg-rust group-hover:border-rust group-hover:text-paper transition-colors">
+                  <svg width="15" height="17" viewBox="0 0 22 24" aria-hidden="true"><path d="M0 0l22 12L0 24z" fill="currentColor" /></svg>
+                </span>
+              </span>
+            </button>
+            <figcaption class="mt-2 text-[0.85rem]">
+              <span class="font-serif text-[1rem]">{v.title}</span>
+              <span class="block text-ink-soft mt-0.5 leading-relaxed">{v.note}</span>
+              <span class="block font-mono text-[0.72rem] text-ink-faint mt-1">{v.date} · {v.len}</span>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </section>
+
+  <footer class="py-6 border-t border-rule">
+    <p class="text-[0.82rem] text-ink-faint max-w-[70ch]">
+      All videos are embedded from Blizzard's official YouTube channel and remain their property. {attribution}
+    </p>
+  </footer>
+</Base>
+
+<script is:inline>
+  // 点击才加载 iframe —— 13 个 iframe 一起加载会把页面拖垮
+  document.querySelectorAll(".video-facade").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var id = btn.dataset.id;
+      var title = btn.dataset.title || "";
+      var holder = document.createElement("div");
+      holder.className = "aspect-video w-full border border-rule-hard";
+      var frame = document.createElement("iframe");
+      frame.src = "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&rel=0";
+      frame.title = title;
+      frame.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture");
+      frame.setAttribute("allowfullscreen", "");
+      frame.style.width = "100%";
+      frame.style.height = "100%";
+      frame.style.border = "0";
+      holder.appendChild(frame);
+      btn.replaceWith(holder);
+    });
+  });
+</script>
