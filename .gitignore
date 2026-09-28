@@ -14,3 +14,6 @@ data/transcripts/
 
 # IndexNow key 本体不入库；public/<key>.txt 是它的公开副本（IndexNow 要抓的那个）
 .indexnow-key
+
+# 部署标记由 prebuild 生成（CI 读 WORKERS_CI_COMMIT_SHA）。入库会让陈旧 SHA 盖住真实值。
+public/.well-known/
