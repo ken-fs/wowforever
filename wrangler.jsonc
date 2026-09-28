@@ -5,6 +5,10 @@
   // 纯静态站：dist/ 直接作为 assets 部署，没有 Worker 脚本
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "404-page"
+    "not_found_handling": "404-page",
+    // ⚠️ 必须设 "none"：默认的 auto-trailing-slash 会把 /ads/x.html 307 到
+    // /ads/x，广告位 iframe 因此多一次重定向，而且和本地 python http.server
+    // 的行为不一致（本地只有 .html 能取）。设 none 后两边行为一致。
+    "html_handling": "none"
   }
 }
