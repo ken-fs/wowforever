@@ -1,0 +1,57 @@
+{
+  "_说明": "营地道具 ↔ 客户端配方的对照表。",
+  "_为什么需要": "camping 攻略里的道具名来自创作者转述（攻略页已标来源），和客户端的配方命名不完全一致。",
+  "_为什么不自动匹配": "按名字 LIKE '%camp%' 只能捞到 4 个；按攻略名精确匹配能捞到 10 个。剩下的客户端里没有同名词，如实标 null。",
+  "_结构": "profession=攻略里写的专业, object=攻略里写的道具名, tier=1/2/3, recipe=客户端 recipe.spell_name（null = 客户端无此配方）",
+  "_来源": "src/content/guides/camping.md 的「Every profession's camp object」表",
+
+  "objects": [
+    { "profession": "Cooking",        "object": "Basic Campfire Kit",      "tier": 1, "recipe": null },
+    { "profession": "Cooking",        "object": "Journeyman Campfire Kit", "tier": 2, "recipe": null },
+    { "profession": "Cooking",        "object": "Expert Campfire Kit",     "tier": 3, "recipe": null },
+    { "profession": "Cooking",        "object": "Cookie's Feast",          "tier": 2, "recipe": null },
+
+    { "profession": "Alchemy",        "object": "Mana Well",               "tier": 1, "recipe": "Mana Well" },
+    { "profession": "Alchemy",        "object": "Fermentor",               "tier": 2, "recipe": "Fermentor" },
+    { "profession": "Alchemy",        "object": "Alchemy Laboratory",      "tier": 3, "recipe": null },
+
+    { "profession": "Blacksmithing",  "object": "Sharpening Wheel",        "tier": 1, "recipe": "Sharpening Wheel" },
+    { "profession": "Blacksmithing",  "object": "Anvil",                   "tier": 2, "recipe": "Anvil" },
+    { "profession": "Blacksmithing",  "object": "Master Forge",            "tier": 3, "recipe": null },
+
+    { "profession": "Enchanting",     "object": "Enchanted Loot",          "tier": 1, "recipe": null },
+    { "profession": "Enchanting",     "object": "Arcane Salvager",         "tier": 2, "recipe": null },
+    { "profession": "Enchanting",     "object": "Arcane Forge",            "tier": 3, "recipe": null },
+
+    { "profession": "Engineering",    "object": "Reagent Bot",             "tier": 1, "recipe": "Reagent Bot" },
+    { "profession": "Engineering",    "object": "Repair Bot",              "tier": 2, "recipe": "Repair Bot" },
+    { "profession": "Engineering",    "object": "Anarchist's Workbench",   "tier": 3, "recipe": null },
+
+    { "profession": "Leatherworking", "object": "Camp Tent",               "tier": 1, "recipe": "Camp Tent" },
+    { "profession": "Leatherworking", "object": "Tanning Rack",            "tier": 2, "recipe": null },
+    { "profession": "Leatherworking", "object": "Sewing Machine",          "tier": 3, "recipe": null },
+
+    { "profession": "Tailoring",      "object": "Faction Banner",          "tier": 1, "recipe": "Faction Banner" },
+    { "profession": "Tailoring",      "object": "Spinning Wheel",          "tier": 2, "recipe": null },
+    { "profession": "Tailoring",      "object": "Loom",                    "tier": 3, "recipe": null },
+
+    { "profession": "Fishing",        "object": "Fishbowl",                "tier": 1, "recipe": null },
+    { "profession": "Fishing",        "object": "Fishing Rack",            "tier": 2, "recipe": null },
+    { "profession": "Fishing",        "object": "Fishing Hut",             "tier": 3, "recipe": null },
+
+    { "profession": "Mining",         "object": "Lodestone",               "tier": 1, "recipe": "Lodestone" },
+    { "profession": "Mining",         "object": "Rock Garden",             "tier": 2, "recipe": null },
+    { "profession": "Mining",         "object": "Molten Foundry",          "tier": 3, "recipe": null },
+
+    { "profession": "Herbalism",      "object": "Incense Candle",          "tier": 1, "recipe": "Incense Candle" },
+    { "profession": "Herbalism",      "object": "Greenhouse",              "tier": 2, "recipe": null },
+
+    { "profession": "Skinning",       "object": "Camping Chair",           "tier": 1, "recipe": "Camp Chair" },
+    { "profession": "Skinning",       "object": "Field Guide",             "tier": 2, "recipe": "Field Guide" },
+    { "profession": "Skinning",       "object": "Trapper's Workbench",     "tier": 3, "recipe": null },
+
+    { "profession": "First Aid",      "object": "First Aid Kit",           "tier": 1, "recipe": null },
+    { "profession": "First Aid",      "object": "Toxin Study",             "tier": 2, "recipe": null },
+    { "profession": "First Aid",      "object": "Plague Doctor's Laboratory", "tier": 3, "recipe": null }
+  ]
+}

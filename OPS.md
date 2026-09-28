@@ -541,3 +541,60 @@ git add -A && git commit && git push
 
 负向测试抓到的：404 页上也有一张 `_astro` 图（恰好返回 200），
 只检查图片会把挂掉的页面判成正常。所以 `checkImages` 先看页面 status。
+
+
+---
+
+## 数据列陷阱清单（持续更新）
+
+拿到暴雪的表**先别信列名**，抽几个非零样本验证再写 JOIN。已踩过的：
+
+| 表.列 | 看着像 | 实际 | 真值在哪 |
+|---|---|---|---|
+| `Talent.ClassID` | 职业 | 整列 0 | `TalentTab.ClassMask` 位掩码 |
+| `Talent.SpellID` | 法术 | 整列 0 | `Talent.SpellRank_0` |
+| `SkillLineAbility.MinSkillLineRank` | 需求等级 | 7809/7826 行是 1 | `TrivialSkillLineRankHigh`（变灰等级）|
+| `QuestV2` | 任务表 | 只有 3 列 | 服务端，客户端没有 |
+
+**两个通用排查手段**：
+
+```sql
+SELECT typeof(列), hex(列) FROM 表 LIMIT 1;         -- 别信屏幕上看到的 0
+SELECT COUNT(*) FROM 表 WHERE CAST(列 AS INTEGER) != 0;  -- 别用字符串比较
+```
+
+### ⚠️ 专业分类不只 CategoryID=11
+
+`SkillLine.CategoryID`：
+- `11` = 9 个制造专业（锻造/制皮/裁缝/工程/附魔/炼金/采矿/草药/剥皮）
+- **`9` = 次要技能，但 Cooking / First Aid / Fishing 也是真专业**
+
+只写 `CategoryID='11'` 会漏掉这三个 —— 而**营火系统的主角就是烹饪**，钓鱼还有 Fishbowl。
+所以过滤条件要写成：
+
+```sql
+AND (sl.CategoryID = '11' OR sl.DisplayName_lang IN ('Cooking','First Aid','Fishing'))
+```
+
+### ⚠️ 新增派生表后必须加进 SITE_TABLES
+
+`data/site.db` 是**白名单导出**。新表没加进去的话：
+本地 `npm run build` 可能正常（取决于 site.db 是否已重建），**CI 直接报 `no such table`**。
+
+踩过三次：`recipe_reagent` · `reagent_name` · `camping_spell`。
+
+### 营地道具 ↔ 配方：名字对不上是**正常的**
+
+`pipeline/camp-objects.json` 是手工对照表。原因：
+
+- 攻略里的道具名来自**创作者转述**（页面已标来源），不是客户端原文
+  - 攻略写 "Camping Chair"，客户端叫 "Camp Chair"
+- 客户端**根本没有**部分道具的配方：Fishbowl / Cookie's Feast / Enchanted Loot /
+  First Aid Kit / Basic Campfire Kit / 各种 tier-3 工作台
+- 按 `LIKE '%camp%'` 自动匹配只能捞到 4/16 —— Sharpening Wheel 之类都不含 camp
+
+对照表里 `recipe: null` 就是「客户端没有」，页面如实写
+"no recipe in the client"，**不猜**。
+
+**顺带验到一次交叉印证**：`Mana Well = Peacebloom ×1 + Empty Vial ×1`，
+和语料里创作者原话 "it just takes a peace bloom and an empty vial" 完全对上。

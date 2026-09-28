@@ -101,18 +101,58 @@ SELECT
   CAST(sla.ID AS INTEGER)               AS id,
   sl.DisplayName_lang                   AS profession,
   CAST(sla.SkillLine AS INTEGER)        AS skill_line,
-  CAST(sla.MinSkillLineRank AS INTEGER) AS req_skill,
+  -- ⚠️ MinSkillLineRank 在 Forever 客户端里 7809/7826 行都是 1（没用）。
+  -- 真等级在 TrivialSkillLineRankHigh —— 配方"变灰"的技能等级，2547 行有值。
+  -- 别当"需求等级"用，它是 trivial 等级。
+  CAST(sla.TrivialSkillLineRankHigh AS INTEGER) AS trivial_at,
+  CAST(sla.TradeSkillCategoryID AS INTEGER)    AS category_id,
   sn.name                               AS spell_name,
   CAST(sla.Spell AS INTEGER)            AS spell_id,
   CAST(sr.Reagent_0 AS INTEGER)         AS reagent_0,
   CAST(sr.ReagentCount_0 AS INTEGER)    AS count_0
+  -- 完整材料表见 recipe_reagent（一张配方最多 8 个材料槽）
 FROM "SkillLineAbility" sla
 JOIN "SkillLine" sl ON CAST(sl.ID AS INTEGER) = CAST(sla.SkillLine AS INTEGER)
-  AND sl.CategoryID = '11'   -- 11=专业；7=武器技能(Axes/Swords/Bows)，不是专业
+  -- 11 = 制造专业(9 个)；9 = 次要技能，但 Cooking/First Aid/Fishing 也是真专业
+  -- ⚠️ 只写 CategoryID='11' 会把这三个漏掉 —— 而营火系统的主角就是烹饪，钓鱼还有 Fishbowl
+  AND (sl.CategoryID = '11' OR sl.DisplayName_lang IN ('Cooking', 'First Aid', 'Fishing'))
+  -- 7 = 武器技能(Axes/Swords/Bows)，不是专业
 LEFT JOIN spell_named sn ON sn.id = CAST(sla.Spell AS INTEGER)
 LEFT JOIN "SpellReagents" sr ON CAST(sr.SpellID AS INTEGER) = CAST(sla.Spell AS INTEGER)
-WHERE sn.name IS NOT NULL;
+WHERE sn.name IS NOT NULL
+  -- 排除职业本身（"Blacksmithing" 这种技能线法术会被当成配方混进来）
+  AND sn.name <> sl.DisplayName_lang
+  -- 只要真配方：trivial 等级 > 0 的
+  AND CAST(sla.TrivialSkillLineRankHigh AS INTEGER) > 0;
 CREATE INDEX ix_recipe_prof ON recipe(profession);
+
+-- 配方材料：SpellReagents 有 Reagent_0..7 共 8 个槽位，竖过来存才用得上
+-- （之前 recipe 表只取了 reagent_0，浪费了 7 个槽）
+DROP TABLE IF EXISTS recipe_reagent;
+CREATE TABLE recipe_reagent AS
+SELECT spell_id, CAST(trivial_at AS INTEGER) AS trivial_at, profession, spell_name,
+       reagent_id, count, slot
+FROM (
+  SELECT CAST(sr.SpellID AS INTEGER) AS spell_id, r.trivial_at, r.profession, r.spell_name,
+         CAST(sr.Reagent_0 AS INTEGER) AS reagent_id, CAST(sr.ReagentCount_0 AS INTEGER) AS count, 0 AS slot FROM "SpellReagents" sr JOIN recipe r ON r.spell_id = CAST(sr.SpellID AS INTEGER)
+  UNION ALL SELECT CAST(sr.SpellID AS INTEGER), r.trivial_at, r.profession, r.spell_name, CAST(sr.Reagent_1 AS INTEGER), CAST(sr.ReagentCount_1 AS INTEGER), 1 FROM "SpellReagents" sr JOIN recipe r ON r.spell_id = CAST(sr.SpellID AS INTEGER)
+  UNION ALL SELECT CAST(sr.SpellID AS INTEGER), r.trivial_at, r.profession, r.spell_name, CAST(sr.Reagent_2 AS INTEGER), CAST(sr.ReagentCount_2 AS INTEGER), 2 FROM "SpellReagents" sr JOIN recipe r ON r.spell_id = CAST(sr.SpellID AS INTEGER)
+  UNION ALL SELECT CAST(sr.SpellID AS INTEGER), r.trivial_at, r.profession, r.spell_name, CAST(sr.Reagent_3 AS INTEGER), CAST(sr.ReagentCount_3 AS INTEGER), 3 FROM "SpellReagents" sr JOIN recipe r ON r.spell_id = CAST(sr.SpellID AS INTEGER)
+  UNION ALL SELECT CAST(sr.SpellID AS INTEGER), r.trivial_at, r.profession, r.spell_name, CAST(sr.Reagent_4 AS INTEGER), CAST(sr.ReagentCount_4 AS INTEGER), 4 FROM "SpellReagents" sr JOIN recipe r ON r.spell_id = CAST(sr.SpellID AS INTEGER)
+  UNION ALL SELECT CAST(sr.SpellID AS INTEGER), r.trivial_at, r.profession, r.spell_name, CAST(sr.Reagent_5 AS INTEGER), CAST(sr.ReagentCount_5 AS INTEGER), 5 FROM "SpellReagents" sr JOIN recipe r ON r.spell_id = CAST(sr.SpellID AS INTEGER)
+  UNION ALL SELECT CAST(sr.SpellID AS INTEGER), r.trivial_at, r.profession, r.spell_name, CAST(sr.Reagent_6 AS INTEGER), CAST(sr.ReagentCount_6 AS INTEGER), 6 FROM "SpellReagents" sr JOIN recipe r ON r.spell_id = CAST(sr.SpellID AS INTEGER)
+  UNION ALL SELECT CAST(sr.SpellID AS INTEGER), r.trivial_at, r.profession, r.spell_name, CAST(sr.Reagent_7 AS INTEGER), CAST(sr.ReagentCount_7 AS INTEGER), 7 FROM "SpellReagents" sr JOIN recipe r ON r.spell_id = CAST(sr.SpellID AS INTEGER)
+)
+WHERE reagent_id > 0;
+CREATE INDEX ix_rr_spell ON recipe_reagent(spell_id);
+
+-- 材料名：只存「被用作材料」的那部分物品（实测 ~800 个 vs 全量 19,224）
+-- 站点要显示材料名，但没必要为此把整张 item_named 带进 site.db
+DROP TABLE IF EXISTS reagent_name;
+CREATE TABLE reagent_name AS
+SELECT DISTINCT CAST(i.id AS INTEGER) AS id, i.name, CAST(i.quality AS INTEGER) AS quality
+FROM item_named i
+WHERE CAST(i.id AS INTEGER) IN (SELECT DISTINCT reagent_id FROM recipe_reagent);
 
 -- ── 支柱 ② 露营 / 增益 ────────────────────────────────────────
 DROP TABLE IF EXISTS camping_spell;
@@ -198,7 +238,7 @@ SELECT * FROM (
   UNION ALL SELECT '职业×种族组合', CAST(COUNT(*) AS TEXT), 'CharBaseInfo（含天裔两分支）' FROM race_class
   UNION ALL SELECT '套装页', CAST(COUNT(*) AS TEXT), 'ItemSet'
     FROM "ItemSet" WHERE ItemID_0 IS NOT NULL AND ItemID_0 <> ''
-  UNION ALL SELECT '专业配方页', CAST(COUNT(*) AS TEXT), 'SkillLineAbility×SpellName' FROM recipe
+  UNION ALL SELECT '专业配方页', CAST(COUNT(*) AS TEXT), 'SkillLineAbility，已排职业本身+无等级行' FROM recipe
   UNION ALL SELECT '专业（SkillLine）', CAST(COUNT(*) AS TEXT), 'SkillLine 表' FROM "SkillLine"
   UNION ALL SELECT '地图/区域页', CAST(COUNT(*) AS TEXT), 'Map 表' FROM "Map"
   UNION ALL SELECT '副本 BOSS 页', CAST(COUNT(*) AS TEXT), 'DungeonEncounter' FROM "DungeonEncounter"

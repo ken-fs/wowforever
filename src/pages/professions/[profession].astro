@@ -1,0 +1,144 @@
+---
+import Base from "../../layouts/Base.astro";
+import { all, one, slug, val } from "../../data/db.ts";
+
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+
+export async function getStaticPaths() {
+  const list = all(`SELECT DISTINCT profession FROM recipe WHERE profession NOT LIKE '%[DNT]%' ORDER BY profession`);
+  return list.map((p) => ({ params: { profession: slug(p.profession) }, props: { prof: p.profession } }));
+}
+
+const { prof } = Astro.props;
+
+// 一条配方一行，材料用子查询聚合成一行 —— 8083 条材料行，别在前端 join
+const recipes = all(
+  `SELECT r.spell_id, r.spell_name, CAST(r.trivial_at AS INTEGER) AS tier, r.category_id,
+          (SELECT group_concat(x, ' · ') FROM (
+             SELECT i.name || ' ×' || rr.count AS x
+             FROM recipe_reagent rr
+             JOIN reagent_name i ON CAST(i.id AS INTEGER) = rr.reagent_id
+             WHERE rr.spell_id = r.spell_id
+             ORDER BY rr.slot
+          )) AS mats
+   FROM recipe r
+   WHERE r.profession = ?
+   ORDER BY CAST(r.trivial_at AS INTEGER), r.spell_name`,
+  prof,
+);
+
+// 按 tier 分档，做出"练级顺序"的感觉
+const tiers = [];
+for (const r of recipes) {
+  let g = tiers[tiers.length - 1];
+  if (!g || g.tier !== r.tier) { g = { tier: r.tier, rows: [] }; tiers.push(g); }
+  g.rows.push(r);
+}
+
+// 这个专业能做哪些营地道具（只有做得到时才显示）
+// ⚠️ 用 camp_object 对照表，不用 camping_spell 的名字模糊匹配 ——
+// 后者按 LIKE '%camp%' 只能捞到 4/16 个道具（Sharpening Wheel 之类都不含 camp）。
+const campObjects = all(
+  `SELECT o.object, o.tier, o.recipe,
+          (SELECT group_concat(x, ' · ') FROM (
+             SELECT i.name || ' ×' || rr.count AS x
+             FROM recipe_reagent rr JOIN reagent_name i ON CAST(i.id AS INTEGER) = rr.reagent_id
+             WHERE rr.spell_id = r.spell_id ORDER BY rr.slot
+          )) AS mats
+   FROM camp_object o
+   LEFT JOIN recipe r ON lower(r.spell_name) = lower(o.recipe)
+   WHERE o.profession = ?
+   GROUP BY o.object, o.tier, o.recipe
+   ORDER BY o.tier`,
+  prof,
+);
+
+const withMats = recipes.filter((r) => r.mats).length;
+---
+<Base
+  title={`${prof} in WoW Forever — all ${recipes.length} recipes`}
+  description={`Every ${prof} recipe in World of Warcraft: Forever: ${recipes.length} of them, with skill tiers and the materials each one takes, read from the game client.`}
+  crumbs={[{ href: "/", label: "Home" }, { href: "/professions/", label: "Professions" }, { label: prof }]}
+  {build}
+>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <div class="flex flex-wrap gap-2 mb-3">
+      <span class="tag">{recipes.length} recipes</span>
+      <span class="tag">tiers {tiers[0]?.tier}&ndash;{tiers[tiers.length - 1]?.tier}</span>
+      {campObjects.length > 0 && <span class="tag">{campObjects.length} camp objects</span>}
+    </div>
+    <h1 class="text-[2rem] leading-tight">{prof}</h1>
+    <p class="mt-3 max-w-[64ch] text-ink-soft leading-relaxed">
+      Grouped by the skill level where each recipe goes trivial, so the order below is the order you'd
+      actually level in. {withMats} of them list materials.
+    </p>
+  </header>
+
+  {
+    campObjects.length > 0 && (
+      <section class="py-8 border-b border-rule">
+        <h2 class="text-[1.3rem] mb-2">The camp objects this profession makes</h2>
+        <p class="text-[0.9rem] text-ink-soft mb-4 max-w-[68ch]">
+          Camp objects are consumable and share an hourly cooldown, which makes them the recipes with
+          ongoing demand rather than a one-off craft. Names come from{" "}
+          <a href="/guides/camping/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">the camping guide</a>;
+          materials come from the client. Where the client ships no recipe under that name, the row says so
+          rather than guessing.
+        </p>
+        <table class="data">
+          <thead><tr><th>Object</th><th>Materials</th></tr></thead>
+          <tbody>
+            {campObjects.map((c) => (
+              <tr>
+                <td class="font-medium">
+                  {c.object}{" "}
+                  <span class="font-mono text-[0.75rem] text-ink-faint">tier {c.tier}</span>
+                </td>
+                <td class="text-[0.88rem] text-ink-soft">
+                  {c.mats ?? <span class="text-ink-faint">no recipe in the client</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    )
+  }
+
+  <section class="py-8">
+    <h2 class="text-[1.3rem] mb-4">All {recipes.length} recipes</h2>
+    <div class="space-y-8">
+      {
+        tiers.map((g) => (
+          <div>
+            <h3 class="flex items-baseline gap-3 mb-2">
+              <span class="font-mono text-[0.9rem] text-ochre">trivial {g.tier}</span>
+              <span class="h-px flex-1 bg-rule" aria-hidden="true" />
+              <span class="font-mono text-[0.78rem] text-ink-faint">{g.rows.length}</span>
+            </h3>
+            <table class="data">
+              <thead>
+                <tr><th>Recipe</th><th>Materials</th></tr>
+              </thead>
+              <tbody>
+                {g.rows.map((r) => (
+                  <tr>
+                    <td class="whitespace-nowrap">{r.spell_name || "—"}</td>
+                    <td class="text-[0.86rem] text-ink-soft">{r.mats ?? <span class="text-rule-hard">—</span>}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <footer class="py-6 border-t border-rule">
+    <p class="text-[0.82rem] text-ink-faint max-w-[70ch]">
+      Recipe names, tiers and reagents read from the game client for build {build}. Where the client
+      stores no material list, the row shows a dash rather than a guess.
+    </p>
+  </footer>
+</Base>

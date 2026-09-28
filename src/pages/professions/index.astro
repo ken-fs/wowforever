@@ -1,0 +1,96 @@
+---
+import Base from "../../layouts/Base.astro";
+import { all, val, slug } from "../../data/db.ts";
+
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+
+// 只要真专业，排除 Test Profession [DNT]
+const professions = all(`
+  SELECT profession,
+         COUNT(*)                     AS recipes,
+         MIN(CAST(trivial_at AS INTEGER)) AS min_tier,
+         MAX(CAST(trivial_at AS INTEGER)) AS max_tier
+  FROM recipe
+  WHERE profession NOT LIKE '%[DNT]%'
+  GROUP BY profession
+  ORDER BY COUNT(*) DESC
+`);
+
+const total = professions.reduce((a, p) => a + p.recipes, 0);
+
+// 每个专业能做几个营地道具 —— 这个交叉没人做过
+const campCount = all(`
+  SELECT r.profession, COUNT(DISTINCT r.spell_id) AS n
+  FROM recipe r JOIN camping_spell c ON lower(c.name) = lower(r.spell_name)
+  GROUP BY r.profession
+`).reduce((a, r) => ((a[r.profession] = r.n), a), {} as Record<string, number>);
+---
+<Base
+  title="Professions in WoW Forever — every recipe the client ships"
+  description={`All ${total.toLocaleString()} profession recipes in World of Warcraft: Forever, read from the client with their skill tiers and reagents. Including what every camping object costs to craft.`}
+  crumbs={[{ href: "/", label: "Home" }, { label: "Professions" }]}
+  {build}
+>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <p class="tag mb-3">{total.toLocaleString()} recipes</p>
+    <h1 class="text-[2rem] leading-tight">Professions</h1>
+    <p class="mt-3 max-w-[64ch] text-ink-soft leading-relaxed">
+      Every recipe the client ships, with its skill tier and the materials it takes. This is the same
+      data the crafting window reads &mdash; not a wiki someone typed up.
+    </p>
+  </header>
+
+  <section class="py-8">
+    <table class="data">
+      <thead>
+        <tr>
+          <th>Profession</th>
+          <th class="text-right">Recipes</th>
+          <th class="text-right">Tier range</th>
+          <th class="text-right">Camp objects</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          professions.map((p) => (
+            <tr>
+              <td><a href={`/professions/${slug(p.profession)}/`} class="font-medium hover:text-rust">{p.profession}</a></td>
+              <td class="text-right font-mono">{Number(p.recipes).toLocaleString()}</td>
+              <td class="text-right font-mono text-ink-faint">{p.min_tier}&ndash;{p.max_tier}</td>
+              <td class="text-right font-mono">
+                {campCount[p.profession] ? <span class="text-ochre">{campCount[p.profession]}</span> : <span class="text-rule-hard">—</span>}
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </section>
+
+  <section class="py-8 border-t border-rule grid gap-8 lg:grid-cols-2">
+    <div>
+      <h2 class="text-[1.3rem] mb-2">Why tiers, not levels</h2>
+      <p class="text-[0.92rem] text-ink-soft leading-relaxed">
+        The column is the skill level at which a recipe goes <em>trivial</em> &mdash; when it stops giving
+        skill-ups. It is not the level you need to learn it. Sorting by it gives you the crafting order
+        you'd actually follow while levelling a profession.
+      </p>
+      <p class="text-[0.9rem] text-ink-faint leading-relaxed mt-3">
+        Worth stating because the client's obvious column for this (<span class="font-mono text-[0.9em]">MinSkillLineRank</span>)
+        is 1 for 7,809 of 7,826 rows. The real number lives in
+        <span class="font-mono text-[0.9em]">TrivialSkillLineRankHigh</span>.
+      </p>
+    </div>
+    <div>
+      <h2 class="text-[1.3rem] mb-2">Camp objects are crafted goods</h2>
+      <p class="text-[0.92rem] text-ink-soft leading-relaxed">
+        The third column counts how many camping objects each profession makes. Those objects are what
+        give a camp its buffs &mdash; and unlike most recipes, they have ongoing demand, because they are
+        consumable and share an hourly cooldown.
+      </p>
+      <a href="/guides/camping/" class="arrow-link inline-block mt-3 text-[0.9rem] hover:text-rust">
+        What each camp object does<span class="arrow"> →</span>
+      </a>
+    </div>
+  </section>
+</Base>

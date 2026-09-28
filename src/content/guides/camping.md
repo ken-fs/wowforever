@@ -95,6 +95,22 @@ Two others are the ones people argue about:
   creator put it plainly: getting a bar of rested instead of a stat buff "feels weird". Whether that
   survives launch is unknown.
 
+## What each camp object costs to craft
+
+The client ships the recipe for every one of these, so the material lists aren't guesswork. Tiers are the
+skill level where the recipe goes trivial — see the [professions pages](/professions/) for the full list.
+
+| Object | Profession | Trivial at |
+|---|---|---|
+| Camp Chair | Skinning | 25 |
+| Camp Tent | Leatherworking | 25 |
+| Faction Banner | Tailoring | 25 |
+| Field Guide | Skinning | 145 |
+
+Each profession page lists the exact materials. Camp Tent, for example, is **5× Light Leather** — cheap
+enough that the argument against it isn't the cost, it's that a bar of rested experience is a weaker
+payoff than a stat buff for the same slot.
+
 ## What's still uncertain
 
 - **The Greenhouse and Rock Garden** both generate resources over time, and nobody has published numbers

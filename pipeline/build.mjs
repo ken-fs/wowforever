@@ -100,6 +100,15 @@ function importAll(results, build) {
     imported++;
   }
   // meta：把 build 号写进库里，站点构建时读它显示"数据基于哪个版本"
+  // 营地道具对照表 —— 攻略里的道具名（创作者转述）↔ 客户端配方名。
+  // 不能在 SQL 里自动匹配：按名字 LIKE '%camp%' 只能捞到 4/16。
+  const campMap = JSON.parse(readFileSync(resolve(ROOT, "pipeline/camp-objects.json"), "utf8")).objects;
+  const esc = (v) => (v === null ? "NULL" : `'${String(v).replace(/'/g, "''")}'`);
+  script.push(
+    `DROP TABLE IF EXISTS camp_object;`,
+    `CREATE TABLE camp_object (profession TEXT, object TEXT, tier INTEGER, recipe TEXT);`,
+    ...campMap.map((o) => `INSERT INTO camp_object VALUES (${esc(o.profession)}, ${esc(o.object)}, ${o.tier}, ${esc(o.recipe)});`),
+  );
   script.push(
     `CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT);`,
     `INSERT OR REPLACE INTO meta VALUES ('build', '${build}'), ('built_at', '${new Date().toISOString()}');`,
@@ -212,10 +221,12 @@ for (const t of list) {
 const n = importAll(results, build);
 console.error(`imported ${n} tables → ${DB}`);
 
+// ⚠️ 新增派生表后必须加进 SITE_TABLES，否则本地 build 正常（读完整库）
+// 但 CI 构建报 'no such table'（只读 site.db）。踩过一次。
 // ── 导出瘦身库：站点构建只读它（0.3MB vs 20MB），可以进 git，CI 不依赖网络 ──
 const SITE_TABLES = [
   "race_class", "race_class_new", "talent_full", "xp_spell", "xp_curve", "quest_xp",
-  "recipe", "counts", "meta", "ChrRaces", "ChrClasses", "DungeonEncounter", "Map", "ItemSet",
+  "recipe", "recipe_reagent", "reagent_name", "camping_spell", "camp_object", "counts", "meta", "ChrRaces", "ChrClasses", "DungeonEncounter", "Map", "ItemSet",
   "v_change_summary", "v_page_counts", "v_findings", "v_gaps",
 ];
 const siteDb = resolve(ROOT, "data/site.db");
