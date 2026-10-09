@@ -11,6 +11,17 @@ const added = all(`SELECT race, class, race_id, is_skyborne FROM race_class_new 
 const oldRaces = added.filter((a) => !a.is_skyborne);
 const skyborne = added.filter((a) => a.is_skyborne);
 
+const talentByClass = all(
+  `SELECT class, SUM(status = 'new') AS new, SUM(status = 'changed') AS changed,
+          (SELECT COUNT(*) FROM talent_removed r WHERE r.class = t.class) AS removed
+     FROM talent_node t GROUP BY class ORDER BY class`,
+);
+const talentTally = {
+  new: talentByClass.reduce((a, c) => a + c.new, 0),
+  changed: talentByClass.reduce((a, c) => a + c.changed, 0),
+  removed: talentByClass.reduce((a, c) => a + c.removed, 0),
+};
+
 const totals = {
   items: count("items_rare"),
   recipes: val(`SELECT COUNT(*) FROM recipe`),
@@ -19,7 +30,7 @@ const totals = {
 ---
 <Base
   title="What changed in WoW Forever versus Classic — the full comparison"
-  description="A side-by-side of WoW: Forever and Classic Era built from both clients' data. 16 new race and class combinations, and not a single one removed."
+  description="WoW Forever next to Classic Era, read from both clients: 16 new race and class combinations, plus every talent that's new, changed or gone, class by class."
   crumbs={[{ href: "/", label: "Home" }, { label: "What changed" }]}
   {build}
 >
@@ -125,12 +136,36 @@ const totals = {
   </section>
 
   <section class="py-8 border-t border-rule">
+    <h2 class="text-[1.4rem] mb-1">Talents: {talentTally.new} new, {talentTally.changed} changed</h2>
+    <p class="text-[0.9rem] text-ink-soft mb-5 max-w-[68ch]">
+      Forever has {totals.talents} talents across the nine classes. {talentTally.removed} Classic talents
+      are gone. Each class has its own page with every talent next to its Classic version.
+    </p>
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        talentByClass.map((c) => (
+          <a href={`/classes/${slug(c.class)}/talent-changes/`} class="card block p-4">
+            <span class="flex items-center gap-2.5">
+              {classIcon[slug(c.class)] && (
+                <Image src={classIcon[slug(c.class)]!} alt="" width={26} height={26} format="webp" aria-hidden="true" />
+              )}
+              <span class="font-serif text-[1.1rem]">{c.class} talents</span>
+            </span>
+            <span class="block mt-1 text-[0.82rem] text-ink-faint">
+              {c.new} new · {c.changed} changed · {c.removed} gone
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="py-8 border-t border-rule">
     <h2 class="text-[1.3rem] mb-3">What this page doesn't cover yet</h2>
     <p class="text-[0.92rem] text-ink-soft leading-relaxed max-w-[70ch]">
-      Items, spells and talents ship in numbers that make an honest diff slower than a race/class table:
-      {" "}{Number(totals.items).toLocaleString()} rare-or-better items,{" "}
-      {Number(totals.talents).toLocaleString()} talent points and{" "}
-      {Number(totals.recipes).toLocaleString()} recipes are all indexed, and a first pass at the item
+      Items and recipes ship in numbers that make an honest diff slow:
+      {" "}{Number(totals.items).toLocaleString()} rare-or-better items and{" "}
+      {Number(totals.recipes).toLocaleString()} recipes are indexed, and a first pass at the item
       diff turned up mostly noise &mdash; incidental changes like item level 0 flipping to 1. That work
       is in progress and will land here when the signal is good enough to publish.
     </p>

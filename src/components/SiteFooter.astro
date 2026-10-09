@@ -8,7 +8,9 @@ const year = new Date().getFullYear();
     <div class="grid gap-6 sm:grid-cols-[2fr_1fr_1fr]">
       <div class="max-w-[46ch] leading-relaxed">
         <p>
-          Data pulled straight from the game client, not copied from another site.{" "}
+          Data read from the game client. Talent and spell text partly from{" "}
+          <a href="https://talentsforever.com/" class="underline decoration-rule-hard underline-offset-2 hover:text-rust">talentsforever.com</a>{" "}
+          (<a href="https://creativecommons.org/licenses/by/4.0/" class="underline decoration-rule-hard underline-offset-2 hover:text-rust">CC BY 4.0</a>).{" "}
           {build && <>Current build: <span class="font-mono text-ink-soft">{build}</span>.</>}
         </p>
         <p class="mt-2">

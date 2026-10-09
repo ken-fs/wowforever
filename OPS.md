@@ -440,6 +440,40 @@ node ../scripts/browser/browser.mjs eval "http://localhost:4399/" "
 
 ---
 
+## 职业数据：天赋树 + 技能书（2026-10-09 加）
+
+`pipeline/classes.mjs`（`npm run data` 最后一步自动跑）产出 4 张表，喂给
+`/classes/<职业>/talent-changes/` 和 `/classes/<职业>/spells/` 共 18 页：
+
+| 表 | 内容 |
+|---|---|
+| `talent_node` | Forever 466 个天赋：位置 / 等级数 / 每级文字 / 和 Classic 比改了什么 |
+| `talent_removed` | Classic 有、Forever 没了的天赋 |
+| `spellbook` / `spellbook_gone` | 每职业训练师技能（按等级）/ Classic 有而 Forever 没了的技能 |
+
+### ⚠️⚠️ Forever 的天赋不在 Talent 表
+
+`Talent` / `TalentTab`（432 行）是 **Classic 留下的旧布局**，09-28 到 10-09 线上职业页一直展示的是它（位置、等级数都不对）。
+真树在 Trait 系统：`TraitNode`（PosX/PosY）→ `TraitNodeXTraitNodeEntry` → `TraitNodeEntry.MaxRanks` → `TraitDefinition.SpellID`。
+9 棵职业树各 50–54 节点，每棵横排 3 个专精。`classes.mjs` 最后会**用新结果重建 `talent_full`**，
+所以首页 / 职业页 / 种族×职业页沿用旧查询也是对的。
+
+### 借了 talentsforever.com 的数据（CC BY 4.0，必须署名）
+
+`data.json` 缓存在 `data/baseline/talentsforever.json`（不进 git，每次 `npm run data` 重拉）。
+
+| 用他们的 | 原因 |
+|---|---|
+| 天赋每级文字 | Forever 天赋法术有的存每级值、有的存满级值，文件看不出；我们自己解析满级文字只有 277/468 对得上 |
+| 技能书清单 | 只靠客户端会混进内部法术、漏掉共用技能线（Holy 线 Paladin/Priest 共用） |
+| 改动判定的分歧项 | 两边独立算 421/466 一致，分歧多在前置条件，他们进游戏看过 |
+
+**我们自己算、拿来核对他们的**：树布局 466/466 一致、等级数 468/469、技能学习等级 1,337 条 0 差异。
+Classic 侧文字是我们从 Classic Era 客户端（`data/baseline/classic.db`）解析的。
+署名在：两种新页面的「Where this comes from」、about 页「Data we borrow」、页脚。**删署名 = 违反许可。**
+
+拉不到他们的导出时，`classes.mjs` 自动退回纯客户端数据（文字会少一部分），不会挂。
+
 ## ⚠️ 类型陷阱：`.import --csv` 的列是 `ANY` 类型
 
 **踩过一次，而且差点得出错误结论。**

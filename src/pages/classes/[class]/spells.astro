@@ -1,0 +1,176 @@
+---
+import AdBreak from "../../../components/AdBreak.astro";
+import Base from "../../../layouts/Base.astro";
+import { all, slug, val } from "../../../data/db.ts";
+import { Image } from "astro:assets";
+import { classIcon } from "../../../data/assets.ts";
+
+export async function getStaticPaths() {
+  const classes = all(`SELECT DISTINCT class FROM spellbook ORDER BY class`);
+  return classes.map((c) => ({ params: { class: slug(c.class) }, props: { cls: c.class } }));
+}
+
+const { cls } = Astro.props;
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+const classicBuild = val(`SELECT value FROM meta WHERE key='classic_build'`);
+
+const spells = all(
+  `SELECT * FROM spellbook WHERE class = ? ORDER BY level, school, name, rank`, cls,
+);
+const gone = all(`SELECT name FROM spellbook_gone WHERE class = ? ORDER BY name`, cls);
+const levels = [...new Set(spells.map((s) => s.level))].sort((a, b) => a - b);
+const schools = [...new Set(spells.map((s) => s.school))];
+const abilities = new Set(spells.map((s) => s.name)).size;
+// 「新技能」= 每一级在 Classic 都没有。Slam 只是多了个 20 级的新低等级，不算新技能
+// （不用 Map.groupBy：CI 的 Node 版本不一定有）
+const names = [...new Set(spells.map((s) => s.name))];
+const newNames = names.filter((n) => spells.filter((s) => s.name === n).every((s) => s.classic_status === "new"));
+const busiest = [...levels]
+  .map((l) => ({ l, n: spells.filter((s) => s.level === l).length }))
+  .sort((a, b) => b.n - a.n)
+  .slice(0, 3);
+const verified = spells.filter((s) => s.verified).length;
+
+// 每 10 级一段，读起来像训练师的节奏
+const bands = [1, 11, 21, 31, 41, 51].map((from) => ({
+  from, to: from + 9, rows: spells.filter((s) => s.level >= from && s.level <= from + 9),
+})).filter((b) => b.rows.length);
+
+const BADGE = {
+  new: ["new", "border-rust text-rust"],
+  changed: ["changed", "border-ochre text-ochre"],
+  level: ["level moved", "border-ochre text-ochre"],
+  note: ["changed", "border-ochre text-ochre"],
+};
+
+const title = `WoW Forever ${cls} spells by level: every trainer rank, 1 to 60`;
+const description = `All ${spells.length} ${cls} spell ranks in WoW Forever by the level you learn them, ${newNames.length} of them new since Classic. Read from the beta client.`;
+---
+<Base
+  {title}
+  description={description.slice(0, 165)}
+  crumbs={[
+    { href: "/", label: "Home" },
+    { href: "/classes/", label: "Classes" },
+    { href: `/classes/${slug(cls)}/`, label: cls },
+    { label: "Spells by level" },
+  ]}
+  {build}
+>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <div class="flex items-center gap-3 mb-3">
+      {classIcon[slug(cls)] && (
+        <Image src={classIcon[slug(cls)]!} alt="" width={44} height={44} format="webp" class="shrink-0" aria-hidden="true" />
+      )}
+      <p class="tag">Trainer list</p>
+    </div>
+    <h1 class="text-[2rem] leading-tight max-w-[26ch]">{cls} spells by level in WoW Forever</h1>
+    <p class="mt-3 max-w-[64ch] text-ink-soft leading-relaxed">
+      What the {cls} trainer has for you at each level, 1 to 60. Spells from talents aren't here,
+      only their higher ranks, which you still buy from the trainer.
+    </p>
+  </header>
+
+  <section class="py-8">
+    <div class="grid gap-4 grid-cols-2 sm:grid-cols-4">
+      <div class="border-t-2 border-rule-hard pt-3">
+        <p class="font-mono text-[2rem]">{abilities}</p>
+        <p class="text-[0.85rem] text-ink-soft">abilities</p>
+      </div>
+      <div class="border-t-2 border-rule-hard pt-3">
+        <p class="font-mono text-[2rem]">{spells.length}</p>
+        <p class="text-[0.85rem] text-ink-soft">ranks to train</p>
+      </div>
+      <div class="border-t-2 border-rust pt-3">
+        <p class="font-mono text-[2rem] text-rust">{newNames.length}</p>
+        <p class="text-[0.85rem] text-ink-soft">abilities new since Classic</p>
+      </div>
+      <div class="border-t-2 border-rule-hard pt-3">
+        <p class="font-mono text-[2rem]">{gone.length}</p>
+        <p class="text-[0.85rem] text-ink-soft">Classic spells gone</p>
+      </div>
+    </div>
+    <div class="mt-6 grid gap-6 sm:grid-cols-2 max-w-[72ch]">
+      <p class="text-[0.92rem] text-ink-soft leading-relaxed">
+        <strong>Busiest trips to the trainer:</strong>{" "}
+        {busiest.map((b, i) => <>{i > 0 && ", "}level {b.l} ({b.n} ranks)</>)}. Bring gold.
+      </p>
+      {newNames.length > 0 && (
+        <p class="text-[0.92rem] text-ink-soft leading-relaxed">
+          <strong>New to the {cls}:</strong> {newNames.slice(0, 8).join(", ")}{newNames.length > 8 ? `, and ${newNames.length - 8} more` : ""}.
+        </p>
+      )}
+    </div>
+    <p class="mt-5 text-[0.9rem] text-ink-soft">
+      Jump to:{" "}
+      {bands.map((b, i) => (
+        <>{i > 0 && " · "}<a href={`#levels-${b.from}`} class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">{b.from}–{b.to}</a></>
+      ))}
+    </p>
+  </section>
+
+  {bands.map((b, bi) => (
+    <>
+      {bi === 2 && <AdBreak />}
+      <section id={`levels-${b.from}`} class="py-8 border-t border-rule">
+        <h2 class="text-[1.35rem] mb-4">Levels {b.from} to {b.to}</h2>
+        <table class="data">
+          <thead><tr><th class="w-14">Level</th><th>Spell</th><th class="hidden sm:table-cell">School</th></tr></thead>
+          <tbody>
+            {b.rows.map((s) => (
+              <tr>
+                <td class="font-mono text-ink-faint align-top">{s.level}</td>
+                <td class="align-top">
+                  <span class="font-medium">{s.name}</span>
+                  {s.rank && <span class="text-ink-faint text-[0.82rem]"> · {s.rank}</span>}
+                  {BADGE[s.classic_status] && (
+                    <span class={`ml-2 text-[0.66rem] uppercase tracking-wider border px-1 py-px ${BADGE[s.classic_status][1]}`}>{BADGE[s.classic_status][0]}</span>
+                  )}
+                  {s.description && <p class="text-[0.84rem] text-ink-soft leading-snug mt-0.5">{s.description}</p>}
+                  {s.classic_note && <p class="text-[0.8rem] text-ochre leading-snug mt-0.5">{s.classic_note}</p>}
+                  {!s.classic_note && s.classic_status === "level" && s.classic_level && (
+                    <p class="text-[0.8rem] text-ochre leading-snug mt-0.5">Classic taught this at level {s.classic_level}.</p>
+                  )}
+                </td>
+                <td class="hidden sm:table-cell align-top text-ink-faint text-[0.85rem]">{s.school}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    </>
+  ))}
+
+  {gone.length > 0 && (
+    <section class="py-8 border-t border-rule">
+      <h2 class="text-[1.3rem] mb-2">Classic {cls} spells you won't find</h2>
+      <p class="text-[0.92rem] text-ink-soft max-w-[66ch]">
+        {gone.map((g) => g.name).join(", ")}. Not in Forever's trainer list.
+      </p>
+    </section>
+  )}
+
+  <section class="py-8 border-t border-rule grid gap-8 lg:grid-cols-2">
+    <div>
+      <h2 class="text-[1.15rem] mb-2">Where this comes from</h2>
+      <p class="text-[0.88rem] text-ink-soft leading-relaxed">
+        The list and the tooltips come from{" "}
+        <a href="https://talentsforever.com/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">Talents Forever</a>'s
+        data export (<a href="https://creativecommons.org/licenses/by/4.0/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">CC BY 4.0</a>),
+        which reads the beta and checks trainers in game. We read the learn levels out of the Forever
+        client ourselves (build {build}): {verified} of {spells.length} match. The Classic side is Classic Era
+        build {classicBuild}.
+      </p>
+      <p class="text-[0.82rem] text-ink-faint mt-2">It's still the beta. A build can move any of this.</p>
+    </div>
+    <div>
+      <h2 class="text-[1.15rem] mb-2">More on the {cls}</h2>
+      <ul class="text-[0.9rem] space-y-1.5">
+        <li><a href={`/classes/${slug(cls)}/talent-changes/`} class="hover:text-rust">{cls} talent changes vs Classic</a></li>
+        <li><a href={`/classes/${slug(cls)}/`} class="hover:text-rust">{cls} overview and the races that can play it</a></li>
+        <li><a href="/tools/xp-calculator/" class="hover:text-rust">XP calculator for 1 to 60</a></li>
+        <li><a href="/guides/" class="hover:text-rust">Guides</a></li>
+      </ul>
+    </div>
+  </section>
+</Base>

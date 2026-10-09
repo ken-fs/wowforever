@@ -20,6 +20,8 @@ const talents = all(
   cls,
 );
 const trees = [...new Set(talents.map((t) => t.tab).filter(Boolean))];
+const changed = val(`SELECT COUNT(*) FROM talent_node WHERE class = ? AND status IN ('new','changed')`, cls);
+const spellRanks = val(`SELECT COUNT(*) FROM spellbook WHERE class = ?`, cls);
 
 // 这个职业相关的配方（如果专业数据能对上的话）
 const recipeCount = val(`SELECT COUNT(*) FROM recipe`);
@@ -37,7 +39,7 @@ const ROLE = {
 };
 ---
 <Base
-  title={`${cls} in WoW Forever — races, talent trees, and what the client says`}
+  title={`${cls} in WoW Forever — races, talent trees, spells and what changed`}
   description={`${cls} in World of Warcraft: Forever: the ${races.length} races that can play it, its ${trees.length} talent trees, and where it sits in the class spread.`}
   crumbs={[{ href: "/", label: "Home" }, { href: "/classes/", label: "Classes" }, { label: cls }]}
   {build}
@@ -50,12 +52,20 @@ const ROLE = {
       )}
       <div class="flex flex-wrap gap-2">
       <span class="tag">{races.length} of 10 races</span>
-      <span class="tag">{talents.length} talent points</span>
+      <span class="tag">{talents.length} talents</span>
       <span class="tag">{trees.length} trees</span>
       </div>
     </div>
     <h1 class="text-[2rem] leading-tight">{cls}</h1>
     <p class="mt-3 max-w-[62ch] text-ink-soft leading-relaxed">{ROLE[cls] ?? ""}</p>
+    <div class="mt-5 flex flex-wrap gap-3">
+      <a href={`/classes/${slug(cls)}/talent-changes/`} class="card px-4 py-2.5 text-[0.92rem]">
+        Talent changes vs Classic <span class="text-ink-faint">· {changed} new or changed</span>
+      </a>
+      <a href={`/classes/${slug(cls)}/spells/`} class="card px-4 py-2.5 text-[0.92rem]">
+        Spells by level <span class="text-ink-faint">· {spellRanks} ranks, 1 to 60</span>
+      </a>
+    </div>
   </header>
 
   <section class="py-8 grid gap-10 lg:grid-cols-[1.3fr_1fr]">

@@ -1,0 +1,207 @@
+---
+import AdBreak from "../../../components/AdBreak.astro";
+import Base from "../../../layouts/Base.astro";
+import { all, slug, val } from "../../../data/db.ts";
+import { Image } from "astro:assets";
+import { classIcon, specFor } from "../../../data/assets.ts";
+
+export async function getStaticPaths() {
+  const classes = all(`SELECT DISTINCT class FROM talent_node ORDER BY class`);
+  return classes.map((c) => ({ params: { class: slug(c.class) }, props: { cls: c.class } }));
+}
+
+const { cls } = Astro.props;
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+const classicBuild = val(`SELECT value FROM meta WHERE key='classic_build'`);
+
+const talents = all(
+  `SELECT * FROM talent_node WHERE class = ? ORDER BY spec_order, row, col`, cls,
+).map((t) => ({ ...t, ranks: JSON.parse(t.ranks) as string[] }));
+const removed = all(`SELECT * FROM talent_removed WHERE class = ? ORDER BY spec, classic_row`, cls);
+const specs = [...new Set(talents.map((t) => t.spec))];
+const n = (s: string) => talents.filter((t) => t.status === s).length;
+const tally = { new: n("new"), changed: n("changed"), moved: n("moved"), same: n("same") };
+const usesTf = talents.some((t) => t.text_source === "talentsforever");
+
+const LABEL = { new: "new", changed: "changed", moved: "moved", same: "same as Classic" };
+const TONE = {
+  new: "border-rust text-rust",
+  changed: "border-ochre text-ochre",
+  moved: "border-rule-hard text-ink-soft",
+  same: "border-rule text-ink-faint",
+};
+
+// 一句话说清这个天赋和 Classic 比变了什么。只说数据能证明的。
+function whatChanged(t) {
+  if (t.status === "new") return t.replaces ? `New. Takes the place of ${t.replaces}.` : "New in Forever.";
+  const bits: string[] = [];
+  if (t.classic_name) bits.push(`was ${t.classic_name}`);
+  if (t.ranks_changed && t.classic_max) bits.push(`${t.classic_max} → ${t.max_ranks} ranks`);
+  if (t.moved && t.classic_spec && t.classic_spec !== t.spec) bits.push(`moved from ${t.classic_spec}`);
+  else if (t.moved && t.classic_row) bits.push(`moved from row ${t.classic_row}`);
+  if (t.numbers_changed) bits.push("numbers changed");
+  if (t.note) bits.push(t.note);
+  if (!bits.length && t.status === "changed") bits.push("text changed");
+  return bits.length ? bits.join(" · ") : "";
+}
+
+const title = `WoW Forever ${cls} talent changes vs Classic: all ${talents.length} talents`;
+const description = `Every ${cls} talent in WoW Forever next to its Classic version: ${tally.new} new, ${tally.changed} changed, ${removed.length} gone. Read from both game clients.`;
+---
+<Base
+  {title}
+  description={description.slice(0, 165)}
+  crumbs={[
+    { href: "/", label: "Home" },
+    { href: "/classes/", label: "Classes" },
+    { href: `/classes/${slug(cls)}/`, label: cls },
+    { label: "Talent changes" },
+  ]}
+  {build}
+>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <div class="flex items-center gap-3 mb-3">
+      {classIcon[slug(cls)] && (
+        <Image src={classIcon[slug(cls)]!} alt="" width={44} height={44} format="webp" class="shrink-0" aria-hidden="true" />
+      )}
+      <p class="tag">Forever vs Classic</p>
+    </div>
+    <h1 class="text-[2rem] leading-tight max-w-[26ch]">{cls} talent changes in WoW Forever</h1>
+    <p class="mt-3 max-w-[64ch] text-ink-soft leading-relaxed">
+      Every {cls} talent in Forever, next to what it was in Classic. Find your talent, see what moved.
+      The full tooltip is under each one.
+    </p>
+  </header>
+
+  <section class="py-8">
+    <div class="grid gap-4 grid-cols-2 sm:grid-cols-4">
+      <div class="border-t-2 border-rust pt-3">
+        <p class="font-mono text-[2rem] text-rust">{tally.new}</p>
+        <p class="text-[0.85rem] text-ink-soft">new talents</p>
+      </div>
+      <div class="border-t-2 border-ochre pt-3">
+        <p class="font-mono text-[2rem]">{tally.changed}</p>
+        <p class="text-[0.85rem] text-ink-soft">changed</p>
+      </div>
+      <div class="border-t-2 border-rule-hard pt-3">
+        <p class="font-mono text-[2rem]">{tally.moved + tally.same}</p>
+        <p class="text-[0.85rem] text-ink-soft">same effect ({tally.moved} moved)</p>
+      </div>
+      <div class="border-t-2 border-rule-hard pt-3">
+        <p class="font-mono text-[2rem]">{removed.length}</p>
+        <p class="text-[0.85rem] text-ink-soft">Classic talents gone</p>
+      </div>
+    </div>
+    <p class="mt-5 text-[0.9rem] text-ink-soft">
+      Jump to:{" "}
+      {specs.map((s, i) => (
+        <>{i > 0 && " · "}<a href={`#${slug(s)}`} class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">{s}</a></>
+      ))}
+      {removed.length > 0 && <> · <a href="#removed" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">removed</a></>}
+    </p>
+  </section>
+
+  {specs.map((spec, si) => {
+    const list = talents.filter((t) => t.spec === spec);
+    return (
+      <>
+        {si === 1 && <AdBreak />}
+        <section id={slug(spec)} class="py-8 border-t border-rule">
+          <h2 class="flex items-center gap-2.5 text-[1.4rem] mb-1">
+            {specFor(cls, spec) && (
+              <Image src={specFor(cls, spec)!} alt="" width={30} height={30} format="webp" class="shrink-0" aria-hidden="true" />
+            )}
+            <span>{spec}</span>
+          </h2>
+          <p class="text-[0.85rem] text-ink-faint mb-5">
+            {list.length} talents · {list.filter((t) => t.status === "new").length} new ·{" "}
+            {list.filter((t) => t.status === "changed").length} changed
+          </p>
+          <div class="space-y-4">
+            {list.map((t) => (
+              <article class="border-l-2 border-rule pl-4">
+                <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <h3 class="font-serif text-[1.08rem]">{t.name}</h3>
+                  <span class={`text-[0.7rem] uppercase tracking-wider border px-1.5 py-px ${TONE[t.status]}`}>{LABEL[t.status]}</span>
+                  <span class="font-mono text-[0.78rem] text-ink-faint">row {t.row} · {t.max_ranks} {t.max_ranks === 1 ? "rank" : "ranks"}</span>
+                </div>
+                {whatChanged(t) && <p class="text-[0.85rem] text-ink-soft mt-0.5">{whatChanged(t)}</p>}
+                {t.ranks.length > 0 && (
+                  <p class="text-[0.92rem] mt-1.5 leading-relaxed">
+                    <span class="text-ink-faint font-mono text-[0.75rem] mr-1.5">Forever{t.ranks.length > 1 ? `, rank ${t.ranks.length}` : ""}</span>
+                    {t.ranks.at(-1)}
+                  </p>
+                )}
+                {t.status === "changed" && t.classic_text && (
+                  <p class="text-[0.88rem] mt-1 leading-relaxed text-ink-soft">
+                    <span class="text-ink-faint font-mono text-[0.75rem] mr-1.5">Classic{t.classic_max > 1 ? `, rank ${t.classic_max}` : ""}</span>
+                    {t.classic_text}
+                  </p>
+                )}
+                {t.ranks.length > 1 && (
+                  <details class="mt-1.5 text-[0.85rem] text-ink-soft">
+                    <summary class="cursor-pointer text-ink-faint hover:text-rust">Every rank</summary>
+                    <ol class="mt-1 space-y-0.5 list-decimal pl-5">
+                      {t.ranks.map((r) => <li>{r}</li>)}
+                    </ol>
+                  </details>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
+      </>
+    );
+  })}
+
+  {removed.length > 0 && (
+    <section id="removed" class="py-8 border-t border-rule">
+      <h2 class="text-[1.4rem] mb-1">Classic talents that are gone</h2>
+      <p class="text-[0.9rem] text-ink-soft mb-5 max-w-[66ch]">
+        These were in the Classic {cls} trees and aren't in Forever's. Some came back under a new
+        name or got folded into a new talent above.
+      </p>
+      <table class="data">
+        <thead><tr><th>Talent</th><th>Was in</th><th>What it did in Classic</th></tr></thead>
+        <tbody>
+          {removed.map((r) => (
+            <tr>
+              <td class="align-top whitespace-nowrap pr-4">{r.name}</td>
+              <td class="align-top text-ink-faint whitespace-nowrap pr-4">{r.spec}</td>
+              <td class="text-[0.88rem] text-ink-soft">{r.classic_text ?? "—"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )}
+
+  <section class="py-8 border-t border-rule grid gap-8 lg:grid-cols-2">
+    <div>
+      <h2 class="text-[1.15rem] mb-2">Where this comes from</h2>
+      <p class="text-[0.88rem] text-ink-soft leading-relaxed">
+        Tree layout, ranks and the Classic comparison are read from two game clients: the Forever beta
+        (build {build}) and Classic Era (build {classicBuild}).
+        {usesTf && (
+          <>
+            {" "}Forever's per-rank tooltip text comes from{" "}
+            <a href="https://talentsforever.com/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">Talents Forever</a>
+            's data export (<a href="https://creativecommons.org/licenses/by/4.0/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">CC BY 4.0</a>),
+            which checks each rank in game. The files alone don't say whether a talent stores its
+            per-rank or its full-rank value, so we use theirs.
+          </>
+        )}
+      </p>
+      <p class="text-[0.82rem] text-ink-faint mt-2">It's still the beta. Numbers can move with any build.</p>
+    </div>
+    <div>
+      <h2 class="text-[1.15rem] mb-2">More on the {cls}</h2>
+      <ul class="text-[0.9rem] space-y-1.5">
+        <li><a href={`/classes/${slug(cls)}/spells/`} class="hover:text-rust">{cls} spells by level, 1 to 60</a></li>
+        <li><a href={`/classes/${slug(cls)}/`} class="hover:text-rust">{cls} overview and the races that can play it</a></li>
+        <li><a href="/changes/" class="hover:text-rust">Everything Forever changed, all classes</a></li>
+        <li><a href="/tools/xp-calculator/" class="hover:text-rust">XP calculator for 1 to 60</a></li>
+      </ul>
+    </div>
+  </section>
+</Base>

@@ -13,6 +13,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, rmSync, statSync, writeFileSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { deriveClasses } from "./classes.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const RAW = resolve(ROOT, "data/raw");
@@ -25,6 +26,8 @@ const TABLES = [
   "Item", "ItemSparse", "ItemSet", "ItemClass", "ItemSubClass", "ItemDisplayInfo",
   "ItemXItemEffect", "ItemEffect",
   "Spell", "SpellName", "SpellEffect", "SpellReagents", "SpellMisc", "SpellCategory",
+  // tooltip 解析要用（$d 持续时间 / $h 触发几率 / $a 半径）+ 技能书的学习等级
+  "SpellDuration", "SpellAuraOptions", "SpellRadius", "SpellLevels", "SpellClassOptions",
   // 角色：职业 / 种族 / 天赋
   "ChrRaces", "ChrClasses", "CharBaseInfo", "Talent", "TalentTab", "ChrSpecialization",
   // 专业 / 配方
@@ -34,6 +37,14 @@ const TABLES = [
   "LevelExperience",
   // 传承系统
   "TraitTree", "TraitNode", "TraitNodeEntry", "TraitDefinition", "TraitCurrency",
+  // ⚠️ Forever 的天赋树在 Trait 系统里，不在 Talent 表（见 classes.mjs 顶部）
+  "TraitNodeXTraitNodeEntry", "TraitEdge", "TraitCond",
+];
+
+// Classic Era 的同名表：算「Forever 相对 Classic 改了什么」（天赋 + 技能书）
+const CLASSIC_TABLES = [
+  "Talent", "TalentTab", "Spell", "SpellName", "SpellEffect", "SpellMisc", "SpellDuration",
+  "SpellAuraOptions", "SpellRadius", "SpellLevels", "SkillLineAbility", "SkillLine",
 ];
 
 const flags = Object.fromEntries(
@@ -207,6 +218,46 @@ async function fetchBaseline() {
   return file;
 }
 
+// Classic 客户端的天赋 / 法术表 → data/baseline/classic.db（只在本地，不进 git）
+async function fetchClassicDb() {
+  const txt = await (await fetch("http://us.patch.battle.net:1119/wow_classic_era/versions")).text();
+  const row = txt.split("\n").find((l) => l.startsWith("us|"));
+  if (!row) return null;
+  const v = row.split("|")[5];
+  const got = [];
+  for (const t of CLASSIC_TABLES) {
+    const r = await fetchTable(t, v);
+    if (!r.file) { console.error(`  classic skip ${t} (${r.skip})`); continue; }
+    got.push(r);
+    await new Promise((res) => setTimeout(res, 300));
+  }
+  const db = resolve(ROOT, "data/baseline/classic.db");
+  mkdirSync(dirname(db), { recursive: true });
+  rmSync(db, { force: true });
+  const script = got.flatMap((r) => [`.mode csv`, `.import --csv "${r.file}" "${r.table}"`]);
+  execFileSync("sqlite3", [db], { input: script.join("\n") });
+  console.error(`classic: ${v} → ${got.length} 张表 → ${db}`);
+  return { db, build: v };
+}
+
+// talentsforever.com 的公开导出（CC BY 4.0）：天赋每级文字 + 技能书清单，用法见 classes.mjs。
+// 拉不到就用上次缓存的；都没有就只用客户端数据（文字少一部分）。
+async function fetchTalentsForever() {
+  const file = resolve(ROOT, "data/baseline/talentsforever.json");
+  try {
+    const res = await fetch("https://talentsforever.com/data.json", { headers: { "User-Agent": "Mozilla/5.0" } });
+    const body = await res.text();
+    if (res.ok && JSON.parse(body).license === "CC-BY-4.0") {
+      mkdirSync(dirname(file), { recursive: true });
+      writeFileSync(file, body);
+      console.error(`talentsforever: ${JSON.parse(body).generated}`);
+    }
+  } catch (e) {
+    console.error(`talentsforever: 拉取失败（${e.message}），用缓存`);
+  }
+  return existsSync(file) ? file : null;
+}
+
 const baseline = await fetchBaseline();
 if (baseline) {
   results.push({ table: "CharBaseInfo_baseline", file: resolve(ROOT, "data/baseline/CharBaseInfo.csv") });
@@ -221,6 +272,10 @@ for (const t of list) {
 const n = importAll(results, build);
 console.error(`imported ${n} tables → ${DB}`);
 
+const classic = await fetchClassicDb();
+const tfPath = await fetchTalentsForever();
+console.error("classes:", deriveClasses({ foreverDb: DB, classicDb: classic?.db, classicBuild: classic?.build, tfPath }));
+
 // ⚠️ 新增派生表后必须加进 SITE_TABLES，否则本地 build 正常（读完整库）
 // 但 CI 构建报 'no such table'（只读 site.db）。踩过一次。
 // ── 导出瘦身库：站点构建只读它（0.3MB vs 20MB），可以进 git，CI 不依赖网络 ──
@@ -228,6 +283,7 @@ const SITE_TABLES = [
   "race_class", "race_class_new", "talent_full", "xp_spell", "xp_curve", "quest_xp",
   "recipe", "recipe_reagent", "reagent_name", "camping_spell", "camp_object", "counts", "meta", "ChrRaces", "ChrClasses", "DungeonEncounter", "Map", "ItemSet",
   "v_change_summary", "v_page_counts", "v_findings", "v_gaps",
+  "talent_node", "talent_removed", "spellbook", "spellbook_gone",
 ];
 const siteDb = resolve(ROOT, "data/site.db");
 rmSync(siteDb, { force: true });

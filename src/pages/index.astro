@@ -70,7 +70,7 @@ const NEWSWORTHY = [
           "race × class combos": counts.combos,
           classes: counts.classes,
           races: counts.races,
-          "talent points": counts.talents,
+          "talents": counts.talents,
           recipes: counts.recipes,
           "rare+ items": counts.items,
         }).map(([k, v]) => (
@@ -227,7 +227,7 @@ const NEWSWORTHY = [
     </div>
 
     <div class="mt-8 text-[0.88rem] text-ink-soft max-w-[70ch]">
-      <p><strong>{Number(counts.talents).toLocaleString()}</strong> talent points and <strong>{Number(counts.recipes).toLocaleString()}</strong> profession recipes are indexed and waiting on pages. <a href="/about/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">How this is built &rarr;</a></p>
+      <p><strong>{Number(counts.talents).toLocaleString()}</strong> talents (see <a href="/changes/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">what changed since Classic</a>) and <strong>{Number(counts.recipes).toLocaleString()}</strong> profession recipes are indexed. <a href="/about/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">How this is built &rarr;</a></p>
     </div>
   </section>
 </Base>

@@ -8,7 +8,7 @@ const rows: [string, number][] = [
   ["Spells", count("spells")],
   ["Rare+ items", count("items_rare")],
   ["Item sets", count("sets")],
-  ["Talent points", val(`SELECT COUNT(*) FROM talent_full`)],
+  ["Talents", val(`SELECT COUNT(*) FROM talent_full`)],
   ["Recipes", val(`SELECT COUNT(*) FROM recipe`)],
   ["Race/class combos", val(`SELECT COUNT(*) FROM race_class`)],
   ["New combos vs Classic", val(`SELECT COUNT(*) FROM race_class_new`)],
@@ -58,6 +58,16 @@ const rows: [string, number][] = [
         Quest text, NPCs, and the Legacy tree relationships are the big gaps. Quest data lives on Blizzard's
         servers, not in the client, so nobody can mine it — sites that have quest pages got them by playing
         the beta and typing them up.
+      </p>
+
+      <h2 class="text-[1.3rem] mb-3 mt-8">Data we borrow</h2>
+      <p class="text-[0.92rem] text-ink-soft leading-relaxed">
+        Talent tooltips and the class spell lists come from the data export at{" "}
+        <a href="https://talentsforever.com/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">talentsforever.com</a>,
+        under <a href="https://creativecommons.org/licenses/by/4.0/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">CC BY 4.0</a>.
+        They check every talent rank and trainer in game, which the files alone can't do. The tree
+        layout, ranks, learn levels and the Classic comparison are still read from the clients here,
+        and checked against theirs.
       </p>
     </div>
 
