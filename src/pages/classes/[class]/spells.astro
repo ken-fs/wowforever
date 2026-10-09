@@ -167,6 +167,7 @@ const description = `All ${spells.length} ${cls} spell ranks in WoW Forever by t
       <h2 class="text-[1.15rem] mb-2">More on the {cls}</h2>
       <ul class="text-[0.9rem] space-y-1.5">
         <li><a href={`/classes/${slug(cls)}/talent-changes/`} class="hover:text-rust">{cls} changes in Forever: talents and spells</a></li>
+        {cls === "Mage" && <li><a href="/classes/mage/portals/" class="hover:text-rust">Mage portals and teleports</a></li>}
         <li><a href={`/classes/${slug(cls)}/`} class="hover:text-rust">{cls} overview and the races that can play it</a></li>
         <li><a href="/tools/xp-calculator/" class="hover:text-rust">XP calculator for 1 to 60</a></li>
         <li><a href="/guides/" class="hover:text-rust">Guides</a></li>

@@ -1,0 +1,171 @@
+---
+import Base from "../layouts/Base.astro";
+import { all, val } from "../data/db.ts";
+
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+const classicBuild = val(`SELECT value FROM meta WHERE key='classic_build'`);
+
+const mounts = all(`SELECT * FROM mount ORDER BY level, family, name`);
+// 标准商人坐骑：Forever 统一定价 20g（40 级）/ 200g（60 级）。其他坐骑（PvP、奖励、掉落）的
+// BuyPrice 只是物品价值，不是你实际花的钱，所以不进价格表。
+const g = (c) => (c == null ? null : c / 10000);
+// 再加一道：Classic 里同名物品也是标准价（80g / 1000g），或者是 Classic 没有的新坐骑。
+// 否则奥山声望坐骑（Stormpike / Frostwolf，Classic 800g）会因为 Forever 恰好标价 200g 混进来。
+const isStandard = (m) =>
+  ((m.level === 40 && g(m.price) === 20) || (m.level === 60 && g(m.price) === 200)) &&
+  (m.in_classic === 0 ? !/stormpike|frostwolf|battle|war /i.test(m.name) : [80, 1000].includes(g(m.classic_price)));
+const standard = mounts.filter(isStandard);
+const others = mounts.filter((m) => !isStandard(m));
+
+// 每个种族的坐骑种类（Classic 以来的分配，Galestrider 是 Skyborne 的）
+const RACE = {
+  Horse: "Human", Ram: "Dwarf", Cat: "Night Elf", Mechanostrider: "Gnome", Wolf: "Orc",
+  "Undead horse": "Undead", Kodo: "Tauren", Raptor: "Troll", Galestrider: "Skyborne",
+};
+const families = Object.keys(RACE).filter((f) => standard.some((m) => m.family === f));
+
+// 和 Classic 比：同名坐骑的商人价格
+const cheaper40 = standard.filter((m) => m.level === 40 && g(m.classic_price) === 80).length;
+const cheaper60 = standard.filter((m) => m.level === 60 && g(m.classic_price) === 1000).length;
+const newOnes = mounts.filter((m) => m.in_classic === 0);
+
+const faq = [
+  {
+    q: "What level can you get a mount in WoW Forever?",
+    a: "Level 40 for a normal mount and level 60 for a swift one, the same as Classic. Every regular mount item in the beta client asks for level 40 or 60.",
+  },
+  {
+    q: "How much does a mount cost in WoW Forever?",
+    a: "20 gold for a level 40 mount and 200 gold for a swift level 60 mount, at the vendor before any reputation discount. In Classic Era the same mounts cost 80 and 1,000 gold.",
+  },
+  {
+    q: "Does riding training cost gold too?",
+    a: "Probably, but the price isn't in the client. Trainer prices live on Blizzard's servers, so nobody can read them from the files.",
+  },
+  {
+    q: "What mount do the Skyborne get?",
+    a: "The Galestrider. The client has its own Galestrider Riding skill and eight Galestrider mounts: four at level 40, four swift ones at 60.",
+  },
+];
+
+const title = "WoW Forever mounts: level 40 and 60, now 20g and 200g";
+const desc = "WoW Forever mount level and cost from the beta client: still level 40 and 60, but 20g and 200g instead of Classic's 80g and 1,000g. Every mount listed.";
+---
+<Base {title} description={desc.slice(0, 165)} crumbs={[{ href: "/", label: "Home" }, { label: "Mounts" }]} {build}>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <p class="tag mb-3">Mounts</p>
+    <h1 class="text-[2rem] sm:text-[2.4rem] leading-tight max-w-[24ch]">WoW Forever mounts: level and cost</h1>
+    <div class="mt-4 max-w-[66ch] text-ink-soft leading-relaxed space-y-2">
+      <p><strong>Short version.</strong> You still ride at level 40 and go swift at 60. What changed is the
+        price: <strong>20 gold</strong> for your first mount and <strong>200 gold</strong> for the swift one.</p>
+      <p>In Classic Era the same mounts cost 80 and 1,000 gold. That's a quarter and a fifth of the old price.</p>
+    </div>
+  </header>
+
+  <section class="py-8">
+    <div class="grid gap-4 grid-cols-2 sm:grid-cols-4">
+      <div class="border-t-2 border-rule-hard pt-3">
+        <p class="font-mono text-[2rem]">40</p>
+        <p class="text-[0.85rem] text-ink-soft">first mount, same as Classic</p>
+      </div>
+      <div class="border-t-2 border-rust pt-3">
+        <p class="font-mono text-[2rem] text-rust">20g</p>
+        <p class="text-[0.85rem] text-ink-soft">was 80g in Classic</p>
+      </div>
+      <div class="border-t-2 border-rule-hard pt-3">
+        <p class="font-mono text-[2rem]">60</p>
+        <p class="text-[0.85rem] text-ink-soft">swift mount, same as Classic</p>
+      </div>
+      <div class="border-t-2 border-rust pt-3">
+        <p class="font-mono text-[2rem] text-rust">200g</p>
+        <p class="text-[0.85rem] text-ink-soft">was 1,000g in Classic</p>
+      </div>
+    </div>
+    <p class="mt-5 text-[0.88rem] text-ink-soft max-w-[68ch]">
+      Vendor prices before reputation discounts. {cheaper40} level 40 mounts and {cheaper60} swift mounts carry
+      the same name in Classic Era (build {classicBuild}), which is how the old price is checked. Riding
+      training costs extra, and that price isn't in the client.
+    </p>
+  </section>
+
+  <section class="py-8 border-t border-rule">
+    <h2 class="text-[1.35rem] mb-1">Every race's mounts</h2>
+    <p class="text-[0.9rem] text-ink-soft mb-5 max-w-[68ch]">
+      Each race sells its own kind. Mounts marked new aren't in Classic at all.
+    </p>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {families.map((f) => {
+        const list = standard.filter((m) => m.family === f);
+        return (
+          <div>
+            <h3 class="font-serif text-[1.1rem] mb-1">{f} <span class="text-ink-faint text-[0.85rem] font-sans">· {RACE[f]}</span></h3>
+            <ul class="text-[0.88rem] space-y-0.5">
+              {list.map((m) => (
+                <li class="flex justify-between gap-3">
+                  <span>{m.name}{m.in_classic === 0 && <span class="ml-1.5 text-[0.62rem] uppercase tracking-wider border border-rust text-rust px-1">new</span>}</span>
+                  <span class="font-mono text-ink-faint whitespace-nowrap">L{m.level} · {g(m.price)}g</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
+  <section class="py-8 border-t border-rule grid gap-10 lg:grid-cols-[1.25fr_1fr]">
+    <div>
+      <h2 class="text-[1.35rem] mb-3">Riding skill</h2>
+      <p class="text-[0.92rem] text-ink-soft leading-relaxed">
+        Two ranks, as in Classic. <strong>Apprentice Riding</strong> lets you ride mounts that need riding skill
+        75. <strong>Journeyman Riding</strong> unlocks swift mounts at skill 150. The Skyborne get their own
+        <strong>Galestrider Riding</strong> line in the client, the way every other race has one for its mount.
+      </p>
+
+      <h2 class="text-[1.35rem] mb-3 mt-8">Questions people ask</h2>
+      <div class="space-y-5">
+        {faq.map((f) => (
+          <div>
+            <h3 class="font-serif text-[1.05rem]">{f.q}</h3>
+            <p class="text-[0.92rem] text-ink-soft leading-relaxed mt-1">{f.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <aside>
+      <h2 class="text-[1.15rem] mb-2">Other mounts in the client</h2>
+      <p class="text-[0.82rem] text-ink-faint mb-3">
+        PvP, reputation, raid drops and rewards. No price here: for these the item's listed value isn't what
+        you pay.
+      </p>
+      <table class="data">
+        <thead><tr><th>Mount</th><th class="text-right">Level</th></tr></thead>
+        <tbody>
+          {others.map((m) => (
+            <tr>
+              <td class="text-[0.86rem]">{m.name}{m.in_classic === 0 && <span class="ml-1.5 text-[0.62rem] uppercase tracking-wider border border-rust text-rust px-1">new</span>}</td>
+              <td class="text-right font-mono text-ink-faint">{m.level}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {newOnes.length > 0 && (
+        <p class="mt-3 text-[0.8rem] text-ink-faint">{newOnes.length} mounts in all aren't in Classic Era.</p>
+      )}
+    </aside>
+  </section>
+
+  <section class="py-8 border-t border-rule">
+    <p class="text-[0.85rem] text-ink-soft max-w-[70ch]">
+      Read from the Forever beta client (build {build}): every item the game files as a mount, its level and its
+      vendor price. Prices can change before launch. <a href="/tools/xp-calculator/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">How fast you'll get to 40 →</a>
+    </p>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  })}></script>
+</Base>

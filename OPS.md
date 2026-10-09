@@ -485,6 +485,14 @@ Classic 侧文字是我们从 Classic Era 客户端（`data/baseline/classic.db`
 - Adventure Awaits 的 tooltip 写着 Season of Mastery = 旧赛季遗留；Discoverer's Delight 来自 SoD
 - 计算器只放「全部经验」类 buff；Well Fed（只加击杀）不进计算器
 
+## 坐骑页 + 法师传送门页（2026-10-10 加）
+
+- `/mounts/` ← `pipeline/mounts.mjs` 产出 `mount` 表。⚠️ Classic Era 的坐骑物品是 `SubclassID=0`（Junk），Forever 是 15/5，Classic 侧**按名字**对。
+  结论：等级 40/60 没变，商人价 80g→**20g**、1000g→**200g**。价格表只放标准商人坐骑（Forever 20/200g 且 Classic 同名 80/1000g，或 Classic 没有的新坐骑），
+  奥山声望坐骑（Classic 800g）和奖励/掉落坐骑的 BuyPrice 只是物品价值，只列名字不写价格。骑术训练费在服务器上，客户端没有。
+- `/classes/mage/portals/` ← `spellbook` + `spellbook_reagent`（技能书法术的施法材料，含商人价）。
+  Teleport: Dalaran 文件里只挂 Alliance 种族（talentsforever 的 fx 注记），另有两个同名法术无种族 —— 页面写「未确认 Horde 能不能学」，确认前别改成两边都有。
+
 ## ⚠️ 类型陷阱：`.import --csv` 的列是 `ANY` 类型
 
 **踩过一次，而且差点得出错误结论。**

@@ -15,6 +15,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { deriveClasses } from "./classes.mjs";
 import { deriveXp } from "./xp.mjs";
+import { deriveMounts } from "./mounts.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const RAW = resolve(ROOT, "data/raw");
@@ -46,6 +47,8 @@ const TABLES = [
 const CLASSIC_TABLES = [
   "Talent", "TalentTab", "Spell", "SpellName", "SpellEffect", "SpellMisc", "SpellDuration",
   "SpellAuraOptions", "SpellRadius", "SpellLevels", "SkillLineAbility", "SkillLine",
+  // 坐骑价格对比（Classic 的坐骑是 Junk 分类，mounts.mjs 按名字对）
+  "Item", "ItemSparse",
 ];
 
 const flags = Object.fromEntries(
@@ -277,6 +280,7 @@ const classic = await fetchClassicDb();
 const tfPath = await fetchTalentsForever();
 console.error("classes:", deriveClasses({ foreverDb: DB, classicDb: classic?.db, classicBuild: classic?.build, tfPath }));
 console.error("xp_source:", deriveXp({ foreverDb: DB }));
+console.error("mount:", deriveMounts({ foreverDb: DB, classicDb: classic?.db }));
 
 // ⚠️ 新增派生表后必须加进 SITE_TABLES，否则本地 build 正常（读完整库）
 // 但 CI 构建报 'no such table'（只读 site.db）。踩过一次。
@@ -285,7 +289,7 @@ const SITE_TABLES = [
   "race_class", "race_class_new", "talent_full", "xp_spell", "xp_curve", "quest_xp",
   "recipe", "recipe_reagent", "reagent_name", "camping_spell", "camp_object", "counts", "meta", "ChrRaces", "ChrClasses", "DungeonEncounter", "Map", "ItemSet",
   "v_change_summary", "v_page_counts", "v_findings", "v_gaps",
-  "talent_node", "talent_removed", "spellbook", "spellbook_gone", "xp_source",
+  "talent_node", "talent_removed", "spellbook", "spellbook_gone", "xp_source", "mount", "spellbook_reagent",
 ];
 const siteDb = resolve(ROOT, "data/site.db");
 rmSync(siteDb, { force: true });

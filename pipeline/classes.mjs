@@ -286,6 +286,24 @@ export function deriveClasses({ foreverDb, classicDb, classicBuild, tfPath }) {
     "verified INT", "classic_status TEXT", "classic_level INT", "classic_text TEXT", "classic_note TEXT",
   ]);
   write("spellbook_gone", gone, ["class TEXT", "name TEXT"]);
+  // 技能书法术的施法材料（法师传送门的符文、术士的灵魂碎片之类）
+  const reagentRows = [];
+  const qReag = w.prepare(`SELECT * FROM SpellReagents WHERE CAST(SpellID AS INT) = ?`);
+  const qItem = w.prepare(`SELECT Display_lang n, CAST(BuyPrice AS INT) p FROM ItemSparse WHERE CAST(ID AS INT) = ?`);
+  for (const sbk of spellbook) {
+    if (!sbk.spell_id) continue;
+    const r = qReag.get(sbk.spell_id);
+    if (!r) continue;
+    for (let i = 0; i < 8; i++) {
+      const item = Number(r[`Reagent_${i}`]), cnt = Number(r[`ReagentCount_${i}`]);
+      if (item > 0 && cnt > 0) {
+        const it = qItem.get(item);
+        reagentRows.push({ spell_id: sbk.spell_id, item_id: item, item: it?.n ?? null, count: cnt, price: it?.p ?? null });
+      }
+    }
+  }
+  write("spellbook_reagent", reagentRows, ["spell_id INT", "item_id INT", "item TEXT", "count INT", "price INT"]);
+
   // 页面要写明对比的是哪两个版本、文字借的是哪天的导出
   const meta = w.prepare(`INSERT OR REPLACE INTO meta VALUES (?, ?)`);
   if (classicBuild) meta.run("classic_build", classicBuild);
