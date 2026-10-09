@@ -474,6 +474,17 @@ Classic 侧文字是我们从 Classic Era 客户端（`data/baseline/classic.db`
 
 拉不到他们的导出时，`classes.mjs` 自动退回纯客户端数据（文字会少一部分），不会挂。
 
+## XP 页（`/tools/xp-calculator/`，2026-10-09 改版）
+
+`pipeline/xp.mjs` 产出 `xp_source`：客户端里所有改经验的法术（光环 200 全部 / 291 任务 / 447 某类怪）+ 休息经验相关（Camp Tent、Well Rested）。
+页面从「计算器」改成「XP buffs + 练级速度 + 计算器」：GSC 两周 0 展示，而 `xp buff` / `rested xp` / `leveling speed` 这组词前 10 有 6–9 个是 Reddit/论坛/代练站。
+
+客户端核对过的结论（页面上在用，改之前先重查）：
+- 1–60 = 4,084,700 XP，曲线与 Classic 逐级相同；`QuestXP` 60 级全部与 Classic 相同
+- 客户端里**没有**副本 XP buff，也没有给 XP buff 的物品（唯一沾边的是 Camp Tent，item 279978）
+- Adventure Awaits 的 tooltip 写着 Season of Mastery = 旧赛季遗留；Discoverer's Delight 来自 SoD
+- 计算器只放「全部经验」类 buff；Well Fed（只加击杀）不进计算器
+
 ## ⚠️ 类型陷阱：`.import --csv` 的列是 `ANY` 类型
 
 **踩过一次，而且差点得出错误结论。**

@@ -23,6 +23,44 @@ const n = (s: string) => talents.filter((t) => t.status === s).length;
 const tally = { new: n("new"), changed: n("changed"), moved: n("moved"), same: n("same") };
 const usesTf = talents.some((t) => t.text_source === "talentsforever");
 
+// ── 技能：每个技能只看最高一级，和 Classic 同一级比 ─────────────────────
+const book = all(`SELECT * FROM spellbook WHERE class = ? ORDER BY name, level`, cls);
+const goneSpells = all(`SELECT name FROM spellbook_gone WHERE class = ? ORDER BY name`, cls).map((g) => g.name);
+const byName = {};
+for (const r of book) (byName[r.name] ??= []).push(r);
+const toSec = (s) => String(s ?? "")
+  .replace(/(\d+(?:\.\d+)?)\s*hours?\b/gi, (_, n) => `${n * 3600} sec`)
+  .replace(/(\d+(?:\.\d+)?)\s*min\b/gi, (_, n) => `${n * 60} sec`);
+const numsOf = (s) => (toSec(s).match(/\d[\d,]*(?:\.\d+)?/g) ?? []).map((x) => Number(x.replace(/,/g, "")));
+// 文字骨架一样、只有数字不同 → 看数字往哪边走；骨架不同 → 效果改了
+function direction(f, c) {
+  const skel = (s) => toSec(s).replace(/\d[\d,]*(?:\.\d+)?/g, "#").replace(/\s+/g, " ").trim().toLowerCase();
+  if (skel(f) !== skel(c)) return "reworked";
+  const a = numsOf(f), b = numsOf(c);
+  let up = 0, down = 0;
+  a.forEach((x, i) => { if (x > b[i]) up++; else if (x < b[i]) down++; });
+  return up && !down ? "up" : down && !up ? "down" : up && down ? "mixed" : "same";
+}
+const spellChanges = Object.entries(byName).map(([name, ranks]) => {
+  const top = ranks.at(-1);
+  const isNew = ranks.every((r) => r.classic_status === "new");
+  const note = ranks.find((r) => r.classic_note)?.classic_note ?? null;
+  const dir = !isNew && top.description && top.classic_text ? direction(top.description, top.classic_text) : null;
+  return { name, top, isNew, note, dir };
+});
+const newSpells = spellChanges.filter((x) => x.isNew);
+const noted = spellChanges.filter((x) => !x.isNew && x.note);
+const moved = spellChanges.filter((x) => !x.isNew && !x.note && x.dir && x.dir !== "same");
+const DIR = {
+  // 中性配色：数字变小不一定是削弱（冷却变短是加强）
+  up: ["numbers up", "border-rule-hard text-ink-soft"],
+  down: ["numbers down", "border-rule-hard text-ink-soft"],
+  mixed: ["some up, some down", "border-ochre text-ochre"],
+  reworked: ["works differently", "border-ochre text-ochre"],
+};
+const nDown = moved.filter((x) => x.dir === "down").length;
+const nUp = moved.filter((x) => x.dir === "up").length;
+
 const LABEL = { new: "new", changed: "changed", moved: "moved", same: "same as Classic" };
 const TONE = {
   new: "border-rust text-rust",
@@ -45,8 +83,8 @@ function whatChanged(t) {
   return bits.length ? bits.join(" · ") : "";
 }
 
-const title = `WoW Forever ${cls} talent changes vs Classic: all ${talents.length} talents`;
-const description = `Every ${cls} talent in WoW Forever next to its Classic version: ${tally.new} new, ${tally.changed} changed, ${removed.length} gone. Read from both game clients.`;
+const title = `WoW Forever ${cls} changes vs Classic: every talent and spell`;
+const description = `What changed for the ${cls} in WoW Forever: ${tally.new} new talents, ${tally.changed} changed, ${newSpells.length} new spells, ${nDown} with lower numbers. From both game clients.`;
 ---
 <Base
   {title}
@@ -55,7 +93,7 @@ const description = `Every ${cls} talent in WoW Forever next to its Classic vers
     { href: "/", label: "Home" },
     { href: "/classes/", label: "Classes" },
     { href: `/classes/${slug(cls)}/`, label: cls },
-    { label: "Talent changes" },
+    { label: "Changes vs Classic" },
   ]}
   {build}
 >
@@ -66,10 +104,10 @@ const description = `Every ${cls} talent in WoW Forever next to its Classic vers
       )}
       <p class="tag">Forever vs Classic</p>
     </div>
-    <h1 class="text-[2rem] leading-tight max-w-[26ch]">{cls} talent changes in WoW Forever</h1>
+    <h1 class="text-[2rem] leading-tight max-w-[26ch]">{cls} changes in WoW Forever</h1>
     <p class="mt-3 max-w-[64ch] text-ink-soft leading-relaxed">
-      Every {cls} talent in Forever, next to what it was in Classic. Find your talent, see what moved.
-      The full tooltip is under each one.
+      Everything that changed for the {cls} since Classic. Spells first, then every talent next to its
+      Classic version. The full tooltip is under each one.
     </p>
   </header>
 
@@ -93,12 +131,60 @@ const description = `Every ${cls} talent in WoW Forever next to its Classic vers
       </div>
     </div>
     <p class="mt-5 text-[0.9rem] text-ink-soft">
-      Jump to:{" "}
+      Jump to: <a href="#spells" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">spells</a> ·{" "}
       {specs.map((s, i) => (
         <>{i > 0 && " · "}<a href={`#${slug(s)}`} class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">{s}</a></>
       ))}
-      {removed.length > 0 && <> · <a href="#removed" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">removed</a></>}
+      {removed.length > 0 && <> · <a href="#removed" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">removed talents</a></>}
     </p>
+  </section>
+
+  <section id="spells" class="py-8 border-t border-rule">
+    <h2 class="text-[1.4rem] mb-1">Spell changes</h2>
+    <p class="text-[0.9rem] text-ink-soft mb-5 max-w-[68ch]">
+      Each spell's top rank next to the same rank in Classic.
+      {nDown > 0 || nUp > 0 ? <> {nDown} have lower numbers, {nUp} higher. Lower isn't always weaker: a shorter cooldown is a buff.</> : null}
+      {" "}<a href={`/classes/${slug(cls)}/spells/`} class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">Every rank by level →</a>
+    </p>
+
+    {newSpells.length > 0 && (
+      <p class="text-[0.95rem] mb-5"><strong>New spells:</strong> {newSpells.map((x) => x.name).join(", ")}.</p>
+    )}
+    {goneSpells.length > 0 && (
+      <p class="text-[0.95rem] mb-5"><strong>Gone from the trainer:</strong> {goneSpells.join(", ")}.</p>
+    )}
+
+    {noted.length > 0 && (
+      <div class="space-y-3 mb-6">
+        {noted.map((x) => (
+          <div class="border-l-2 border-ochre pl-4">
+            <h3 class="font-serif text-[1.02rem]">{x.name}</h3>
+            <p class="text-[0.9rem] text-ink-soft">{x.note}</p>
+          </div>
+        ))}
+      </div>
+    )}
+
+    {moved.length > 0 && (
+      <table class="data">
+        <thead><tr><th>Spell</th><th>Forever vs Classic</th></tr></thead>
+        <tbody>
+          {moved.map((x) => (
+            <tr>
+              <td class="align-top whitespace-nowrap pr-4">
+                <span class="font-medium">{x.name}</span>
+                {x.top.rank && <span class="block text-[0.78rem] text-ink-faint">{x.top.rank}</span>}
+                <span class={`block w-fit mt-1 text-[0.64rem] uppercase tracking-wider border px-1 py-px ${DIR[x.dir][1]}`}>{DIR[x.dir][0]}</span>
+              </td>
+              <td class="align-top text-[0.86rem] leading-snug">
+                <p><span class="font-mono text-[0.72rem] text-ink-faint mr-1.5">Forever</span>{x.top.description}</p>
+                <p class="text-ink-soft mt-1"><span class="font-mono text-[0.72rem] text-ink-faint mr-1.5">Classic</span>{x.top.classic_text}</p>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
   </section>
 
   {specs.map((spec, si) => {

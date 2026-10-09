@@ -32,6 +32,7 @@ export function makeResolver(dbPath, { classic = false } = {}) {
     `SELECT CAST(ProcChance AS INT) chance, CAST(ProcCharges AS INT) charges, CAST(CumulativeAura AS INT) stacks
        FROM SpellAuraOptions WHERE CAST(SpellID AS INT) = ? AND CAST(DifficultyID AS INT) = 0`,
   );
+  const qAuraText = db.prepare(`SELECT AuraDescription_lang a FROM Spell WHERE CAST(ID AS INT) = ?`);
   const qRadius = db.prepare(`SELECT CAST(Radius AS REAL) r FROM SpellRadius WHERE CAST(ID AS INT) = ?`);
 
   const cache = new Map();
@@ -56,7 +57,7 @@ export function makeResolver(dbPath, { classic = false } = {}) {
   const fmtDur = (ms) => {
     if (ms <= 0) return null;
     const s = ms / 1000;
-    if (s >= 3600 && s % 3600 === 0) return `${s / 3600} hrs`;
+    if (s >= 3600 && s % 3600 === 0) return s === 3600 ? "1 hr" : `${s / 3600} hrs`;
     if (s >= 60 && s % 60 === 0) return `${s / 60} min`;
     return `${fmtNum(s)} sec`;
   };
@@ -64,8 +65,9 @@ export function makeResolver(dbPath, { classic = false } = {}) {
   /**
    * @param id      法术 id
    * @param scale   Forever 的天赋：显示值 = 满级值 × rank / maxRank（实测 Burning Soul 70 → 23/47/70）
+   * @param template 默认解析法术说明；传 "aura" 解析光环说明（buff 栏里那行）
    */
-  function resolve(id, scale = 1) {
+  function resolve(id, scale = 1, template = "desc") {
     const sp = spell(id);
     let ok = true;
     const miss = () => { ok = false; return "?"; };
@@ -76,7 +78,7 @@ export function makeResolver(dbPath, { classic = false } = {}) {
       const sc = refId ? 1 : scale;
       const e = s.eff[idx || 1];
       switch (kind) {
-        case "s": case "m": case "M": case "S": {
+        case "s": case "m": case "M": case "S": case "w": {
           if (!e) return null;
           const base = classic ? e.bp + (e.die <= 1 ? e.die : 0) : e.bp;
           return Math.abs(base) * sc;
@@ -107,12 +109,12 @@ export function makeResolver(dbPath, { classic = false } = {}) {
       return `${fmtNum(e.bp + 1)} to ${fmtNum(e.bp + e.die)}`;
     }
 
-    let text = sp.desc ?? "";
+    let text = (template === "aura" ? qAuraText.get(id)?.a : sp.desc) ?? "";
     let lastNum = null;
 
     // ${ 表达式 } —— 先替换里面的 $s1 之类，再只允许数字和运算符求值
     text = text.replace(/\$\{([^}]*)\}(\.\d)?/g, (_, expr) => {
-      const inner = expr.replace(/\$(\d*)([smoMS])(\d)/g, (__, ref, k, i) => {
+      const inner = expr.replace(/\$(\d*)([smoMSw])(\d)/g, (__, ref, k, i) => {
         const v = value(k.toLowerCase(), Number(i), ref ? Number(ref) : 0);
         return v === null ? "NaN" : String(v);
       });
@@ -126,7 +128,7 @@ export function makeResolver(dbPath, { classic = false } = {}) {
     });
 
     // $/10;s1 和 $*2;s1：除/乘
-    text = text.replace(/\$([/*])(\d+);(\d*)([smoSM])(\d)/g, (_, op, n, ref, k, i) => {
+    text = text.replace(/\$([/*])(\d+);(\d*)([smoSMw])(\d)/g, (_, op, n, ref, k, i) => {
       const v = value(k.toLowerCase(), Number(i), ref ? Number(ref) : 0);
       if (v === null) return miss();
       const r = op === "/" ? v / Number(n) : v * Number(n);
@@ -141,7 +143,7 @@ export function makeResolver(dbPath, { classic = false } = {}) {
     });
 
     // $12345s1 / $s1 / $m1 / $o1 / $t1 / $h / $n / $u / $a1 / $x1
-    text = text.replace(/\$(\d*)([smoMStxhnua])(\d?)/g, (_, ref, k, i) => {
+    text = text.replace(/\$(\d*)([smoMStxhnuaw])(\d?)/g, (_, ref, k, i) => {
       const rg = range(k.toLowerCase(), Number(i), ref ? Number(ref) : 0);
       if (rg) return rg;
       const v = value(k === "S" || k === "M" ? k.toLowerCase() : k, Number(i), ref ? Number(ref) : 0);
