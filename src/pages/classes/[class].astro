@@ -1,5 +1,6 @@
 ---
 import AdBreak from "../../components/AdBreak.astro";
+import TalentCalculator from "../../components/TalentCalculator.astro";
 import Base from "../../layouts/Base.astro";
 import { all, one, slug, val } from "../../data/db.ts";
 import { Image } from "astro:assets";
@@ -39,8 +40,8 @@ const ROLE = {
 };
 ---
 <Base
-  title={`${cls} in WoW Forever — races, talent trees, spells and what changed`}
-  description={`${cls} in World of Warcraft: Forever: the ${races.length} races that can play it, its ${trees.length} talent trees, and where it sits in the class spread.`}
+  title={`WoW Forever ${cls} talent calculator, races and spells`}
+  description={`Free WoW Forever ${cls} talent calculator with all ${talents.length} talents from the beta client. Share a build, see the ${races.length} races that can play ${cls}.`.slice(0, 165)}
   crumbs={[{ href: "/", label: "Home" }, { href: "/classes/", label: "Classes" }, { label: cls }]}
   {build}
 >
@@ -73,52 +74,22 @@ const ROLE = {
     </div>
   </header>
 
-  <section class="py-8 grid gap-10 lg:grid-cols-[1.3fr_1fr]">
+  <section class="py-8" id="talent-calculator">
+    <h2 class="text-[1.4rem] mb-1">{cls} talent calculator</h2>
+    <p class="text-[0.9rem] text-ink-soft mb-5 max-w-[66ch]">
+      All {talents.length} {cls} talents from the beta, in their real spots. Plan a build, then copy the
+      link to share it.
+    </p>
+    <TalentCalculator {cls} />
+  </section>
+
+  <section class="py-8 grid gap-10 lg:grid-cols-[1.3fr_1fr] border-t border-rule">
     <div>
-      <h2 class="text-[1.3rem] mb-3">Talent trees</h2>
-      {
-        trees.length ? (
-          <div class="space-y-6">
-            {trees.map((tree) => {
-              const pts = talents.filter((t) => t.tab === tree);
-              const tiers = [...new Set(pts.map((p) => p.tier))].sort((a, b) => a - b);
-              return (
-                <div>
-                  <h3 class="flex items-center gap-2.5 font-serif text-[1.1rem] mb-2">
-                    {specFor(cls, tree) && (
-                      <Image src={specFor(cls, tree)!} alt="" width={30} height={30}
-                        format="webp" class="shrink-0" aria-hidden="true" />
-                    )}
-                    <span>{tree}</span>
-                  </h3>
-                  <table class="data">
-                    <thead>
-                      <tr><th class="w-16">Tier</th><th>Talent</th></tr>
-                    </thead>
-                    <tbody>
-                      {tiers.map((tier) => (
-                        <tr>
-                          <td class="font-mono text-ink-faint align-top">{tier + 1}</td>
-                          <td>
-                            {pts.filter((p) => p.tier === tier).map((p, i) => (
-                              <>
-                                {i > 0 && <span class="text-rule-hard"> · </span>}
-                                <span>{p.spell_name || "—"}</span>
-                              </>
-                            ))}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <p class="text-ink-faint">No talent data for this class in the current build.</p>
-        )
-      }
+      <h2 class="text-[1.3rem] mb-3">What changed for the {cls}</h2>
+      <p class="text-[0.92rem] text-ink-soft leading-relaxed">
+        {changed} of the {talents.length} talents are new or different from Classic, and the trainer list moved
+        too. <a href={`/classes/${slug(cls)}/talent-changes/`} class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">Every change, talent by talent →</a>
+      </p>
     </div>
 
 <AdBreak />

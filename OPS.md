@@ -493,6 +493,19 @@ Classic 侧文字是我们从 Classic Era 客户端（`data/baseline/classic.db`
 - `/classes/mage/portals/` ← `spellbook` + `spellbook_reagent`（技能书法术的施法材料，含商人价）。
   Teleport: Dalaran 文件里只挂 Alliance 种族（talentsforever 的 fx 注记），另有两个同名法术无种族 —— 页面写「未确认 Horde 能不能学」，确认前别改成两边都有。
 
+## 天赋计算器（2026-10-10 加）
+
+嵌在 9 个职业页 `/classes/<职业>/#talent-calculator`，总入口 `/tools/talent-calculator/`。组件 `src/components/TalentCalculator.astro`（纯前端、零依赖）。
+
+| 规则 | 来源（客户端核对过）|
+|---|---|
+| 箭头 = `TraitEdge` Type=2，Left 是前置 | 对照 talentsforever 的 now/no longer requires 注记 39/39；丢掉「前置在下面一行」的反向重复边（Hunter Bestial Wrath ↔ Intimidation）|
+| 第 r 行要本系先投 5×(r−1) 点 | `TraitCond.SpentAmountRequired` 0/5/…/30 按行分布 |
+| 10 级起每级 1 点，共 51 | 和 talentsforever 一致 |
+
+- 图标：`pipeline/talent-icons.mjs`，fdid → wago 文件名 → `render.worldofwarcraft.com` 官方 56px JPEG → `public/icons/talents/`（358 张，1.4MB，**入 git**，已有的不重下；文件名缓存 `data/baseline/icon-names.json`）
+- 分享：URL hash `#t=<系1>-<系2>-<系3>`，每系按「行、列」顺序一串 0–5 数字。读链接时逐点按规则加，非法的点自动丢 —— 新 build 改了树，旧链接也不会进非法状态（但可能少几点）
+
 ## ⚠️ 类型陷阱：`.import --csv` 的列是 `ANY` 类型
 
 **踩过一次，而且差点得出错误结论。**

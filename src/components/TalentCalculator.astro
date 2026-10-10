@@ -1,0 +1,298 @@
+---
+/**
+ * TalentCalculator —— 职业页里的天赋计算器（纯前端，零依赖）。
+ *
+ * 数据全来自 site.db：talent_node（位置 / 等级 / 每级文字 / 图标）+ talent_edge（前置箭头）。
+ * 规则（客户端核对过，见 OPS.md「天赋计算器」）：
+ *   - 10 级起每级 1 点，60 级共 51 点
+ *   - 第 r 行要在本系先投 5×(r−1) 点（TraitCond.SpentAmountRequired 0/5/…/30）
+ *   - 有箭头的天赋要先把前置点满
+ * 分享：build 存在 URL hash（#t=…），每系一串数字，按 行、列 排序，末尾的 0 省掉。
+ */
+import { all, slug } from "../data/db.ts";
+
+interface Props { cls: string }
+const { cls } = Astro.props;
+
+const rows = all(
+  `SELECT name, spec, spec_order, row, col, max_ranks, ranks, icon, status
+     FROM talent_node WHERE class = ? ORDER BY spec_order, row, col`,
+  cls,
+);
+const specs = [...new Set(rows.map((r) => r.spec))];
+const trees = specs.map((spec) => ({
+  name: spec,
+  talents: rows.filter((r) => r.spec === spec).map((r) => ({
+    n: r.name, r: r.row, c: r.col, m: r.max_ranks, d: JSON.parse(r.ranks), ic: r.icon, s: r.status,
+  })),
+}));
+const edgeRows = all(`SELECT spec, pre, dep FROM talent_edge WHERE class = ?`, cls);
+const edges = edgeRows.map((e) => {
+  const t = specs.indexOf(e.spec);
+  const list = trees[t]?.talents ?? [];
+  return [t, list.findIndex((x) => x.n === e.pre), list.findIndex((x) => x.n === e.dep)];
+}).filter(([t, a, b]) => t >= 0 && a >= 0 && b >= 0);
+
+// 网格尺寸（px）：图标 44，格距 58
+const PITCH = 58, ICON = 44, COLS = 4, ROWS = 7;
+const W = COLS * PITCH, H = ROWS * PITCH;
+const cx = (c) => (c - 1) * PITCH + PITCH / 2;
+const cy = (r) => (r - 1) * PITCH + PITCH / 2;
+const data = { cls, cap: 51, changes: `/classes/${slug(cls)}/talent-changes/`, trees, edges };
+---
+<div class="tcalc" data-tcalc>
+  <div class="flex flex-wrap items-end justify-between gap-4 mb-4">
+    <div class="flex flex-wrap gap-x-7 gap-y-2 items-end">
+      <div>
+        <p class="text-[0.72rem] uppercase tracking-wider text-ink-faint">Points left</p>
+        <p class="font-mono text-[1.6rem] text-rust leading-none mt-1" data-left>51</p>
+      </div>
+      <div>
+        <p class="text-[0.72rem] uppercase tracking-wider text-ink-faint">Build</p>
+        <p class="font-mono text-[1.6rem] leading-none mt-1" data-split>0/0/0</p>
+      </div>
+      <div>
+        <p class="text-[0.72rem] uppercase tracking-wider text-ink-faint">Level needed</p>
+        <p class="font-mono text-[1.6rem] leading-none mt-1" data-level>—</p>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <button type="button" class="tc-btn" data-reset>Reset</button>
+      <button type="button" class="tc-btn tc-btn-main" data-copy>Copy link</button>
+    </div>
+  </div>
+
+  <div class="tc-info border border-rule-hard bg-card p-4 mb-5 min-h-[7.5rem]" data-info aria-live="polite">
+    <p class="text-[0.9rem] text-ink-soft">
+      <span class="hidden sm:inline">Click a talent to add a point, right-click or Shift+click to take one back.</span>
+      <span class="sm:hidden">Tap a talent to add a point. Tap its − to take one back.</span>{" "}
+      Rows open every 5 points in a tree. An arrow means the talent above has to be maxed first.
+    </p>
+  </div>
+
+  <div class="flex flex-wrap gap-x-8 gap-y-8 justify-center lg:justify-between">
+    {trees.map((tree, t) => (
+      <div class="tc-tree" data-tree={t}>
+        <div class="flex items-baseline justify-between mb-2" style={`width:${W}px`}>
+          <h3 class="font-serif text-[1.1rem]">{tree.name}</h3>
+          <span class="font-mono text-[0.85rem] text-ink-faint" data-spent={t}>0</span>
+        </div>
+        <div class="relative" style={`width:${W}px;height:${H}px`}>
+          <svg class="absolute inset-0 pointer-events-none" width={W} height={H} viewBox={`0 0 ${W} ${H}`} aria-hidden="true">
+            {edges.filter((e) => e[0] === t).map(([, a, b]) => {
+              const p = tree.talents[a], q = tree.talents[b];
+              const sameRow = p.r === q.r;
+              const x1 = cx(p.c), y1 = cy(p.r), x2 = cx(q.c), y2 = cy(q.r);
+              // 箭头画到目标图标的边上，不压住图标
+              const ex = sameRow ? x2 - Math.sign(x2 - x1) * (ICON / 2 + 3) : x2;
+              const ey = sameRow ? y2 : y2 - ICON / 2 - 3;
+              const path = sameRow || p.c === q.c ? `M${x1},${y1} L${ex},${ey}` : `M${x1},${y1} L${x1},${ey - 8} L${x2},${ey - 8} L${ex},${ey}`;
+              return <path d={path} class="tc-arrow" data-edge={`${a}-${b}`} marker-end={`url(#tc-head-${t})`} />;
+            })}
+            <defs>
+              {/* marker 不继承线条颜色，所以亮/暗各一个，JS 切 marker-end */}
+              <marker id={`tc-head-${t}`} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L8,4 L0,8 z" fill="#cec2a8" />
+              </marker>
+              <marker id={`tc-head-on-${t}`} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L8,4 L0,8 z" fill="#9a6b12" />
+              </marker>
+            </defs>
+          </svg>
+          {tree.talents.map((x, i) => (
+            <div class="tc-cell absolute" style={`left:${cx(x.c) - ICON / 2}px;top:${cy(x.r) - ICON / 2}px`} data-cell={`${t}-${i}`}>
+              <button type="button" class="tc-talent" data-t={t} data-i={i} aria-label={`${x.n}, 0 of ${x.m}`}>
+                {x.ic
+                  ? <img src={`/icons/talents/${x.ic}.jpg`} alt="" width={ICON} height={ICON} loading="lazy" decoding="async" />
+                  : <span class="tc-fallback">{x.n.slice(0, 2)}</span>}
+                <span class="tc-rank" data-rank>0/{x.m}</span>
+              </button>
+              <button type="button" class="tc-minus" data-minus data-t={t} data-i={i} aria-label={`Remove a point from ${x.n}`}>−</button>
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <p class="mt-5 text-[0.8rem] text-ink-faint max-w-[70ch]">
+    Tree layout, ranks, arrows and row gates read from the Forever beta client. Rank text from{" "}
+    <a href="https://talentsforever.com/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">Talents Forever</a> (CC BY 4.0).
+    It's the beta: a new build can move talents, and old links may then load a little differently.
+  </p>
+
+  <script type="application/json" data-tcalc-data set:html={JSON.stringify(data)}></script>
+</div>
+
+<style>
+  .tc-btn {
+    border: 1px solid var(--color-rule-hard); padding: 0.35rem 0.85rem; font-size: 0.85rem;
+    background: var(--color-card);
+  }
+  .tc-btn:hover { border-color: var(--color-rust); color: var(--color-rust); }
+  .tc-btn-main { background: var(--color-ink); color: var(--color-paper); border-color: var(--color-ink); }
+  .tc-btn-main:hover { background: var(--color-rust); border-color: var(--color-rust); color: var(--color-paper); }
+  .tc-cell { width: 44px; height: 44px; }
+  .tc-talent {
+    position: relative; display: block; width: 44px; height: 44px; padding: 0;
+    border: 2px solid var(--color-rule-hard); background: var(--color-paper-edge); cursor: pointer;
+    transition: border-color .15s, filter .15s, opacity .15s;
+  }
+  .tc-talent img, .tc-fallback { display: block; width: 40px; height: 40px; }
+  .tc-fallback { line-height: 40px; text-align: center; font-family: var(--font-mono, monospace); font-size: .8rem; }
+  .tc-talent[data-state="locked"] { filter: grayscale(1); opacity: .45; }
+  .tc-talent[data-state="open"] { border-color: var(--color-ink-faint); }
+  .tc-talent[data-state="part"] { border-color: var(--color-moss); }
+  .tc-talent[data-state="max"] { border-color: var(--color-ochre); }
+  .tc-talent:focus-visible { outline: 2px solid var(--color-rust); outline-offset: 2px; }
+  .tc-rank {
+    position: absolute; right: -8px; bottom: -8px; font: 600 .62rem/1 var(--font-mono, monospace);
+    background: var(--color-ink); color: var(--color-paper); padding: 2px 3px;
+  }
+  .tc-talent[data-state="locked"] .tc-rank { background: var(--color-ink-faint); }
+  .tc-talent[data-state="max"] .tc-rank { background: var(--color-ochre); }
+  .tc-minus {
+    position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; line-height: 16px;
+    font-size: .8rem; background: var(--color-card); border: 1px solid var(--color-rule-hard);
+    display: none; padding: 0;
+  }
+  .tc-cell[data-has] .tc-minus { display: block; }
+  @media (hover: hover) { .tc-cell[data-has] .tc-minus { display: none; } }
+  .tc-arrow { fill: none; stroke: var(--color-rule-hard); stroke-width: 2.5; }
+  .tc-arrow[data-on] { stroke: var(--color-ochre); }
+</style>
+
+<script is:inline>
+(() => {
+  const root = document.querySelector("[data-tcalc]");
+  if (!root) return;
+  const D = JSON.parse(root.querySelector("[data-tcalc-data]").textContent);
+  const T = D.trees;
+  const pts = T.map((t) => t.talents.map(() => 0));
+  const pre = T.map((t) => t.talents.map(() => [])); // 每个天赋的前置
+  const dep = T.map((t) => t.talents.map(() => [])); // 每个天赋解锁的
+  for (const [t, a, b] of D.edges) { pre[t][b].push(a); dep[t][a].push(b); }
+  const $ = (s) => root.querySelector(s);
+  const total = () => pts.flat().reduce((a, b) => a + b, 0);
+  const spent = (t) => pts[t].reduce((a, b) => a + b, 0);
+  const below = (t, row) => T[t].talents.reduce((a, x, i) => a + (x.r < row ? pts[t][i] : 0), 0);
+  const need = (row) => 5 * (row - 1);
+  const maxed = (t, i) => pts[t][i] >= T[t].talents[i].m;
+
+  function canAdd(t, i) {
+    const x = T[t].talents[i];
+    return total() < D.cap && pts[t][i] < x.m && below(t, x.r) >= need(x.r) && pre[t][i].every((a) => maxed(t, a));
+  }
+  function canRemove(t, i) {
+    if (!pts[t][i]) return false;
+    if (dep[t][i].some((b) => pts[t][b] > 0)) return false;
+    pts[t][i]--;
+    const ok = T[t].talents.every((x, j) => !pts[t][j] || below(t, x.r) >= need(x.r));
+    pts[t][i]++;
+    return ok;
+  }
+  function why(t, i) {
+    const x = T[t].talents[i];
+    if (pts[t][i] >= x.m) return "";
+    const lack = need(x.r) - below(t, x.r);
+    if (lack > 0) return `Needs ${need(x.r)} points in ${T[t].name} (${lack} more).`;
+    const miss = pre[t][i].filter((a) => !maxed(t, a)).map((a) => T[t].talents[a].n);
+    if (miss.length) return `Needs ${miss.join(" and ")} maxed first.`;
+    if (total() >= D.cap) return "No points left at level 60.";
+    return "";
+  }
+
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const TAG = { new: "New in Forever", changed: "Changed since Classic", moved: "Moved since Classic", same: "Same as Classic" };
+  let shown = null;
+  function info(t, i) {
+    shown = [t, i];
+    const x = T[t].talents[i], p = pts[t][i], w = why(t, i);
+    const cur = p > 0 ? x.d[p - 1] : null, next = p < x.m ? x.d[p] : null;
+    $("[data-info]").innerHTML =
+      `<div class="flex flex-wrap items-baseline gap-x-3"><p class="font-serif text-[1.1rem]">${esc(x.n)}</p>` +
+      `<p class="font-mono text-[0.8rem] text-ink-faint">Rank ${p}/${x.m} · row ${x.r}</p>` +
+      (TAG[x.s] ? `<a class="text-[0.75rem] underline decoration-rule-hard underline-offset-2 hover:text-rust" href="${D.changes}#${T[t].name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}">${TAG[x.s]}</a>` : "") +
+      `</div>` +
+      (cur ? `<p class="text-[0.9rem] mt-1.5"><span class="font-mono text-[0.72rem] text-ink-faint mr-1.5">Now</span>${esc(cur)}</p>` : "") +
+      (next ? `<p class="text-[0.9rem] mt-1 ${cur ? "text-ink-soft" : ""}"><span class="font-mono text-[0.72rem] text-ink-faint mr-1.5">${p ? "Next rank" : "Rank 1"}</span>${esc(next)}</p>` : "") +
+      (!x.d.length ? `<p class="text-[0.85rem] text-ink-faint mt-1">Tooltip text not available for this build.</p>` : "") +
+      (w ? `<p class="text-[0.82rem] text-rust mt-1.5">${esc(w)}</p>` : "");
+  }
+
+  function render() {
+    const tot = total();
+    $("[data-left]").textContent = D.cap - tot;
+    $("[data-split]").textContent = T.map((_, t) => spent(t)).join("/");
+    $("[data-level]").textContent = tot ? 9 + tot : "—";
+    T.forEach((tree, t) => {
+      root.querySelector(`[data-spent="${t}"]`).textContent = spent(t);
+      tree.talents.forEach((x, i) => {
+        const cell = root.querySelector(`[data-cell="${t}-${i}"]`);
+        const btn = cell.querySelector(".tc-talent");
+        const p = pts[t][i];
+        btn.dataset.state = p >= x.m ? "max" : p > 0 ? "part" : canAdd(t, i) ? "open" : "locked";
+        btn.querySelector("[data-rank]").textContent = `${p}/${x.m}`;
+        btn.setAttribute("aria-label", `${x.n}, ${p} of ${x.m}`);
+        cell.toggleAttribute("data-has", p > 0);
+      });
+    });
+    for (const [t, a, b] of D.edges) {
+      const el = root.querySelector(`[data-tree="${t}"] [data-edge="${a}-${b}"]`);
+      if (!el) continue;
+      el.toggleAttribute("data-on", maxed(t, a));
+      el.setAttribute("marker-end", `url(#tc-head-${maxed(t, a) ? "on-" : ""}${t})`);
+    }
+    const code = pts.map((r) => r.join("").replace(/0+$/, "")).join("-").replace(/-+$/, "");
+    history.replaceState(null, "", tot ? `#t=${code}` : location.pathname + location.search);
+    if (shown) info(...shown);
+  }
+
+  function add(t, i) { if (canAdd(t, i)) { pts[t][i]++; render(); } info(t, i); }
+  function remove(t, i) { if (canRemove(t, i)) { pts[t][i]--; render(); } info(t, i); }
+
+  root.addEventListener("click", (e) => {
+    const m = e.target.closest("[data-minus]");
+    if (m) { remove(+m.dataset.t, +m.dataset.i); return; }
+    const b = e.target.closest(".tc-talent");
+    if (!b) return;
+    (e.shiftKey ? remove : add)(+b.dataset.t, +b.dataset.i);
+  });
+  root.addEventListener("contextmenu", (e) => {
+    const b = e.target.closest(".tc-talent");
+    if (!b) return;
+    e.preventDefault();
+    remove(+b.dataset.t, +b.dataset.i);
+  });
+  root.addEventListener("mouseover", (e) => {
+    const b = e.target.closest(".tc-talent");
+    if (b) info(+b.dataset.t, +b.dataset.i);
+  });
+  root.addEventListener("focusin", (e) => {
+    const b = e.target.closest(".tc-talent");
+    if (b) info(+b.dataset.t, +b.dataset.i);
+  });
+  $("[data-reset]").addEventListener("click", () => { pts.forEach((r) => r.fill(0)); shown = null; render(); });
+  $("[data-copy]").addEventListener("click", async (e) => {
+    const btn = e.currentTarget;
+    try { await navigator.clipboard.writeText(location.href); btn.textContent = "Copied"; }
+    catch { btn.textContent = "Copy the address bar"; }
+    setTimeout(() => (btn.textContent = "Copy link"), 1800);
+  });
+
+  // 读 #t= ：逐点按规则加，不合法的点自动丢掉（旧 build 的链接在新树上也不会搞出非法状态）
+  const m = /#t=([0-9-]+)/.exec(location.hash);
+  if (m) {
+    const parts = m[1].split("-");
+    let progress = true;
+    while (progress) {
+      progress = false;
+      T.forEach((tree, t) => tree.talents.forEach((x, i) => {
+        const want = Math.min(x.m, +(parts[t]?.[i] ?? 0));
+        while (pts[t][i] < want && canAdd(t, i)) { pts[t][i]++; progress = true; }
+      }));
+    }
+  }
+  render();
+})();
+</script>

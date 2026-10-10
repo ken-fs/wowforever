@@ -16,6 +16,7 @@ import { fileURLToPath } from "node:url";
 import { deriveClasses } from "./classes.mjs";
 import { deriveXp } from "./xp.mjs";
 import { deriveMounts } from "./mounts.mjs";
+import { fetchTalentIcons } from "./talent-icons.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const RAW = resolve(ROOT, "data/raw");
@@ -281,6 +282,7 @@ const tfPath = await fetchTalentsForever();
 console.error("classes:", deriveClasses({ foreverDb: DB, classicDb: classic?.db, classicBuild: classic?.build, tfPath }));
 console.error("xp_source:", deriveXp({ foreverDb: DB }));
 console.error("mount:", deriveMounts({ foreverDb: DB, classicDb: classic?.db }));
+console.error("talent icons:", await fetchTalentIcons({ foreverDb: DB, root: ROOT }));
 
 // ⚠️ 新增派生表后必须加进 SITE_TABLES，否则本地 build 正常（读完整库）
 // 但 CI 构建报 'no such table'（只读 site.db）。踩过一次。
@@ -289,7 +291,7 @@ const SITE_TABLES = [
   "race_class", "race_class_new", "talent_full", "xp_spell", "xp_curve", "quest_xp",
   "recipe", "recipe_reagent", "reagent_name", "camping_spell", "camp_object", "counts", "meta", "ChrRaces", "ChrClasses", "DungeonEncounter", "Map", "ItemSet",
   "v_change_summary", "v_page_counts", "v_findings", "v_gaps",
-  "talent_node", "talent_removed", "spellbook", "spellbook_gone", "xp_source", "mount", "spellbook_reagent",
+  "talent_node", "talent_edge", "talent_removed", "spellbook", "spellbook_gone", "xp_source", "mount", "spellbook_reagent",
 ];
 const siteDb = resolve(ROOT, "data/site.db");
 rmSync(siteDb, { force: true });

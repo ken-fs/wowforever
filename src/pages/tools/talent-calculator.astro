@@ -1,0 +1,59 @@
+---
+import Base from "../../layouts/Base.astro";
+import { all, slug, val } from "../../data/db.ts";
+import { Image } from "astro:assets";
+import { classIcon } from "../../data/assets.ts";
+
+const build = val(`SELECT value FROM meta WHERE key='build'`);
+const classes = all(
+  `SELECT class, COUNT(*) n, GROUP_CONCAT(DISTINCT spec) specs,
+          SUM(status IN ('new','changed')) changed
+     FROM talent_node GROUP BY class ORDER BY class`,
+);
+const total = classes.reduce((a, c) => a + c.n, 0);
+---
+<Base
+  title="WoW Forever talent calculator: all nine classes"
+  description={`Free WoW Forever talent calculator for all nine classes: ${total} talents from the beta client in their real spots, row gates and arrows included. Share any build.`.slice(0, 165)}
+  crumbs={[{ href: "/", label: "Home" }, { href: "/tools/", label: "Tools" }, { label: "Talent calculator" }]}
+  {build}
+>
+  <header class="pt-8 pb-6 border-b border-rule">
+    <p class="tag mb-3">Tool</p>
+    <h1 class="text-[2rem] sm:text-[2.4rem] leading-tight max-w-[24ch]">WoW Forever talent calculator</h1>
+    <p class="mt-3 max-w-[64ch] text-ink-soft leading-relaxed">
+      Pick a class. Every tree is read from the beta client, build <span class="font-mono">{build}</span>:
+      where each talent sits, how many ranks it has, which arrows lock it, and the 5-points-per-row gates.
+      51 points at level 60.
+    </p>
+  </header>
+
+  <section class="py-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    {classes.map((c) => (
+      <a href={`/classes/${slug(c.class)}/#talent-calculator`} class="card block p-4">
+        <span class="flex items-center gap-2.5">
+          {classIcon[slug(c.class)] && (
+            <Image src={classIcon[slug(c.class)]!} alt="" width={28} height={28} format="webp" aria-hidden="true" />
+          )}
+          <span class="font-serif text-[1.15rem]">{c.class}</span>
+        </span>
+        <span class="block mt-1 text-[0.82rem] text-ink-faint">{c.specs.split(",").join(" · ")}</span>
+        <span class="block mt-0.5 text-[0.82rem] text-ink-faint">{c.n} talents · {c.changed} new or changed</span>
+      </a>
+    ))}
+  </section>
+
+  <section class="py-8 border-t border-rule max-w-[70ch]">
+    <h2 class="text-[1.2rem] mb-2">How it works</h2>
+    <ul class="text-[0.92rem] text-ink-soft space-y-1.5 list-disc pl-5">
+      <li>Click a talent to add a point. Right-click or Shift+click takes one back. On a phone, tap to add and tap the − to remove.</li>
+      <li>Rows open every 5 points spent in that tree. An arrow means the talent above has to be maxed first.</li>
+      <li>The link in your address bar is your build. Copy it to share.</li>
+      <li>Want to know what changed? Each class has a page with every talent next to its Classic version.</li>
+    </ul>
+    <p class="text-[0.8rem] text-ink-faint mt-4">
+      Rank text from <a href="https://talentsforever.com/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">Talents Forever</a> (CC BY 4.0).
+      Icons from Blizzard's own icon renders.
+    </p>
+  </section>
+</Base>

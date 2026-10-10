@@ -62,8 +62,9 @@ export function deriveClasses({ foreverDb, classicDb, classicBuild, tfPath }) {
   }
 
   // ── Forever 天赋（Trait 树）────────────────────────────────────────────
+  const qIcon = w.prepare(`SELECT icon_fdid FROM spell_icon WHERE spell_id = ?`);
   const nodes = w.prepare(
-    `SELECT CAST(n.TraitTreeID AS INT) tree, CAST(n.PosX AS INT) x, CAST(n.PosY AS INT) y,
+    `SELECT CAST(n.ID AS INT) node, CAST(n.TraitTreeID AS INT) tree, CAST(n.PosX AS INT) x, CAST(n.PosY AS INT) y,
             CAST(e.MaxRanks AS INT) max, CAST(d.SpellID AS INT) spell, sn.Name_lang name,
             CAST(sco.SpellClassSet AS INT) cset
        FROM TraitNode n
@@ -139,7 +140,8 @@ export function deriveClasses({ foreverDb, classicDb, classicBuild, tfPath }) {
       // 但效果完全不同 —— 挂上会让 Magic Attunement 从「已删除」里消失）
       const cl = status === "new" ? null : c;
       out.push({
-        class: cls, spec: bandName[b], spec_order: b, row, col, name: n.name, spell_id: n.spell,
+        class: cls, spec: bandName[b], spec_order: b, row, col, name: n.name, spell_id: n.spell, node: n.node,
+        icon_fdid: qIcon.get(n.spell)?.icon_fdid ?? null,
         max_ranks: n.max, ranks: JSON.stringify(ranks), text_source: source, status,
         moved: cl ? moved : 0, ranks_changed: cl ? ranksChanged : 0, numbers_changed: cl ? numbersChanged : 0,
         classic_spec: cl?.spec ?? null, classic_row: cl?.row ?? null, classic_col: cl?.col ?? null,
@@ -159,6 +161,19 @@ export function deriveClasses({ foreverDb, classicDb, classicBuild, tfPath }) {
     for (const [name, c] of Object.entries(list)) {
       if (!have.has(name)) removed.push({ class: cls, spec: c.spec, name, classic_max: c.max, classic_row: c.row, classic_text: c.ok ? c.text : null });
     }
+  }
+
+  // ── 天赋前置（计算器的箭头）─────────────────────────────────────────────
+  // TraitEdge Type=2 是职业树的前置箭头：Left = 前置，Right = 被解锁的（Mage: Cold Snap → Ice Barrier）。
+  // 有少数成对的反向边（Hunter: Bestial Wrath ↔ Intimidation），前置在下面一行的那条是反的，丢掉。
+  // 2026-10-10 对照 talentsforever 的「now requires / no longer requires」注记：39/39 一致。
+  const byNode = new Map(out.map((o) => [o.node, o]));
+  const edges = [];
+  for (const e of w.prepare(`SELECT CAST(LeftTraitNodeID AS INT) a, CAST(RightTraitNodeID AS INT) b FROM TraitEdge WHERE CAST(Type AS INT) = 2`).all()) {
+    const pre = byNode.get(e.a), dep = byNode.get(e.b);
+    if (!pre || !dep || pre.class !== dep.class || pre.row > dep.row) continue;
+    if (edges.some((x) => x.class === dep.class && x.pre === pre.name && x.dep === dep.name)) continue;
+    edges.push({ class: dep.class, spec: dep.spec, pre: pre.name, dep: dep.name });
   }
 
   // ── 技能书：训练师技能（SkillLine 类别 7 = 职业技能线，去掉宠物线）────────
@@ -274,10 +289,11 @@ export function deriveClasses({ foreverDb, classicDb, classicBuild, tfPath }) {
   };
   write("talent_node", out, [
     "class TEXT", "spec TEXT", "spec_order INT", "row INT", "col INT", "name TEXT", "spell_id INT",
-    "max_ranks INT", "ranks TEXT", "text_source TEXT", "status TEXT", "moved INT", "ranks_changed INT",
+    "max_ranks INT", "icon_fdid INT", "icon TEXT", "ranks TEXT", "text_source TEXT", "status TEXT", "moved INT", "ranks_changed INT",
     "numbers_changed INT", "status_source TEXT", "note TEXT", "replaces TEXT", "classic_name TEXT", "classic_spec TEXT", "classic_row INT", "classic_col INT", "classic_max INT",
     "classic_text TEXT",
   ]);
+  write("talent_edge", edges, ["class TEXT", "spec TEXT", "pre TEXT", "dep TEXT"]);
   write("talent_removed", removed, [
     "class TEXT", "spec TEXT", "name TEXT", "classic_max INT", "classic_row INT", "classic_text TEXT",
   ]);
@@ -320,6 +336,7 @@ export function deriveClasses({ foreverDb, classicDb, classicBuild, tfPath }) {
 
   return {
     talents: out.length,
+    edges: edges.length,
     fromTf: out.filter((o) => o.text_source === "talentsforever").length,
     removed: removed.length,
     spellbook: spellbook.length,

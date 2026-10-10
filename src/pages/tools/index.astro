@@ -8,7 +8,7 @@ const classCount = [...new Set(combos.map((c) => c.class))].length;
 const raceCount = [...new Set(combos.map((c) => c.race))].length;
 const talents = val(`SELECT COUNT(*) FROM talent_full`);
 const recipes = val(`SELECT COUNT(*) FROM recipe`);
-const xpBuffs = val(`SELECT COUNT(DISTINCT name) FROM xp_spell WHERE reliable = 1 AND aura = 200`);
+const xpBuffs = val(`SELECT COUNT(*) FROM xp_source WHERE kind <> 'rested' AND readable = 1`);
 const dungeons = count("dungeons");
 ---
 <Base title="WoW Forever tools — calculators and sortable data" description="Every World of Warcraft: Forever calculator and lookup table on this site, in one place. XP math, race and class combinations, talents and professions." crumbs={[{ href: "/", label: "Home" }, { label: "Tools" }]} {build}>
@@ -46,18 +46,26 @@ const dungeons = count("dungeons");
       </a>
 
       {[
-        { t: "Talent changes", d: `${Number(talents).toLocaleString()} talents across 27 trees, each one next to its Classic version.`, href: "/changes/" },
-        { t: "Professions & recipes", d: `${Number(recipes).toLocaleString()} recipes with their reagents.`, href: "/classes/" },
-        { t: "Dungeon reference", d: `${dungeons} dungeons and their encounters.`, href: "/guides/" },
+        { t: "Talent calculator", d: `All ${Number(talents).toLocaleString()} talents in their real spots for all nine classes. Plan a build, share the link.`, href: "/tools/talent-calculator/" },
+        { t: "Class changes vs Classic", d: "Every talent and every spell's top rank next to its Classic version, class by class.", href: "/changes/" },
+        { t: "Mounts", d: "Mount level and vendor price for every mount in the client, next to Classic's.", href: "/mounts/" },
+        { t: "Professions & recipes", d: `${Number(recipes).toLocaleString()} recipes with their reagents.`, href: "/professions/" },
       ].map((x) => (
-        <div class="block border border-rule bg-card/50 p-5">
+        <a href={x.href} class="block border border-rule-hard bg-card p-5 hover:border-rust transition-colors">
           <div class="flex flex-wrap items-baseline gap-3">
-            <h2 class="text-[1.25rem] text-ink-soft">{x.t}</h2>
-            <span class="tag">in progress</span>
+            <h2 class="text-[1.25rem]">{x.t}</h2>
+            <span class="tag">live</span>
           </div>
-          <p class="mt-2 text-[0.9rem] text-ink-faint max-w-[70ch]">{x.d}</p>
-        </div>
+          <p class="mt-2 text-[0.9rem] text-ink-soft max-w-[70ch]">{x.d}</p>
+        </a>
       ))}
+      <div class="block border border-rule bg-card/50 p-5">
+        <div class="flex flex-wrap items-baseline gap-3">
+          <h2 class="text-[1.25rem] text-ink-soft">Dungeon reference</h2>
+          <span class="tag">in progress</span>
+        </div>
+        <p class="mt-2 text-[0.9rem] text-ink-faint max-w-[70ch]">{dungeons} dungeons and their encounters.</p>
+      </div>
     </div>
   </section>
 </Base>
