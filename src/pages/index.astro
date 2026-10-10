@@ -33,6 +33,16 @@ const specGroups = all(`SELECT DISTINCT class, tab FROM talent_full WHERE class 
     return acc;
   }, [] as { cls: string; specs: { name: string; img: any }[] }[]);
 
+// 首页 Bento 的数字 —— 全部现查，不写死
+const xpTotal = all(`SELECT xp FROM xp_curve WHERE level < 60`).reduce((x, r) => x + r.xp, 0);
+const mountCheap = val(`SELECT MIN(price) FROM mount WHERE level = 40 AND price > 0 AND in_classic = 1`);
+const mountClassic = val(`SELECT MIN(classic_price) FROM mount WHERE level = 40 AND price = ? AND classic_price > 0`, mountCheap);
+const swift = val(`SELECT MIN(price) FROM mount WHERE level = 60 AND price > 0 AND in_classic = 1 AND classic_price = 10000000`);
+const talentsChanged = val(`SELECT COUNT(*) FROM talent_node WHERE status IN ('new','changed')`);
+const newCombos = val(`SELECT COUNT(*) FROM race_class_new`);
+const spellsNew = val(`SELECT COUNT(DISTINCT class || name) FROM spellbook s WHERE NOT EXISTS (SELECT 1 FROM spellbook t WHERE t.class = s.class AND t.name = s.name AND t.classic_status <> 'new')`);
+const g = (c) => Math.round(c / 10000);
+
 const NEWSWORTHY = [
   {
     k: "The Skyborne are two races, not one",
@@ -49,132 +59,126 @@ const NEWSWORTHY = [
 ];
 ---
 <Base
-  title="WoW Forever — race/class combos, XP math, and every number that changed"
-  description="World of Warcraft: Forever reference built from the game client itself. Race and class combinations, XP buff stacking, talent data, and what changed versus Classic."
+  title="WoW Forever by the numbers: talent calculator, XP, mounts and what changed"
+  description="WoW Forever data read from the beta client: a talent calculator for all nine classes, XP buffs, mount prices, race and class combos, and what changed since Classic."
   {build}
 >
-  <section class="pt-10 pb-8 border-b border-rule grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
-    <div>
-    <p class="tag mb-3">World of Warcraft: Forever</p>
-    <h1 class="text-[2.1rem] sm:text-[2.7rem] leading-[1.1] max-w-[20ch]">
-      Every number in Forever, pulled from the client.
+  <!-- 首屏：Cullet 式大字 + 熔融光晕（纯 CSS，三团径向渐变慢速漂移） -->
+  <section class="hero relative pt-16 sm:pt-24 pb-14">
+    <div class="hero-glow" aria-hidden="true"><span></span><span></span><span></span></div>
+    <p class="relative tag mb-6">Beta build {build} · launches 4 Nov</p>
+    <h1 class="relative text-[2.7rem] sm:text-[4.4rem] lg:text-[5.4rem] leading-[0.95] max-w-[14ch]">
+      WoW Forever, <span class="text-rust">by the numbers.</span>
     </h1>
-    <p class="mt-4 max-w-[62ch] text-ink-soft leading-relaxed">
-      Wowhead has the news and the item database, and it does both well. What it doesn't hand you is a
-      sortable answer. This site is the sortable answer: what the client actually ships, rebuilt every time
-      Blizzard pushes a build.
-    </p>
-    <dl class="mt-6 flex flex-wrap gap-x-8 gap-y-3 font-mono text-[0.82rem]">
-      {
-        Object.entries({
-          "race × class combos": counts.combos,
-          classes: counts.classes,
-          races: counts.races,
-          "talents": counts.talents,
-          recipes: counts.recipes,
-          "rare+ items": counts.items,
-        }).map(([k, v]) => (
-          <div class="flex items-baseline gap-2">
-            <dd class="text-[1.35rem] text-rust">{Number(v).toLocaleString()}</dd>
-            <dt class="text-ink-faint">{k}</dt>
-          </div>
-        ))
-      }
-    </dl>
-    </div>
-    {
-      hero && (
-        <figure class="lg:pt-2">
-          <Image
-            src={hero}
-            alt="Official key art for World of Warcraft: Forever"
-            widths={[420, 720]}
-            sizes="(max-width: 1023px) 100vw, 400px"
-            format="webp"
-            loading="eager"
-            fetchpriority="high"
-            decoding="async"
-            class="w-full border border-rule-hard"
-          />
-          <figcaption class="mt-2 text-[0.72rem] text-ink-faint leading-snug">
-            Key art from Blizzard's Forever announcement assets.
-          </figcaption>
-        </figure>
-      )
-    }
-  </section>
-
-  <LaunchTimeline />
-
-  <a
-    href="/guides/first-40-hours/"
-    class="card mt-9 block p-5 sm:flex sm:items-center sm:justify-between sm:gap-8"
-  >
-    <span class="block">
-      <span class="tag mb-2">New to Forever?</span>
-      <span class="block font-serif text-[1.35rem] leading-tight">
-        Your first 40 hours, in the order you'll actually face it
-      </span>
-      <span class="mt-1.5 block text-[0.9rem] text-ink-soft max-w-[62ch] leading-relaxed">
-        What to decide before launch, when camping unlocks, why dungeons stopped being skippable at 15,
-        and the five mistakes the beta keeps repeating. Every number from the game client.
-      </span>
-    </span>
-    <span class="arrow-link mt-3 sm:mt-0 shrink-0 text-[0.9rem] text-rust whitespace-nowrap">
-      Read it<span class="arrow"> →</span>
-    </span>
-  </a>
-
-  <section class="py-9 border-t border-rule grid gap-10 lg:grid-cols-[1.35fr_1fr]">
-    <div>
-      <h2 class="text-[1.6rem] mb-1">Start here</h2>
-      <p class="text-ink-soft text-[0.92rem] mb-5">Two tools nobody else has built yet.</p>
-      <div class="space-y-4">
-        <a href="/tools/xp-calculator/" class="card block p-5">
-          <h3 class="text-[1.15rem]">XP &amp; leveling calculator</h3>
-          <p class="mt-1 text-[0.9rem] text-ink-soft">
-            {counts.xpbuffs} XP buffs are readable straight out of the client. Stack{" "}
-            <span class="font-mono text-rust">Winds of Wisdom</span> (+50%) on top of food and rest, and
-            see what 1&ndash;60 actually costs you.
-          </p>
-        </a>
-        <a href="/race-class/" class="card block p-5">
-          <h3 class="text-[1.15rem]">Race × class matrix</h3>
-          <p class="mt-1 text-[0.9rem] text-ink-soft">
-            All {counts.combos} legal combinations across {counts.races} races and {counts.classes} classes,
-            each one its own page. Filter by role, faction, or the new Skyborne.
-          </p>
-        </a>
+    <div class="relative mt-8 grid gap-6 sm:grid-cols-[minmax(0,34rem)_auto] sm:items-end sm:justify-between">
+      <p class="text-[1.05rem] text-ink-soft leading-relaxed">
+        Talents, XP, mounts and race combos, read straight out of the beta client.
+        Rebuilt every time Blizzard pushes a build. No guessing.
+      </p>
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
+        <a href="/tools/talent-calculator/" class="btn-ember">Open the talent calculator</a>
+        <a href="/changes/" class="arrow-link text-[0.95rem] font-semibold">What changed <span class="arrow">→</span></a>
       </div>
     </div>
+  </section>
 
-    <div class="lg:pt-14">
-      <h2 class="text-[1.15rem] mb-3">Things the announcement didn't say</h2>
-      <dl class="space-y-4">
-        {
-          NEWSWORTHY.map((n) => (
-            <div class="border-l-2 border-ochre pl-3">
-              <dt class="font-serif text-[1rem]">{n.k}</dt>
-              <dd class="text-[0.88rem] text-ink-soft mt-0.5" set:html={n.v} />
-            </div>
-          ))
-        }
+  <!-- Bento：每块一个硬数字 -->
+  <section class="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-12 auto-rows-[minmax(9.5rem,auto)] pb-10">
+    <a href="/tools/talent-calculator/" class="card col-span-2 lg:col-span-6 lg:row-span-2 p-6 flex flex-col justify-between overflow-hidden">
+      <div>
+        <p class="text-[0.85rem] text-ink-faint font-semibold">Talent calculator</p>
+        <p class="mt-2 font-serif text-[3.4rem] sm:text-[4.2rem] leading-none tracking-[-0.05em]">{Number(counts.talents)}</p>
+        <p class="mt-2 text-[0.95rem] text-ink-soft max-w-[34ch]">talents in their real spots. {talentsChanged} are new or changed since Classic.</p>
+      </div>
+      <div class="mt-6 grid grid-cols-9 gap-1.5 max-w-[26rem]">
+        {specGroups.map(({ cls }) => classIcon[slug(cls)] && (
+          <Image src={classIcon[slug(cls)]!} alt={cls} width={40} height={40} format="webp" class="rounded-[6px] w-full h-auto" />
+        ))}
+      </div>
+      <span class="arrow-link mt-5 text-[0.9rem] font-semibold text-rust">Plan a build <span class="arrow">→</span></span>
+    </a>
+
+    <a href="/tools/xp-calculator/" class="card col-span-2 sm:col-span-1 lg:col-span-3 p-5 flex flex-col justify-between">
+      <p class="text-[0.85rem] text-ink-faint font-semibold">XP, 1 to 60</p>
+      <div>
+        <p class="font-serif text-[1.75rem] leading-none tracking-[-0.05em]">{xpTotal.toLocaleString()}</p>
+        <p class="mt-2 text-[0.85rem] text-ink-soft">Same curve as Classic. Here's what speeds it up.</p>
+      </div>
+    </a>
+
+    {mountCheap && (
+      <a href="/mounts/" class="card col-span-2 sm:col-span-1 lg:col-span-3 p-5 flex flex-col justify-between">
+        <p class="text-[0.85rem] text-ink-faint font-semibold">First mount</p>
+        <div>
+          <p class="font-serif text-[2.4rem] leading-none tracking-[-0.05em] text-rust">{g(mountCheap)}g</p>
+          <p class="mt-2 text-[0.85rem] text-ink-soft">Was {mountClassic ? g(mountClassic) : 80}g in Classic. Swift is {swift ? g(swift) : 200}g.</p>
+        </div>
+      </a>
+    )}
+
+    <a href="/race-class/" class="card col-span-1 lg:col-span-3 p-5 flex flex-col justify-between">
+      <p class="text-[0.85rem] text-ink-faint font-semibold">Race × class</p>
+      <div>
+        <p class="font-serif text-[2.4rem] leading-none tracking-[-0.05em]">{counts.combos}</p>
+        <p class="mt-2 text-[0.85rem] text-ink-soft">{newCombos} are new. Undead Paladin is one.</p>
+      </div>
+    </a>
+
+    <a href="/changes/" class="card col-span-1 lg:col-span-3 p-5 flex flex-col justify-between">
+      <p class="text-[0.85rem] text-ink-faint font-semibold">New spells</p>
+      <div>
+        <p class="font-serif text-[2.4rem] leading-none tracking-[-0.05em]">{spellsNew}</p>
+        <p class="mt-2 text-[0.85rem] text-ink-soft">across nine classes. Penance, Ice Lance, Victory Rush…</p>
+      </div>
+    </a>
+
+    {hero && (
+      <figure class="tile col-span-2 lg:col-span-7 lg:row-span-2 overflow-hidden relative min-h-[16rem]">
+        <Image src={hero} alt="Official key art for World of Warcraft: Forever" widths={[480, 820]}
+          sizes="(max-width: 1023px) 100vw, 680px" format="webp" loading="eager" fetchpriority="high" decoding="async"
+          class="absolute inset-0 w-full h-full object-cover opacity-80" />
+        <div class="absolute inset-0 bg-gradient-to-t from-paper via-paper/30 to-transparent"></div>
+        <figcaption class="absolute left-5 right-5 bottom-5">
+          <p class="font-serif text-[1.5rem] sm:text-[1.9rem] leading-tight tracking-[-0.04em]">Launch: 4 November</p>
+          <p class="text-[0.85rem] text-ink-soft mt-1"><span data-home-countdown>3 p.m. PST</span> · <a href="#timeline" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">Every date →</a></p>
+          <p class="text-[0.7rem] text-ink-faint mt-2">Key art from Blizzard's Forever announcement.</p>
+        </figcaption>
+      </figure>
+    )}
+
+    <div class="tile col-span-2 lg:col-span-5 lg:row-span-2 p-6">
+      <p class="text-[0.85rem] text-ink-faint font-semibold mb-4">What the announcement didn't say</p>
+      <dl class="space-y-5">
+        {NEWSWORTHY.map((n) => (
+          <div>
+            <dt class="font-bold text-[1rem]">{n.k}</dt>
+            <dd class="text-[0.88rem] text-ink-soft mt-1 leading-relaxed" set:html={n.v} />
+          </div>
+        ))}
       </dl>
-      <p class="mt-4 text-[0.82rem] text-ink-faint">
-        All three come from <span class="font-mono">CharBaseInfo</span> in the client. Nobody has written
-        them up yet.
-      </p>
     </div>
   </section>
+
+  <a href="/guides/first-40-hours/" class="card block p-6 sm:p-7 mb-10 sm:flex sm:items-center sm:justify-between sm:gap-10">
+    <span class="block">
+      <span class="tag mb-3">New to Forever?</span>
+      <span class="block font-serif text-[1.5rem] sm:text-[1.8rem] leading-tight tracking-[-0.04em]">
+        Your first 40 hours, in order
+      </span>
+      <span class="mt-2 block text-[0.92rem] text-ink-soft max-w-[60ch] leading-relaxed">
+        What to pick before launch, when camping unlocks, and why you can't skip dungeons any more.
+      </span>
+    </span>
+    <span class="btn-ember mt-4 sm:mt-0 shrink-0">Read it</span>
+  </a>
 
   <section class="py-9 border-t border-rule">
     <div class="flex flex-wrap items-baseline justify-between gap-2 mb-1">
-      <h2 class="text-[1.6rem]">Nine classes, twenty-seven specs</h2>
+      <h2 class="text-[1.8rem] sm:text-[2.2rem]">Pick a class</h2>
       <p class="text-[0.82rem] text-ink-faint">Icons from the game client.</p>
     </div>
-    <p class="text-[0.9rem] text-ink-soft mb-5 max-w-[68ch]">
-      Every class Forever ships, with the three talent trees it actually has. Click through for the
-      points, tiers and spells inside each one.
+    <p class="text-[0.95rem] text-ink-soft mb-6 max-w-[60ch]">
+      Each one opens its talent calculator, spells by level and what changed since Classic.
     </p>
     <div class="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
       {
@@ -203,6 +207,19 @@ const NEWSWORTHY = [
     </div>
   </section>
 
+  <LaunchTimeline />
+
+  <script is:inline>
+    (function () {
+      var el = document.querySelector("[data-home-countdown]");
+      if (!el) return;
+      var d = Date.parse("2026-11-04T23:00:00Z") - Date.now();
+      if (d <= 0) { el.textContent = "Live now"; return; }
+      var days = Math.floor(d / 864e5), hrs = Math.floor((d % 864e5) / 36e5);
+      el.textContent = days + " days, " + hrs + " hours to go";
+    })();
+  </script>
+
 <AdBreak />
 
   <section class="py-9 border-t border-rule">
@@ -216,7 +233,7 @@ const NEWSWORTHY = [
           { href: "/classes/", t: "Classes", d: `${counts.classes} classes, three trees each` },
           { href: "/races/", t: "Races", d: `${counts.races} playable races` },
           { href: "/race-class/", t: "Combos", d: `${counts.combos} combinations` },
-          { href: "/changes/", t: "What changed", d: "16 new combos, 0 removed" },
+          { href: "/changes/", t: "What changed", d: `${newCombos} new combos, ${talentsChanged} talents reworked` },
         ].map((c) => (
           <a href={c.href} class="border-t-2 border-rule-hard pt-3 hover:border-rust transition-colors">
             <span class="font-serif text-[1.05rem]">{c.t}</span>

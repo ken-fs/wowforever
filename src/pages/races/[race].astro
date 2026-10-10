@@ -82,7 +82,7 @@ const BLURB = {
     <aside class="space-y-4">
       {
         isSky && (
-          <div class="border border-rule-hard bg-card p-4">
+          <div class="tile p-4">
             <h2 class="font-serif text-[1.05rem] mb-2">The other Skyborne</h2>
             <p class="text-[0.85rem] text-ink-soft">
               The client also ships <a href={`/races/${slug(sibling)}/`} class="hover:text-rust underline decoration-rule-hard underline-offset-2">{sibling}</a>
@@ -91,7 +91,7 @@ const BLURB = {
           </div>
         )
       }
-      <div class="border border-rule-hard bg-card p-4">
+      <div class="tile p-4">
         <h2 class="font-serif text-[1.05rem] mb-2">Before you roll this</h2>
         <p class="text-[0.85rem] text-ink-soft">
           Check what 1&ndash;60 costs with the{" "}

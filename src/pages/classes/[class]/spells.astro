@@ -74,19 +74,19 @@ const description = `All ${spells.length} ${cls} spell ranks in WoW Forever by t
   <section class="py-8">
     <div class="grid gap-4 grid-cols-2 sm:grid-cols-4">
       <div class="border-t-2 border-rule-hard pt-3">
-        <p class="font-mono text-[2rem]">{abilities}</p>
+        <p class="font-serif text-[2rem] tracking-[-0.05em]">{abilities}</p>
         <p class="text-[0.85rem] text-ink-soft">abilities</p>
       </div>
       <div class="border-t-2 border-rule-hard pt-3">
-        <p class="font-mono text-[2rem]">{spells.length}</p>
+        <p class="font-serif text-[2rem] tracking-[-0.05em]">{spells.length}</p>
         <p class="text-[0.85rem] text-ink-soft">ranks to train</p>
       </div>
       <div class="border-t-2 border-rust pt-3">
-        <p class="font-mono text-[2rem] text-rust">{newNames.length}</p>
+        <p class="font-serif text-[2rem] tracking-[-0.05em] text-rust">{newNames.length}</p>
         <p class="text-[0.85rem] text-ink-soft">abilities new since Classic</p>
       </div>
       <div class="border-t-2 border-rule-hard pt-3">
-        <p class="font-mono text-[2rem]">{gone.length}</p>
+        <p class="font-serif text-[2rem] tracking-[-0.05em]">{gone.length}</p>
         <p class="text-[0.85rem] text-ink-soft">Classic spells gone</p>
       </div>
     </div>
@@ -124,7 +124,7 @@ const description = `All ${spells.length} ${cls} spell ranks in WoW Forever by t
                   <span class="font-medium">{s.name}</span>
                   {s.rank && <span class="text-ink-faint text-[0.82rem]"> · {s.rank}</span>}
                   {BADGE[s.classic_status] && (
-                    <span class={`ml-2 text-[0.66rem] uppercase tracking-wider border px-1 py-px ${BADGE[s.classic_status][1]}`}>{BADGE[s.classic_status][0]}</span>
+                    <span class={`ml-2 text-[0.66rem] font-semibold border px-1 py-px ${BADGE[s.classic_status][1]}`}>{BADGE[s.classic_status][0]}</span>
                   )}
                   {s.description && <p class="text-[0.84rem] text-ink-soft leading-snug mt-0.5">{s.description}</p>}
                   {s.classic_note && <p class="text-[0.8rem] text-ochre leading-snug mt-0.5">{s.classic_note}</p>}

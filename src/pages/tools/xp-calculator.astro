@@ -82,21 +82,21 @@ const desc = `Every XP buff in the WoW Forever beta client, how Camp Tent rested
 
   <section class="py-8">
     <h2 class="text-[1.35rem] mb-3">XP calculator</h2>
-    <div class="border border-rule-hard bg-card">
+    <div class="tile">
       <div class="p-5 border-b border-rule">
         <div class="flex flex-wrap gap-x-8 gap-y-4 items-end">
           <div>
-            <label for="from" class="block text-[0.75rem] uppercase tracking-wider text-ink-faint mb-1">From level</label>
+            <label for="from" class="block text-[0.75rem] font-semibold text-ink-faint mb-1">From level</label>
             <input id="from" type="number" min="1" max="59" value="1"
               class="w-20 border border-rule-hard bg-paper px-2 py-1 font-mono text-[1.05rem]" />
           </div>
           <div>
-            <label for="to" class="block text-[0.75rem] uppercase tracking-wider text-ink-faint mb-1">To level</label>
+            <label for="to" class="block text-[0.75rem] font-semibold text-ink-faint mb-1">To level</label>
             <input id="to" type="number" min="2" max="60" value="60"
               class="w-20 border border-rule-hard bg-paper px-2 py-1 font-mono text-[1.05rem]" />
           </div>
           <div>
-            <label for="xph" class="block text-[0.75rem] uppercase tracking-wider text-ink-faint mb-1">
+            <label for="xph" class="block text-[0.75rem] font-semibold text-ink-faint mb-1">
               Your XP / hour <span class="normal-case tracking-normal">(guess it)</span>
             </label>
             <input id="xph" type="number" min="100" step="500" value="20000"
@@ -106,12 +106,12 @@ const desc = `Every XP buff in the WoW Forever beta client, how Camp Tent rested
       </div>
 
       <div class="p-5 border-b border-rule">
-        <p class="text-[0.75rem] uppercase tracking-wider text-ink-faint mb-3">Buffs you'll have up (all-XP buffs only)</p>
+        <p class="text-[0.75rem] font-semibold text-ink-faint mb-3">Buffs you'll have up (all-XP buffs only)</p>
         <div class="grid gap-2 sm:grid-cols-2">
           {
             buffs.map((b) => (
               <label class="flex items-start gap-2.5 cursor-pointer group">
-                <input type="checkbox" data-pct={b.pct} class="mt-1 accent-[#a63d1c]" />
+                <input type="checkbox" data-pct={b.pct} class="mt-1 accent-[#e44b3c]" />
                 {buffFor(b.name) && (
                   <Image src={buffFor(b.name)!} alt="" width={32} height={32} format="webp"
                     class="shrink-0 border border-rule" aria-hidden="true" />
@@ -130,17 +130,17 @@ const desc = `Every XP buff in the WoW Forever beta client, how Camp Tent rested
 
       <div class="p-5 grid gap-5 sm:grid-cols-3">
         <div>
-          <p class="text-[0.75rem] uppercase tracking-wider text-ink-faint">Base XP needed</p>
+          <p class="text-[0.75rem] font-semibold text-ink-faint">Base XP needed</p>
           <p id="out-base" class="font-mono text-[1.6rem] text-ink">—</p>
         </div>
         <div>
-          <p class="text-[0.75rem] uppercase tracking-wider text-ink-faint">
+          <p class="text-[0.75rem] font-semibold text-ink-faint">
             XP multiplier <span id="out-mult-pct" class="text-ochre normal-case"></span>
           </p>
           <p id="out-mult" class="font-mono text-[1.6rem] text-ochre">—</p>
         </div>
         <div>
-          <p class="text-[0.75rem] uppercase tracking-wider text-ink-faint">Hours at your rate</p>
+          <p class="text-[0.75rem] font-semibold text-ink-faint">Hours at your rate</p>
           <p id="out-hours" class="font-mono text-[1.6rem] text-rust">—</p>
         </div>
       </div>

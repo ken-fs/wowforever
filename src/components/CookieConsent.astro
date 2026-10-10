@@ -21,12 +21,12 @@ const GA_ENABLED = Boolean(import.meta.env.PUBLIC_GA_ID || import.meta.env.PUBLI
     <div
       id="cookie-consent"
       hidden
-      class="fixed inset-x-0 bottom-0 z-50 border-t-2 border-rule-hard bg-card"
+      class="glass fixed inset-x-0 bottom-0 z-50 border-t border-rule"
       role="dialog"
       aria-live="polite"
       aria-label="Analytics consent"
     >
-      <div class="w-full max-w-[1100px] mx-auto px-5 sm:px-8 py-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div class="w-full max-w-[1180px] mx-auto px-5 sm:px-8 py-4 flex flex-col gap-3 sm:flex-row sm:items-center">
         <p class="text-[0.85rem] text-ink-soft leading-relaxed max-w-[62ch]">
           <span class="font-serif text-[0.95rem] text-ink">One question about analytics:</span>{" "}
           this site would like to count visits with Google Analytics. It sets cookies. Say no and the
@@ -46,7 +46,7 @@ const GA_ENABLED = Boolean(import.meta.env.PUBLIC_GA_ID || import.meta.env.PUBLI
           <button
             type="button"
             data-consent="accepted"
-            class="px-4 py-1.5 text-[0.85rem] bg-rust text-paper border border-rust hover:bg-ink hover:border-ink transition-colors"
+            class="btn-ember !py-2 !text-[0.85rem]"
           >
             Allow
           </button>

@@ -4,8 +4,8 @@ description: "Forever pulls abilities forward from later expansions and rebuilds
 facts:
   - k: "classes"
     v: "9"
-  - k: "talent points"
-    v: "432"
+  - k: "talents"
+    v: "466"
   - k: "trees"
     v: "27"
 updated: 2026-09-28
@@ -22,8 +22,8 @@ back into a level-60 game.
 
 Lava Burst. Mutilate. Victory Rush. Holy Strike. All back, all baseline.
 
-The client holds the rest — **432 talent points across 27 trees**. That's what the
-[class pages](/classes/) are built from.
+The client holds the rest — **466 talents across 27 trees**. That's what the
+[class pages](/classes/) and their talent calculators are built from.
 
 ## Warrior
 
@@ -105,5 +105,5 @@ Treat tuning numbers as provisional. Mechanics are safer.
 - **Skyborne racials** aren't documented in effect terms yet
 - The client has per-spec ability lists (31,703 named spells), but sorting them by spec and cutting the
   unused ones is ongoing
-- The **432 talent points** are browsable on the [class pages](/classes/), but the trees with their point
-  costs aren't assembled yet
+- All **466 talents** are in the [talent calculators](/tools/talent-calculator/), with their real
+  positions, ranks and arrows

@@ -1,76 +1,107 @@
 @import "tailwindcss";
 
-/* ── 设计 token：纸质年鉴 ──────────────────────────────────────
-   竞品全是暗色霓虹游戏站，我们走印刷品：米白纸、墨黑字、赭金规则线。
-   规则（DESIGN-RULES.md）：禁 Tailwind 默认色板、禁纯平背景。
+@import "@fontsource-variable/unbounded";
+@import "@fontsource-variable/manrope";
+
+/* ── 设计 token：余烬暗色（2026-10-10 改版）─────────────────────
+   参考 superdesign.dev 的 Cullet（ink / bone / 单一余烬色 + 熔融光晕）
+   和 Pulse（暗色 Bento 磁贴）。旧的米白纸 + 衬线 + 等宽被用户判为 AI 味。
+   token 名沿用旧的（paper / ink / rust…），页面上的类名不用改：
+     paper = 底色   ink = 主文字   rust = 唯一强调色（余烬红）
+   对比度实测（WCAG）：ink 16.5 · ink-soft 10.2 · ink-faint 6.2 · rust 5.0（底色上）
+   余烬按钮上的字用深色（5.0），不用骨白（3.9，不过 AA）。
 */
 @theme {
-  --color-paper:      #fdfbf6;
-  --color-paper-edge: #f7f3ea;
-  --color-card:       #ffffff;
-  --color-ink:        #1c1a16;
-  --color-ink-soft:   #4a4438;
-  --color-ink-faint:  #78705c;
-  --color-rule:       #e6dfcd;
-  --color-rule-hard:  #cec2a8;
-  --color-rust:       #a63d1c;
-  --color-ochre:      #9a6b12;
-  --color-moss:       #4a6141;
+  --color-paper:      #0b0c0b;
+  --color-paper-edge: #101211;
+  --color-card:       #151716;
+  --color-ink:        #e9ede6;
+  --color-ink-soft:   #b8bdb4;
+  --color-ink-faint:  #8d938a;
+  --color-rule:       #222622;
+  --color-rule-hard:  #3a3f3a;
+  --color-rust:       #e44b3c;
+  --color-ember-lite: #f07a5c;
+  --color-ochre:      #e2a35f;
+  --color-moss:       #8db98a;
 
-  /* 物品品质（数据语义色，不是站点主色） */
-  --color-q0: #8a8578;
-  --color-q1: #57534a;
-  --color-q2: #3d6b35;
-  --color-q3: #1d5c99;
-  --color-q4: #6b3fa0;
-  --color-q5: #b25c07;
-  --color-q6: #9c7a2e;
-  --color-q7: #7a6a3a;
+  /* 物品品质（数据语义色，暗底上调亮过） */
+  --color-q0: #9d9d9d;
+  --color-q1: #e9ede6;
+  --color-q2: #5fd35a;
+  --color-q3: #4a9eff;
+  --color-q4: #b77cff;
+  --color-q5: #ff9a3c;
+  --color-q6: #e6cc80;
+  --color-q7: #d8c58a;
 
-  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, ui-serif, serif;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+  /* font-serif = 展示字（Unbounded），沿用旧 token 名；正文 Manrope；
+     font-mono 也落到 Manrope + 等宽数字 —— 不再用等宽字体做装饰 */
+  --font-serif: "Unbounded Variable", "Manrope Variable", ui-sans-serif, sans-serif;
+  --font-sans: "Manrope Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-code: ui-monospace, "SF Mono", Menlo, monospace;
 }
 
-/* 纸纹：SVG feTurbulence 内联，零请求。DESIGN-RULES 禁止纯平背景 */
+html { color-scheme: dark; scroll-behavior: smooth; }
+/* 光晕会伸出内容区：横向裁掉，别出现横向滚动条（clip 不会像 hidden 那样破坏 sticky） */
+html, body { overflow-x: clip; }
+
+/* 底：墨黑 + 两团固定的熔融光晕 + 颗粒（DESIGN-RULES 禁纯平背景） */
 body {
   background-color: var(--color-paper);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.035 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image:
+    radial-gradient(60rem 38rem at 85% -10%, color-mix(in srgb, var(--color-rust) 16%, transparent), transparent 70%),
+    radial-gradient(44rem 30rem at -10% 18%, color-mix(in srgb, var(--color-ochre) 7%, transparent), transparent 70%);
+  background-attachment: fixed;
   color: var(--color-ink);
   font-family: var(--font-sans);
+  font-feature-settings: "ss01";
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: .07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-h1, h2, h3, h4 { font-family: var(--font-serif); font-weight: 600; letter-spacing: -0.01em; }
+h1, h2 {
+  font-family: var(--font-serif); font-weight: 600; letter-spacing: -0.035em; line-height: 1.05;
+  text-wrap: balance;
+}
+h1 { font-weight: 650; }
+h3, h4 { font-family: var(--font-sans); font-weight: 700; letter-spacing: -0.01em; }
+/* 小号的 font-serif（卡片里的名字）别用宽体的大字距 */
+.font-serif { letter-spacing: -0.02em; }
+p { text-wrap: pretty; }
+::selection { background: color-mix(in srgb, var(--color-rust) 45%, transparent); }
 
-/* 表格数字：等宽 + 齐位，方便纵向比对 */
-.num, table td, table th { font-variant-numeric: tabular-nums; }
-.num { font-family: var(--font-mono); }
+/* 数字：等宽数字（不是等宽字体） */
+.num, .font-mono, table td, table th { font-variant-numeric: tabular-nums; }
+code, kbd, samp { font-family: var(--font-code); font-size: .88em; }
 
-/* 小标签 */
+/* 小标签：方角色块、正常大小写（全大写加字距是 AI 指纹） */
 .tag {
   display: inline-block;
-  font-size: 0.6875rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.1rem 0.4rem;
-  border: 1px solid var(--color-rule-hard);
-  color: var(--color-ink-faint);
-  border-radius: 2px;
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0;
+  padding: 0.12rem 0.5rem;
+  background: color-mix(in srgb, var(--color-rust) 13%, transparent);
+  color: var(--color-ember-lite);
+  border-radius: 4px;
 }
 
-/* 数据表：发丝线，不用圆角卡片 */
+/* 数据表 */
 table.data { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
 table.data th {
-  text-align: left; font-weight: 600; font-size: 0.75rem;
-  letter-spacing: 0.05em; text-transform: uppercase; color: var(--color-ink-faint);
-  border-bottom: 1.5px solid var(--color-rule-hard); padding: 0.4rem 0.6rem 0.4rem 0;
+  text-align: left; font-weight: 600; font-size: 0.78rem; color: var(--color-ink-faint);
+  border-bottom: 1px solid var(--color-rule-hard); padding: 0.5rem 0.75rem 0.5rem 0;
 }
-table.data td { border-bottom: 1px solid var(--color-rule); padding: 0.4rem 0.6rem 0.4rem 0; }
-table.data tr:hover td { background: color-mix(in srgb, var(--color-ochre) 7%, transparent); }
+table.data td { border-bottom: 1px solid var(--color-rule); padding: 0.5rem 0.75rem 0.5rem 0; }
+table.data tr:hover td { background: color-mix(in srgb, var(--color-rust) 6%, transparent); }
 
 a { color: inherit; }
-a:hover { color: var(--color-rust); }
+a:hover { color: var(--color-ember-lite); }
+:focus-visible { outline: 2px solid var(--color-rust); outline-offset: 2px; }
 
 /* 视频门面：点击前只是图片 + 播放键，点完才注入 iframe */
 .video-facade { padding: 0; cursor: pointer; }
@@ -105,7 +136,7 @@ a, button, .card, [data-hover] {
    bg 半透明 + 饱和度和模糊一起上，才是真·毛玻璃；
    只写 blur 会显得灰、发闷。 */
 .glass {
-  background-color: color-mix(in srgb, var(--color-paper) 82%, transparent);
+  background-color: color-mix(in srgb, var(--color-paper) 72%, transparent);
   -webkit-backdrop-filter: blur(14px) saturate(1.4);
   backdrop-filter: blur(14px) saturate(1.4);
 }
@@ -114,17 +145,33 @@ a, button, .card, [data-hover] {
   .glass { background-color: var(--color-paper); }
 }
 
-/* ── 卡片：hover 抬起 ──────────────────────────────────────── */
+/* ── 卡片 = Bento 磁贴：实色面 + 顶部一道高光边，hover 余烬描边 + 光斑 ── */
 .card {
-  background: var(--color-card);
-  border: 1px solid var(--color-rule-hard);
+  position: relative;
+  background:
+    radial-gradient(28rem 14rem at var(--mx, 50%) -20%, color-mix(in srgb, var(--color-rust) 0%, transparent), transparent 70%),
+    var(--color-card);
+  border: 1px solid var(--color-rule);
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-ink) 6%, transparent);
 }
 .card:hover {
-  border-color: var(--color-rust);
+  border-color: color-mix(in srgb, var(--color-rust) 55%, var(--color-rule));
   transform: translateY(-2px);
+  background:
+    radial-gradient(28rem 14rem at 50% -20%, color-mix(in srgb, var(--color-rust) 14%, transparent), transparent 70%),
+    var(--color-card);
   box-shadow:
-    0 1px 2px color-mix(in srgb, var(--color-ink) 5%, transparent),
-    0 6px 18px -6px color-mix(in srgb, var(--color-ink) 14%, transparent);
+    inset 0 1px 0 color-mix(in srgb, var(--color-ink) 8%, transparent),
+    0 14px 40px -18px color-mix(in srgb, var(--color-rust) 45%, transparent);
+}
+.card:active { transform: translateY(0) scale(.99); }
+/* 不可点的磁贴（纯展示） */
+.tile {
+  background: var(--color-card);
+  border: 1px solid var(--color-rule);
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-ink) 6%, transparent);
 }
 
 /* ── 卡片里的图：hover 微放大（裁掉溢出）───────────────────── */
@@ -186,4 +233,31 @@ section[id],
   .card:hover { transform: none; }
   .card:hover .zoom-frame img,
   .zoom-frame:hover img { transform: none; }
+}
+
+
+/* ── 主按钮：余烬实色，深色字（对比 5.0）───────────────────────── */
+.btn-ember {
+  display: inline-flex; align-items: center; gap: .5rem;
+  background: var(--color-rust); color: var(--color-paper);
+  font-weight: 700; font-size: .92rem; padding: .7rem 1.15rem; border-radius: 10px;
+  box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--color-rust) 80%, transparent), inset 0 1px 0 rgb(255 255 255 / .18);
+}
+.btn-ember:hover { color: var(--color-paper); background: var(--color-ember-lite); transform: translateY(-1px); }
+.btn-ember:active { transform: translateY(1px) scale(.99); }
+
+/* ── 首屏熔融光晕：三团径向渐变，screen 混合，慢速漂移（transform 动画，走 GPU）── */
+.hero-glow { position: absolute; inset: -40% -30% -40% -20%; pointer-events: none; filter: blur(10px); z-index: -1; }
+.hero-glow span {
+  position: absolute; border-radius: 50%; mix-blend-mode: screen; opacity: .55;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-rust) 70%, transparent) 0%, transparent 65%);
+  animation: drift 18s var(--ease-out-quint) infinite alternate;
+}
+.hero-glow span:nth-child(1) { width: 46rem; height: 46rem; right: -12rem; top: -16rem; }
+.hero-glow span:nth-child(2) { width: 30rem; height: 30rem; right: 14rem; top: 6rem; opacity: .35; animation-duration: 23s;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-ochre) 55%, transparent) 0%, transparent 65%); }
+.hero-glow span:nth-child(3) { width: 24rem; height: 24rem; left: -8rem; bottom: -6rem; opacity: .25; animation-duration: 29s; }
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(-4rem, 2.5rem, 0) scale(1.12); }
 }

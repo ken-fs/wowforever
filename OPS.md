@@ -148,15 +148,15 @@ src/
 
 ## 设计
 
-纸质年鉴路线，**故意反着竞品来**（他们全是暗色霓虹）。
+**2026-10-10 改版：余烬暗色**（用户：旧的「纸质年鉴」米白纸 + 衬线 + 等宽「太稀疏平常、AI 味很浓」）。
+参考 superdesign.dev 的 Cullet（ink / bone / 单一余烬色 + 熔融光晕）和 Pulse（暗色 Bento 磁贴）。
 
-- token 在 `src/styles/global.css` 的 `@theme`
-- 米白纸 `#f7f3e9` + 墨黑 `#1c1a16` + 赭金 `#9a6b12` + 锈红 `#a63d1c`
-- 纸纹用内联 SVG feTurbulence，零请求
-- 表格数字 `tabular-nums` + 等宽，方便纵向比对
-- 遵守 `~/Desktop/david/Ship/DESIGN-RULES.md`（禁 Tailwind 默认色板、禁纯平背景、禁 emoji 图标）
-
----
+- token 在 `src/styles/global.css` 的 `@theme`，**沿用旧名**：`paper`=底 `#0b0c0b`、`ink`=骨白 `#e9ede6`、`rust`=唯一强调色余烬红 `#e44b3c`、`ochre`=数据状态用的琥珀（点满/改动），所以页面类名不用改
+- 字体自托管（`@fontsource-variable`）：`font-serif` = **Unbounded**（标题/大数字），正文 **Manrope**；`font-mono` 也落到 Manrope + 等宽数字，**不再用等宽字体做装饰**；代码用 `--font-code`
+- 卡片 = `.card`（可点 Bento 磁贴，14px 圆角，hover 余烬描边+光斑）/ `.tile`（不可点）；主按钮 `.btn-ember`（深色字，对比 5.0；骨白字只有 3.9 不过 AA）
+- 首页首屏 `.hero-glow`：三团径向渐变 transform 漂移；`html, body { overflow-x: clip }` 防横向滚动（别改成 hidden，会破坏 sticky 导航）
+- **别回退的 AI 指纹**：米白/奶油底、衬线 + 等宽组合、全大写加字距小标签（已全站去掉）、方角描边卡片
+- favicon：余烬方块 + 深色 W 路径（不依赖字体），重生成命令见下方「图标与统计」
 
 ## 踩过的坑
 
@@ -365,7 +365,7 @@ magick /tmp/f16.png /tmp/f32.png /tmp/f48.png public/favicon.ico
 for s in 180 192 512; do rsvg-convert -w $s -h $s public/favicon.svg -o public/$( [ $s = 180 ] && echo apple-touch-icon.png || echo icon-$s.png ); done
 ```
 
-设计是「锈红圆角方 + 米白衬线 W」—— 域名的首字母，和页头衬线字对得上。
+设计是「余烬红圆角方 + 深色 W」（2026-10-10 起），W 是路径不是文字，各系统渲染一致。
 
 ⚠️ **不用暴雪的官方游戏图标当 favicon**：那是品牌标识，会暗示官方关联。
 仓库里 `src/assets/official/icon_512x512.png` 是官方素材，可以放在**页面里**配署名使用，

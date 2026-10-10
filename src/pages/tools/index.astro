@@ -22,7 +22,7 @@ const dungeons = count("dungeons");
 
   <section class="py-8">
     <div class="space-y-4">
-      <a href="/tools/xp-calculator/" class="block border border-rule-hard bg-card p-5 hover:border-rust transition-colors">
+      <a href="/tools/xp-calculator/" class="block tile p-5 hover:border-rust transition-colors">
         <div class="flex flex-wrap items-baseline gap-3">
           <h2 class="text-[1.25rem]">XP &amp; leveling calculator</h2>
           <span class="tag">live</span>
@@ -34,7 +34,7 @@ const dungeons = count("dungeons");
         </p>
       </a>
 
-      <a href="/race-class/" class="block border border-rule-hard bg-card p-5 hover:border-rust transition-colors">
+      <a href="/race-class/" class="block tile p-5 hover:border-rust transition-colors">
         <div class="flex flex-wrap items-baseline gap-3">
           <h2 class="text-[1.25rem]">Race × class matrix</h2>
           <span class="tag">live</span>
@@ -51,7 +51,7 @@ const dungeons = count("dungeons");
         { t: "Mounts", d: "Mount level and vendor price for every mount in the client, next to Classic's.", href: "/mounts/" },
         { t: "Professions & recipes", d: `${Number(recipes).toLocaleString()} recipes with their reagents.`, href: "/professions/" },
       ].map((x) => (
-        <a href={x.href} class="block border border-rule-hard bg-card p-5 hover:border-rust transition-colors">
+        <a href={x.href} class="block tile p-5 hover:border-rust transition-colors">
           <div class="flex flex-wrap items-baseline gap-3">
             <h2 class="text-[1.25rem]">{x.t}</h2>
             <span class="tag">live</span>

@@ -114,19 +114,19 @@ const description = `What changed for the ${cls} in WoW Forever: ${tally.new} ne
   <section class="py-8">
     <div class="grid gap-4 grid-cols-2 sm:grid-cols-4">
       <div class="border-t-2 border-rust pt-3">
-        <p class="font-mono text-[2rem] text-rust">{tally.new}</p>
+        <p class="font-serif text-[2rem] tracking-[-0.05em] text-rust">{tally.new}</p>
         <p class="text-[0.85rem] text-ink-soft">new talents</p>
       </div>
       <div class="border-t-2 border-ochre pt-3">
-        <p class="font-mono text-[2rem]">{tally.changed}</p>
+        <p class="font-serif text-[2rem] tracking-[-0.05em]">{tally.changed}</p>
         <p class="text-[0.85rem] text-ink-soft">changed</p>
       </div>
       <div class="border-t-2 border-rule-hard pt-3">
-        <p class="font-mono text-[2rem]">{tally.moved + tally.same}</p>
+        <p class="font-serif text-[2rem] tracking-[-0.05em]">{tally.moved + tally.same}</p>
         <p class="text-[0.85rem] text-ink-soft">same effect ({tally.moved} moved)</p>
       </div>
       <div class="border-t-2 border-rule-hard pt-3">
-        <p class="font-mono text-[2rem]">{removed.length}</p>
+        <p class="font-serif text-[2rem] tracking-[-0.05em]">{removed.length}</p>
         <p class="text-[0.85rem] text-ink-soft">Classic talents gone</p>
       </div>
     </div>
@@ -174,7 +174,7 @@ const description = `What changed for the ${cls} in WoW Forever: ${tally.new} ne
               <td class="align-top whitespace-nowrap pr-4">
                 <span class="font-medium">{x.name}</span>
                 {x.top.rank && <span class="block text-[0.78rem] text-ink-faint">{x.top.rank}</span>}
-                <span class={`block w-fit mt-1 text-[0.64rem] uppercase tracking-wider border px-1 py-px ${DIR[x.dir][1]}`}>{DIR[x.dir][0]}</span>
+                <span class={`block w-fit mt-1 text-[0.64rem] font-semibold border px-1 py-px ${DIR[x.dir][1]}`}>{DIR[x.dir][0]}</span>
               </td>
               <td class="align-top text-[0.86rem] leading-snug">
                 <p><span class="font-mono text-[0.72rem] text-ink-faint mr-1.5">Forever</span>{x.top.description}</p>
@@ -208,7 +208,7 @@ const description = `What changed for the ${cls} in WoW Forever: ${tally.new} ne
               <article class="border-l-2 border-rule pl-4">
                 <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   <h3 class="font-serif text-[1.08rem]">{t.name}</h3>
-                  <span class={`text-[0.7rem] uppercase tracking-wider border px-1.5 py-px ${TONE[t.status]}`}>{LABEL[t.status]}</span>
+                  <span class={`text-[0.7rem] font-semibold border px-1.5 py-px ${TONE[t.status]}`}>{LABEL[t.status]}</span>
                   <span class="font-mono text-[0.78rem] text-ink-faint">row {t.row} · {t.max_ranks} {t.max_ranks === 1 ? "rank" : "ranks"}</span>
                 </div>
                 {whatChanged(t) && <p class="text-[0.85rem] text-ink-soft mt-0.5">{whatChanged(t)}</p>}

@@ -14,17 +14,16 @@ const NAV = [
 ];
 const path = Astro.url.pathname;
 ---
-<header class="glass sticky top-0 z-40 border-b-2 border-rule-hard">
-  <div class="w-full max-w-[1100px] mx-auto px-5 sm:px-8">
-    <div class="flex flex-wrap items-baseline gap-x-6 gap-y-2 py-4">
-      <a href="/" class="group flex items-center gap-2.5 shrink-0">
+<header class="glass sticky top-0 z-40 border-b border-rule">
+  <div class="w-full max-w-[1180px] mx-auto px-5 sm:px-8">
+    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 py-3.5">
+      <a href="/" class="group flex items-center gap-2.5 shrink-0" aria-label="WoW Forever home">
         <BrandMark />
-        <span class="flex items-baseline gap-2">
-          <span class="font-serif text-[1.35rem] font-semibold tracking-tight">WoW Forever</span>
-          <span class="text-[0.7rem] font-mono text-rust tracking-wider">.one</span>
+        <span class="font-serif text-[1.02rem] font-semibold tracking-[-0.04em] leading-none">
+          WoW <span class="text-rust">Forever</span>
         </span>
       </a>
-      <nav class="flex flex-wrap gap-x-5 gap-y-1 text-[0.86rem]">
+      <nav class="flex flex-wrap gap-x-5 gap-y-1 text-[0.86rem] font-medium" aria-label="Main">
         {
           NAV.map((n) => {
             const on = path === n.href || path.startsWith(n.href);
@@ -32,7 +31,7 @@ const path = Astro.url.pathname;
               <a
                 href={n.href}
                 aria-current={on ? "page" : undefined}
-                class:list={["nav-link py-0.5", on ? "text-rust" : "text-ink-soft hover:text-ink"]}
+                class:list={["nav-link py-0.5", on ? "text-ink" : "text-ink-faint hover:text-ink"]}
               >
                 {n.label}
               </a>

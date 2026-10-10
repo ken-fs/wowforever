@@ -7,17 +7,17 @@
  *   官方 logo 放内容区是引用（已署名），放身份位会让人以为这是官方站。
  *   同行也这么干 —— wowhead / icy-veins / wow.gg 都是自家标记。
  *
- * 图形和 favicon.svg 同源：锈红圆角方 + 米白衬线 W。
+ * 图形和 favicon.svg 同源：余烬红圆角方 + 深色 Unbounded W（2026-10-10 改版）。
  *
  * ⚠️ 试过放官方 logo（素材在 data/assets.ts 的 logo），34px 高度下糊成一团 ——
  * 它带文字和细节，要 120px+ 才认得出。所以徽记位只能用简单图形，和商标无关。
  */
-const SIZE = 34;
+const SIZE = 30;
 
 // 徽记本身内联 —— 它要在首屏渲染，不该额外发一个请求
 ---
 <span
-  class="inline-flex shrink-0 items-center justify-center rounded-[7px] bg-rust text-paper font-serif font-semibold"
+  class="inline-flex shrink-0 items-center justify-center rounded-[8px] bg-rust text-paper font-serif font-bold shadow-[0_0_24px_-4px_rgba(228,75,60,0.6)]"
   style={`width:${SIZE}px;height:${SIZE}px;font-size:${Math.round(SIZE * 0.6)}px;line-height:1`}
   aria-hidden="true"
 >W</span>

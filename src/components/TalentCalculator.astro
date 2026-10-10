@@ -44,25 +44,25 @@ const data = { cls, cap: 51, changes: `/classes/${slug(cls)}/talent-changes/`, t
   <div class="flex flex-wrap items-end justify-between gap-4 mb-4">
     <div class="flex flex-wrap gap-x-7 gap-y-2 items-end">
       <div>
-        <p class="text-[0.72rem] uppercase tracking-wider text-ink-faint">Points left</p>
+        <p class="text-[0.72rem] font-semibold text-ink-faint">Points left</p>
         <p class="font-mono text-[1.6rem] text-rust leading-none mt-1" data-left>51</p>
       </div>
       <div>
-        <p class="text-[0.72rem] uppercase tracking-wider text-ink-faint">Build</p>
+        <p class="text-[0.72rem] font-semibold text-ink-faint">Build</p>
         <p class="font-mono text-[1.6rem] leading-none mt-1" data-split>0/0/0</p>
       </div>
       <div>
-        <p class="text-[0.72rem] uppercase tracking-wider text-ink-faint">Level needed</p>
+        <p class="text-[0.72rem] font-semibold text-ink-faint">Level needed</p>
         <p class="font-mono text-[1.6rem] leading-none mt-1" data-level>—</p>
       </div>
     </div>
     <div class="flex gap-2">
       <button type="button" class="tc-btn" data-reset>Reset</button>
-      <button type="button" class="tc-btn tc-btn-main" data-copy>Copy link</button>
+      <button type="button" class="btn-ember" data-copy>Copy link</button>
     </div>
   </div>
 
-  <div class="tc-info border border-rule-hard bg-card p-4 mb-5 min-h-[7.5rem]" data-info aria-live="polite">
+  <div class="tc-info tile p-5 mb-6 min-h-[7.5rem]" data-info aria-live="polite">
     <p class="text-[0.9rem] text-ink-soft">
       <span class="hidden sm:inline">Click a talent to add a point, right-click or Shift+click to take one back.</span>
       <span class="sm:hidden">Tap a talent to add a point. Tap its − to take one back.</span>{" "}
@@ -92,10 +92,10 @@ const data = { cls, cap: 51, changes: `/classes/${slug(cls)}/talent-changes/`, t
             <defs>
               {/* marker 不继承线条颜色，所以亮/暗各一个，JS 切 marker-end */}
               <marker id={`tc-head-${t}`} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                <path d="M0,0 L8,4 L0,8 z" fill="#cec2a8" />
+                <path d="M0,0 L8,4 L0,8 z" fill="#3a3f3a" />
               </marker>
               <marker id={`tc-head-on-${t}`} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                <path d="M0,0 L8,4 L0,8 z" fill="#9a6b12" />
+                <path d="M0,0 L8,4 L0,8 z" fill="#e2a35f" />
               </marker>
             </defs>
           </svg>
@@ -126,28 +126,27 @@ const data = { cls, cap: 51, changes: `/classes/${slug(cls)}/talent-changes/`, t
 
 <style>
   .tc-btn {
-    border: 1px solid var(--color-rule-hard); padding: 0.35rem 0.85rem; font-size: 0.85rem;
-    background: var(--color-card);
+    border: 1px solid var(--color-rule-hard); padding: 0.6rem 1rem; font-size: 0.88rem; font-weight: 600;
+    background: var(--color-card); border-radius: 10px;
   }
-  .tc-btn:hover { border-color: var(--color-rust); color: var(--color-rust); }
-  .tc-btn-main { background: var(--color-ink); color: var(--color-paper); border-color: var(--color-ink); }
-  .tc-btn-main:hover { background: var(--color-rust); border-color: var(--color-rust); color: var(--color-paper); }
+  .tc-btn:hover { border-color: var(--color-rust); color: var(--color-ember-lite); }
   .tc-cell { width: 44px; height: 44px; }
   .tc-talent {
     position: relative; display: block; width: 44px; height: 44px; padding: 0;
-    border: 2px solid var(--color-rule-hard); background: var(--color-paper-edge); cursor: pointer;
+    border: 2px solid var(--color-rule-hard); background: var(--color-paper-edge); cursor: pointer; border-radius: 7px; overflow: visible;
     transition: border-color .15s, filter .15s, opacity .15s;
   }
-  .tc-talent img, .tc-fallback { display: block; width: 40px; height: 40px; }
+  .tc-talent img, .tc-fallback { display: block; width: 40px; height: 40px; border-radius: 5px; }
   .tc-fallback { line-height: 40px; text-align: center; font-family: var(--font-mono, monospace); font-size: .8rem; }
   .tc-talent[data-state="locked"] { filter: grayscale(1); opacity: .45; }
   .tc-talent[data-state="open"] { border-color: var(--color-ink-faint); }
   .tc-talent[data-state="part"] { border-color: var(--color-moss); }
-  .tc-talent[data-state="max"] { border-color: var(--color-ochre); }
+  .tc-talent[data-state="max"] { border-color: var(--color-ochre); box-shadow: 0 0 18px -4px color-mix(in srgb, var(--color-ochre) 70%, transparent); }
+  .tc-talent[data-state="part"] { box-shadow: 0 0 14px -6px color-mix(in srgb, var(--color-moss) 80%, transparent); }
   .tc-talent:focus-visible { outline: 2px solid var(--color-rust); outline-offset: 2px; }
   .tc-rank {
     position: absolute; right: -8px; bottom: -8px; font: 600 .62rem/1 var(--font-mono, monospace);
-    background: var(--color-ink); color: var(--color-paper); padding: 2px 3px;
+    background: var(--color-ink); color: var(--color-paper); padding: 2px 3px; border-radius: 3px;
   }
   .tc-talent[data-state="locked"] .tc-rank { background: var(--color-ink-faint); }
   .tc-talent[data-state="max"] .tc-rank { background: var(--color-ochre); }

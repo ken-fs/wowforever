@@ -104,7 +104,7 @@ const desc = `${race} can be a ${cls} in World of Warcraft: Forever. ${raceClass
     </div>
 
     <aside class="lg:pt-2">
-      <div class="border border-rule-hard bg-card p-4">
+      <div class="tile p-4">
         <h2 class="font-serif text-[1.05rem] mb-2">{race}</h2>
         <p class="text-[0.85rem] text-ink-soft mb-3">
           Can be {sameRace.length} classes: {sameRace.map((r, i) => (
@@ -114,7 +114,7 @@ const desc = `${race} can be a ${cls} in World of Warcraft: Forever. ${raceClass
         <a href={`/races/${slug(race)}/`} class="text-[0.85rem] hover:text-rust arrow-link">All {race} details <span class="arrow">→</span></a>
       </div>
 
-      <div class="border border-rule-hard bg-card p-4 mt-4">
+      <div class="tile p-4 mt-4">
         <h2 class="font-serif text-[1.05rem] mb-2">{cls}</h2>
         <p class="text-[0.85rem] text-ink-soft mb-3">
           {raceClassCount} races: {sameClass.map((r, i) => (

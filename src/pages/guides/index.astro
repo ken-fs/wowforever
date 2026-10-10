@@ -22,9 +22,9 @@ const guides = (await getCollection("guides")).sort(
     <div class="space-y-5">
       {
         guides.map((g) => (
-          <a href={`/guides/${g.id}/`} class="card grid gap-4 p-4 sm:grid-cols-[180px_1fr]">
+          <a href={`/guides/${g.id}/`} class:list={["card grid gap-4 p-4", guideImage[g.id] ? "sm:grid-cols-[180px_1fr]" : ""]}>
             {guideImage[g.id] && (
-              <span class="zoom-frame block self-start border border-rule-hard"><Image
+              <span class="zoom-frame block self-start rounded-[9px] overflow-hidden"><Image
                 src={guideImage[g.id]!}
                 alt=""
                 widths={[180, 360]}
