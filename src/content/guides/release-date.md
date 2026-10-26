@@ -10,11 +10,13 @@ facts:
     v: "Oct 21"
   - k: "name reservation"
     v: "Oct 27"
-updated: 2026-10-18
+updated: 2026-10-26
 build: "1.60.1.70450"
 sources:
   - label: "Blizzard — Pre-Purchase World of Warcraft: Forever Upgrades and Begin Your Next Journey in Azeroth"
     url: "https://worldofwarcraft.blizzard.com/en-us/news/24301508"
+  - label: "Blizzard — Claim Your World of Warcraft: Forever Character Names (Oct 20)"
+    url: "https://worldofwarcraft.blizzard.com/en-us/news/24303866"
   - label: "Blizzard — Forever Deep Dive and What's Next panel recaps"
   - label: "Client data — meta table, build 1.60.1.70450 (the last beta build this site has read)"
 ---
@@ -65,9 +67,12 @@ character, not the progress.
 ## Name reservation, in plain terms
 
 - Runs **October 27 through November 3**.
-- Included with **any** upgrade purchase, not just the expensive ones.
-- **Up to three characters**, created and customised before launch.
-- Names are **first come, first served**, and Blizzard says desired names cannot be guaranteed.
+- Opens **1:00 p.m. PDT on October 27** in North America. Europe opens at 18:00 CET.
+- Korea and Taiwan open at 07:00 local time on October 28.
+- You need the Digital Upgrade or Collector's Edition. The Skyborne Heroic Pack, Skyborne Epic Pack and Warcraft Forever Collection count.
+- It only works on the WoW account that bought it.
+- **Up to three characters in total**, across all rulesets. Two on PvP leaves one for Normal or Role-Play.
+- Names are **first come, first served**. Blizzard says desired names cannot be guaranteed.
 
 So the practical play is simple. Decide your race, class, name and look before October 27. Then be ready
 that morning.
