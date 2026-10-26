@@ -77,7 +77,7 @@ character, not the progress.
 So the practical play is simple. Decide your race, class, name and look before October 27. Then be ready
 that morning.
 
-Still choosing? The [race × class matrix](/race-class/) has all 56 legal combinations. Every [race](/races/)
+Want the race list first? See [playable races](/guides/playable-races/). Still choosing? The [race × class matrix](/race-class/) has all 56 legal combinations. Every [race](/races/)
 and [class](/classes/) page lists what that pick actually gets.
 
 ## Do you have to buy an upgrade?
