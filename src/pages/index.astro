@@ -5,11 +5,15 @@ import { all, val, one, count, slug } from "../data/db.ts";
 import { Image } from "astro:assets";
 import { hero, ogImage, classIcon, specFor, attribution } from "../data/assets.ts";
 import LaunchTimeline from "../components/LaunchTimeline.astro";
+import { getCollection } from "astro:content";
 
 const build = val(`SELECT value FROM meta WHERE key='build'`);
 
 // 首页要的是"能立刻用的东西"，不是营销文案
 const combos = all(`SELECT race, class, is_skyborne FROM race_class ORDER BY race, class`);
+const races = [...new Set(combos.map((c) => c.race))].sort();
+const professions = all(`SELECT DISTINCT profession FROM recipe WHERE profession NOT LIKE '%[DNT]%' ORDER BY profession`);
+const guides = (await getCollection("guides")).sort((a, b) => a.data.title.localeCompare(b.data.title));
 const skyborne = combos.filter((c) => c.is_skyborne);
 const undead = combos.filter((c) => c.race === "Undead").map((c) => c.class);
 
@@ -245,6 +249,60 @@ const NEWSWORTHY = [
 
     <div class="mt-8 text-[0.88rem] text-ink-soft max-w-[70ch]">
       <p><strong>{Number(counts.talents).toLocaleString()}</strong> talents (see <a href="/changes/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">what changed since Classic</a>) and <strong>{Number(counts.recipes).toLocaleString()}</strong> profession recipes are indexed. <a href="/about/" class="underline decoration-rule-hard underline-offset-2 hover:decoration-rust">How this is built &rarr;</a></p>
+    </div>
+  </section>
+
+  <section class="py-9 border-t border-rule">
+    <h2 class="text-[1.6rem]">Every data page</h2>
+    <p class="mt-2 text-[0.9rem] text-ink-soft max-w-[65ch]">
+      The complete client-backed index. Open a group to jump straight to any class, combination, profession or guide.
+    </p>
+    <div class="mt-5 border-y border-rule divide-y divide-rule">
+      <details class="py-4">
+        <summary class="cursor-pointer font-serif text-[1.05rem]">Race × class <span class="text-ink-faint">({combos.length})</span></summary>
+        <div class="mt-4 grid gap-x-5 gap-y-2 sm:grid-cols-2 lg:grid-cols-3 text-[0.85rem]">
+          {combos.map((c) => (
+            <a href={`/race-class/${slug(c.race)}-${slug(c.class)}/`} class="hover:text-rust">{c.race} {c.class}</a>
+          ))}
+        </div>
+      </details>
+
+      <details class="py-4">
+        <summary class="cursor-pointer font-serif text-[1.05rem]">Classes, talents and spells <span class="text-ink-faint">({specGroups.length})</span></summary>
+        <div class="mt-4 space-y-3 text-[0.85rem]">
+          {specGroups.map(({ cls }) => (
+            <div class="grid gap-2 sm:grid-cols-[10rem_1fr]">
+              <a href={`/classes/${slug(cls)}/`} class="font-semibold hover:text-rust">{cls}</a>
+              <span class="flex flex-wrap gap-x-4 gap-y-1 text-ink-soft">
+                <a href={`/classes/${slug(cls)}/talent-changes/`} class="hover:text-rust">Talent changes</a>
+                <a href={`/classes/${slug(cls)}/spells/`} class="hover:text-rust">Spells by level</a>
+                {cls === "Mage" && <a href="/classes/mage/portals/" class="hover:text-rust">Portals</a>}
+              </span>
+            </div>
+          ))}
+        </div>
+      </details>
+
+      <details class="py-4">
+        <summary class="cursor-pointer font-serif text-[1.05rem]">Races <span class="text-ink-faint">({races.length})</span></summary>
+        <div class="mt-4 grid gap-x-5 gap-y-2 sm:grid-cols-2 lg:grid-cols-3 text-[0.85rem]">
+          {races.map((race) => <a href={`/races/${slug(race)}/`} class="hover:text-rust">{race}</a>)}
+        </div>
+      </details>
+
+      <details class="py-4">
+        <summary class="cursor-pointer font-serif text-[1.05rem]">Professions <span class="text-ink-faint">({professions.length})</span></summary>
+        <div class="mt-4 grid gap-x-5 gap-y-2 sm:grid-cols-2 lg:grid-cols-3 text-[0.85rem]">
+          {professions.map((p) => <a href={`/professions/${slug(p.profession)}/`} class="hover:text-rust">{p.profession}</a>)}
+        </div>
+      </details>
+
+      <details class="py-4">
+        <summary class="cursor-pointer font-serif text-[1.05rem]">Guides <span class="text-ink-faint">({guides.length})</span></summary>
+        <div class="mt-4 grid gap-x-5 gap-y-2 lg:grid-cols-2 text-[0.85rem]">
+          {guides.map((guide) => <a href={`/guides/${guide.id}/`} class="hover:text-rust">{guide.data.title}</a>)}
+        </div>
+      </details>
     </div>
   </section>
 </Base>

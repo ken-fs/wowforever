@@ -255,7 +255,12 @@ zone     915927540a00804212ce71ffa276b1f5（wowforever.one）
 ```
 
 ⚠️ **本地 `npx wrangler deploy` 只是临时的**，会被下一次 CI push 覆盖。
-最终部署永远走 `git push`。
+最终部署永远走 `git push`。确需手动补部署时，必须带上 CI 的公开构建变量，否则会把 GA 和广告从线上构建里删掉：
+
+```bash
+PUBLIC_GA_ID=G-ND17C7D4G4 PUBLIC_ADSTERRA=1 npm run build
+PUBLIC_GA_ID=G-ND17C7D4G4 PUBLIC_ADSTERRA=1 npx wrangler deploy
+```
 
 ### Cloudflare 构建配置（用 API 建的，备查）
 
