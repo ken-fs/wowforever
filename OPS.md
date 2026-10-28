@@ -86,14 +86,16 @@ WOW_DB=data/wow-forever.db npm run build
 
 实测 beta 期 **1 天一个构建（约 4.4 次/周）**，上线后会降到补丁节奏。
 
+**已经闭环，不用人工跑**：每日 `site-hygiene` 发现暴雪 build 比线上新 → autopilot 调 `scripts/sync-data.mjs` → 重跑管线 → 校验空表 / 关键名称 / 表行数异常缩水（>20%）→ `npm run build` → commit + push → 等部署标记 → 飞书汇报。校验或构建失败会撤回并留下 pending，看护自动重试；连续失败才要求人工处理。
+
+手动排查 / 强制同步时：
+
 ```bash
-npm run data                      # 1. 重跑管线（自动 resolve 最新 build）
-git diff data/site.db             # 2. 看数据变了什么
-npm run build && npm run preview  # 3. 本地验证
+node scripts/sync-data.mjs       # 管线 + 数据校验，不提交
+npm run build && npm run preview
+git diff --stat data/site.db
 git add -A && git commit && git push
 ```
-
-理想状态是把它挂 cron，但**提交前必须有人看一眼 diff** —— 见下面「数据诚实性」。
 
 ---
 
@@ -594,14 +596,7 @@ WHERE CAST(SpellID AS INTEGER) != 0
 不是站出了故障**。计入 fails 会让巡检天天报红（beta 期一天一个构建），
 反而把真故障淹掉。
 
-看到 🔔 时的动作：
-
-```bash
-cd ~/Desktop/david/Ship/wow-forever
-npm run data
-git status --short          # ⚠️ 必须看到 M data/site.db
-git add -A && git commit && git push
-```
+看到 🔔 不用手动处理：同一次全量巡检已经把变化交给 autopilot。只有飞书连续报失败时才手动跑 `node scripts/sync-data.mjs` 看具体校验 / 下载错误。
 
 ### ⚠️ 图片检查必须先验页面本身
 

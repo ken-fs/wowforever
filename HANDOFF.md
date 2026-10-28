@@ -49,16 +49,8 @@ site.webmanifest     站点清单
 
 ## 日常运维
 
-```bash
-cd ~/Desktop/david/Ship/wow-forever
+新 build 已由每日巡检 → autopilot → `scripts/sync-data.mjs` 自动同步、校验、构建、push，并在部署后推飞书。无需手动更新数据库。
 
-npm run data            # 游戏出新 build 后重跑（beta 期约 4.4 次/周）
-git status --short      # ⚠️ 必须看到 "M data/site.db" 才算跑完 —— CI 读的是仓库里那份
-git diff --stat data/site.db
-npm run build && npm run preview
-git add -A && git commit && git push     # 部署 = push
+手动诊断：`node scripts/sync-data.mjs`（只改本地，不提交）；`node scripts/sync-data.mjs --self-test`（校验规则自测）。新页面推 Bing：`npm run indexnow`。
 
-npm run indexnow        # 新页面推给 Bing
-```
-
-巡检：`node ~/Desktop/david/Ship/scripts/site-hygiene.mjs wowforever`（每天 10:00 自动）
+巡检：`node ~/Desktop/david/Ship/scripts/site-hygiene.mjs wowforever`（每天 10:00 自动；单站模式只检查，不触发同步）
