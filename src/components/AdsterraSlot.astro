@@ -1,4 +1,5 @@
 ---
+import { readFileSync } from "node:fs";
 /**
  * AdsterraSlot —— Adsterra 广告位，装在沙箱 iframe 里。
  *
@@ -36,7 +37,9 @@ interface Props {
 
 const { name, width, height, label = true, hideOnMobile = false, hideOnDesktop = false } = Astro.props;
 const show = !!import.meta.env.PUBLIC_ADSTERRA;
-const iframeSrc = `/ads/${name}.html`;
+// 素材内联成 srcdoc（由下面的脚本在可见时填入），不再让 iframe 去请求 /ads/<name>.html（10-31）：Cloudflare 会往每个 HTML 响应里自动插访问统计脚本，
+// 广告框是不透明源，那个脚本回传被 CORS 拦、控制台报错；同源时它还把广告框算成一次页面浏览，统计里多出 /ads/ 页
+const srcdoc = show ? readFileSync(`${process.cwd()}/public/ads/${name}.html`, "utf8") : "";
 ---
 {
   show && (
@@ -53,13 +56,42 @@ const iframeSrc = `/ads/${name}.html`;
           <span class="mb-1 text-[10px] font-semibold text-ink-faint">Advertisement</span>
         )}
         <iframe
-          src={iframeSrc}
+          data-ad-srcdoc={srcdoc}
           style={`width:100%;max-width:${width}px;height:${height}px;border:0`}
           loading="lazy"
           sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms"
           title="Advertisement"
         />
       </div>
+      <script is:inline>
+        /* 只在广告位真的显示、且接近视口时才填 srcdoc（10-31）。srcdoc iframe 不吃 loading="lazy"：
+           直接写 srcdoc 的话，手机上被 CSS 隐藏的 728×90 也会加载，给看不见的广告记展示（无效展示）。
+           display:none 的元素永远不会进入视口，所以隐藏的那个永远不加载。
+           只用 ES2018 语法；幂等：每个广告位都带一份，处理过的去掉 data-ad-srcdoc。 */
+        (function () {
+          var fill = function (f) {
+            var html = f.getAttribute("data-ad-srcdoc");
+            if (!html) return;
+            f.removeAttribute("data-ad-srcdoc");
+            f.srcdoc = html;
+          };
+          var run = function () {
+            var frames = document.querySelectorAll("iframe[data-ad-srcdoc]");
+            if (!("IntersectionObserver" in window)) {
+              for (var i = 0; i < frames.length; i++) if (frames[i].offsetParent) fill(frames[i]);
+              return;
+            }
+            var io = new IntersectionObserver(function (entries) {
+              for (var i = 0; i < entries.length; i++) {
+                if (entries[i].isIntersecting) { fill(entries[i].target); io.unobserve(entries[i].target); }
+              }
+            }, { rootMargin: "600px 0px" });
+            for (var j = 0; j < frames.length; j++) io.observe(frames[j]);
+          };
+          if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+          else run();
+        })();
+      </script>
     </>
   )
 }
