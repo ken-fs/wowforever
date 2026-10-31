@@ -681,7 +681,7 @@ AND (sl.CategoryID = '11' OR sl.DisplayName_lang IN ('Cooking','First Aid','Fish
 | `leaderboard-728x90` | 728×90 | 宽屏 |
 | `banner-320x50` | 320×50 | 窄屏 |
 
-放在：首页 · 攻略页 · 专业页 · 专业 hub · 职业页。
+放在：首页 · 攻略页 · 专业页 · 专业 hub · 职业页 · 种族×职业页（10-31 加）。
 **不放** `/about/` `/privacy/` `/404` `/screenshots/` `/videos/`。
 
 ### ⚠️ 为什么必须 iframe 隔离
@@ -694,24 +694,12 @@ sandbox 省略 `allow-top-navigation`（部分移动端素材会试图把整页�
 ⚠️ 但 `allow-scripts` + `allow-same-origin` 同时存在时，
 **sandbox 是布局隔离 + 导航摩擦，不是安全边界** —— 真隔离需要独立 origin。
 
-### ⚠️ 同意门控
+### 广告不等同意（2026-10-31 改，用户定）
 
-和 GA 同一套：iframe 先不挂 `src`，真 URL 放 `data-src`。
-拿到 localStorage 的 `wowforever-consent === 'accepted'`
-或收到 `wow:consent-accepted` 事件后才提升。
-
-```
-同意前  2 个 iframe，0 个有 src
-点 Allow 后  2 个都被提升
-```
-
-验证命令：
-```bash
-node ../scripts/browser/browser.mjs eval "http://localhost:4399/" "
-JSON.stringify({iframe:document.querySelectorAll('iframe').length,
-  已加载:[...document.querySelectorAll('iframe')].filter(f=>f.getAttribute('src')).length})"
-# 期望 {iframe:2, 已加载:0}（点 Allow 前）
-```
+以前广告和 GA 共用同意框，没点 Allow 的访客一个广告都不加载 → 10 月整月广告收入 $0.01。
+现在同意框只管 GA（`CookieConsent.astro` 只看 `PUBLIC_GA_ID`），广告 iframe 直接挂 `src`，和站群其他站一致；隐私页「Ads」一节写明用 Adsterra、可能写 cookie。
+同日 sandbox 去掉 `allow-same-origin`：`/ads/*.html` 和本站同源，给了它广告脚本就能读主页面。
+放广告的页面加上了 `/race-class/<组合>/`（流量主力页，之前没有）：开头回答下面一个 AdBreak。
 
 ### ⚠️ 两个尺寸都要判可见性
 

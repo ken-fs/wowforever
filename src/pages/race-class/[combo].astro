@@ -1,5 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
+import AdBreak from "../../components/AdBreak.astro";
 import { all, one, slug, val } from "../../data/db.ts";
 import { Image } from "astro:assets";
 import { classIcon, specFor } from "../../data/assets.ts";
@@ -65,6 +66,8 @@ const desc = `${race} can be a ${cls} in World of Warcraft: Forever. ${raceClass
       which is what the character creator reads from.
     </p>
   </header>
+
+  <AdBreak />
 
   <section class="py-8 grid gap-10 lg:grid-cols-[1.3fr_1fr]">
     <div>
