@@ -10,7 +10,7 @@ facts:
     v: "Oct 21"
   - k: "name reservation"
     v: "Oct 27"
-updated: 2026-10-26
+updated: 2026-11-03
 build: "1.60.1.70450"
 sources:
   - label: "Blizzard — Pre-Purchase World of Warcraft: Forever Upgrades and Begin Your Next Journey in Azeroth"
@@ -25,6 +25,8 @@ sources:
 
 It's one global launch. No region gets it first. A **subscription or game time** covers access.
 There is no box price.
+
+**Status on November 3:** launch is tomorrow. Today is the last day of name reservation, so reserve your names now if you haven't. The beta has already closed.
 
 Everything below comes from Blizzard's own pre-purchase announcement. Nothing here is a leak or a
 countdown site.

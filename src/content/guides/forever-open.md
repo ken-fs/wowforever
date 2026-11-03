@@ -10,7 +10,7 @@ facts:
     v: "$5,555"
   - k: "level"
     v: "30"
-updated: 2026-10-18
+updated: 2026-11-03
 build: "1.60.1.70450"
 sources:
   - label: "Raider.IO — The Forever Open tournament hub (event info, qualifiers, finals format and rules)"
@@ -19,7 +19,9 @@ sources:
   - label: "Blizzard — Forever Deep Dive Panel Recap (class deep dives behind the new talents)"
 ---
 
-The Forever Open is the first big community event on the Forever beta. Every competitor levels a **fresh
+**Update, November 3:** the event is over. It ran on the beta weekend of October 17–18. This page keeps the rules and the level-30 toolkit as a record. We haven't confirmed the final results here, so check Raider.IO for them. The live game starts November 4. See the [release date guide](/guides/release-date/) next.
+
+The Forever Open was the first big community event on the Forever beta. Every competitor levels a **fresh
 Horde character to 30**, then duels for a **$100,000** prize pool.
 
 It is **not a Blizzard event**. It is run by **Tips Out, Esfand and Xaryu**, with sign-ups and check-in on
